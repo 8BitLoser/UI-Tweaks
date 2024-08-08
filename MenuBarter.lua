@@ -12,7 +12,7 @@ function Menu:find(name)
 end
 ---MenuBarter Menu
 function Menu.get()
-    return tes3ui.find(tes3ui.registerID("MenuBarter"))
+    return tes3ui.findMenu(tes3ui.registerID("MenuBarter"))
 end
 ---Where MenuBarter Shunts Children `PartDragMenu_main`
 function Menu:Main()
@@ -120,3 +120,5 @@ local function BarterInfo(e)
 end
 event.register(tes3.event.uiActivated, BarterInfo, { filter = "MenuBarter", priority = -1000 })
 event.register(bs.UpdateBarter, BarterInfo, { priority = -1000 })
+
+return Menu

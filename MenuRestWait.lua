@@ -2,12 +2,9 @@ local cfg = require("BeefStranger.UI Tweaks.config")
 ---MenuRestWait Mapped out because it was fun
 local Menu = {}
 
-
-
 ---@return tes3uiElement? MenuRestWait
 function Menu.get()
-    -- debug.log(tes3ui.findMenu(tes3ui.registerID("MenuRestWait")))
-    return tes3ui.find(tes3ui.registerID("MenuRestWait"))
+    return tes3ui.findMenu(tes3ui.registerID("MenuRestWait"))
 end
 
 function Menu:Update()
@@ -15,14 +12,14 @@ function Menu:Update()
     self.get():updateLayout()
 end
 
-function Menu:find(child)
+function Menu:child(child)
     if not self:get() then return end
     return self.get():findChild(child)
 end
 
 function Menu:Scrollbar()
     if not self:get() then return end
-    return self:find("MenuRestWait_scrollbar")
+    return self:child("MenuRestWait_scrollbar")
 end
 
 function Menu:ScrollWidget()
@@ -32,40 +29,50 @@ end
 
 function Menu:Buttons()
     if not self:get() then return end
-    return self:find("MenuRestWait_buttonlayout" )
+    return self:child("MenuRestWait_buttonlayout" )
 end
 
 function Menu:Wait()
     if not self:get() then return end
-    return self:find("MenuRestWait_wait_button")
+    return self:child("MenuRestWait_wait_button")
 end
 
 function Menu:Rest()
     if not self:get() then return end
-    return self:find("MenuRestWait_rest_button")
+    return self:child("MenuRestWait_rest_button")
 end
 
 function Menu:UntilHealed()
     if not self:get() then return end
-    return self:find("MenuRestWait_untilhealed_button")
+    return self:child("MenuRestWait_untilhealed_button")
 end
 
 function Menu:Cancel()
     if not self:get() then return end
-    return self:find("MenuRestWait_cancel_button")
+    return self:child("MenuRestWait_cancel_button")
 end
 
-local function press(button)
+function Menu:press(button)
+    if not self:get() then return end
     button:triggerEvent("mouseClick")
 end
 
-local function triggerWait()
-    if Menu:Wait().visible then
+function Menu:triggerHeal()
+    if not self:get() then return end
+    if self:UntilHealed().visible then
+        self:press(self:UntilHealed())
+    end
+end
+
+function Menu:triggerWait()
+    if not self:get() then return end
+    if self:Wait().visible then
         ---If Wait Button is visible click it
-        Menu:Wait():triggerEvent(tes3.uiEvent.mouseClick)
-    elseif Menu:Rest().visible then
+        self:press(self:Wait())
+        self:press(self:Wait())
+    elseif self:Rest().visible then
         ---If Rest Button is visible click it
-        Menu:Rest():triggerEvent(tes3.uiEvent.mouseClick)
+        self:press(self:Rest())
     end
 end
 
@@ -80,7 +87,7 @@ function Menu.onRestMenu(e)
         ---Set Wait Time to 24 and Trigger the Event that updates bar
         Menu:ScrollWidget().current = 23
         Menu:Scrollbar():triggerEvent("PartScrollBar_changed")
-        triggerWait()
+        Menu:triggerWait()
         Menu:Update()
     end)
     ---Reorder Buttons so DayRest is on the Left
@@ -89,17 +96,4 @@ function Menu.onRestMenu(e)
 end
 event.register(tes3.event.uiActivated, Menu.onRestMenu, { filter = "MenuRestWait" })
 
----@param e keyDownEventData
-local function keyDown(e)
-    if not Menu:get() or not cfg.enableMenuWaitRest then return end
-    -- if e.keyCode == cfg.close.keyCode then
-    --     press(Menu:Cancel())
-    -- end
-    if e.keyCode == cfg.wait.keyCode then
-        triggerWait()
-    end
-    if e.keyCode == cfg.day.keyCode then
-        press(Menu.FullRest)
-    end
-end
-event.register(tes3.event.keyDown, keyDown, { priority = -9999 })
+return Menu
