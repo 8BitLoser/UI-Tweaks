@@ -1,4 +1,6 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
+local keybind = cfg.keybind
+local dialog = cfg.dialog
 local RestWait = require("BeefStranger.UI Tweaks.MenuRestWait")
 local Barter = require("BeefStranger.UI Tweaks.MenuBarter")
 local Dialog = require("BeefStranger.UI Tweaks.MenuDialog")
@@ -69,28 +71,30 @@ local function click(element)
 end
 
 ---@param e keyDownEventData
-local function Hotkey(e)
-    if cfg.enableHotkeys then
-        if key(e, cfg.keybind.take) then Take.Scroll() Take.Book() end
+local function Keybinds(e)
+    if keybind.enable then
+        if key(e, keybind.take) then Take.Scroll() Take.Book() end
 
-        if cfg.enableDialog then
-            if key(e, cfg.keybind.barter) then click(Dialog:Barter()) end
-            if key(e, cfg.keybind.companion) then click(Dialog:Companion()) end
-            if key(e, cfg.keybind.enchanting) then click(Dialog:Enchanting()) end
-            if key(e, cfg.keybind.persuasion) then click(Dialog:Persuasion()) end
-            if key(e, cfg.keybind.repair) then click(Dialog:Repair()) end
-            if key(e, cfg.keybind.spells) then click(Dialog:Spells()) end
-            if key(e, cfg.keybind.spellmaking) then click(Dialog:Spellmaking()) end
-            if key(e, cfg.keybind.training) then click(Dialog:Training()) end
-            if key(e, cfg.keybind.travel) then click(Dialog:Travel()) end
-            if key(e, cfg.keybind.admire) then Persuasion.press("Admire") end
-            if key(e, cfg.keybind.intimidate) then Persuasion.press("Intimidate") end
-            if key(e, cfg.keybind.taunt) then Persuasion.press("Taunt") end
+        if dialog.enable then
+            if key(e, keybind.barter) then click(Dialog:Barter()) end
+            if key(e, keybind.companion) then click(Dialog:Companion()) end
+            if key(e, keybind.enchanting) then click(Dialog:Enchanting()) end
+            if key(e, keybind.persuasion) then click(Dialog:Persuasion()) end
+            if key(e, keybind.repair) then click(Dialog:Repair()) end
+            if key(e, keybind.spells) then click(Dialog:Spells()) end
+            if key(e, keybind.spellmaking) then click(Dialog:Spellmaking()) end
+            if key(e, keybind.training) then click(Dialog:Training()) end
+            if key(e, keybind.travel) then click(Dialog:Travel()) end
+            if key(e, keybind.admire) then Persuasion.press("Admire") end
+            if key(e, keybind.intimidate) then Persuasion.press("Intimidate") end
+            if key(e, keybind.taunt) then Persuasion.press("Taunt") end
         end
 
-        if key(e, cfg.keybind.wait) then RestWait:triggerWait() end
-        if key(e, cfg.keybind.heal) then RestWait:triggerHeal() end
-        if key(e, cfg.keybind.day) and cfg.fullRest then RestWait:press(RestWait.FullRest) end
+        if key(e, keybind.waitDown) then RestWait:waitDown() end
+        if key(e, keybind.waitUp) then RestWait:waitUp() end
+        if key(e, keybind.wait) then RestWait:triggerWait() end
+        if key(e, keybind.heal) then RestWait:triggerHeal() end
+        if key(e, keybind.day) and cfg.wait.fullRest then RestWait:press(RestWait.FullRest) end
 
         if Barter:get() then
             -- if keyCode(e, cfg.barterUp) or keyCode(e, cfg.barterDown) then ---Needed to allow Shift to increase 100
@@ -99,11 +103,11 @@ local function Hotkey(e)
             --     keyDown = true
             --     currentKey = e
             -- end
-            if key(e, cfg.keybind.offer) then Barter:Offer():triggerEvent("mouseClick") end
+            if key(e, keybind.offer) then Barter:Offer():triggerEvent("mouseClick") end
         end
     end
 end
-event.register(tes3.event.keyDown, Hotkey, {priority = -10000})
+event.register(tes3.event.keyDown, Keybinds, {priority = -10000})
 
 
 -- local function enterFrame()

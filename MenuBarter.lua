@@ -1,4 +1,4 @@
-local cfg = require("BeefStranger.UI Tweaks.config")
+local cfg = require("BeefStranger.UI Tweaks.config").menuBarter
 local bs = require("BeefStranger.UI Tweaks.common")
 local sf = string.format
 ---MenuBarter Elements Mapped Out. Just cause I wanted to
@@ -83,7 +83,7 @@ end
 
 --- @param e uiActivatedEventData
 local function BarterInfo(e)
-    if not Menu:get() or not cfg.enableMenuBarter then return end
+    if not Menu:get() or not cfg.enable then return end
     local trader = Menu:getTrader()
 
     if cfg.showDisposition then
@@ -92,7 +92,7 @@ local function BarterInfo(e)
         Menu:Title().text = trader.object.name
     end
 
-    if cfg.showNpcStats then
+    if cfg.menushowNpcStats then
         if not Menu:find("NpcStat") then
             local npcText = sf("Mercantile: %s | Personality: %s", trader.mercantile.current, trader.personality.current)
             NpcStat = Menu:Main():createLabel({ id = "NpcStat", text = npcText })

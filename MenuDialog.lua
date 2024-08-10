@@ -28,7 +28,7 @@ end
 
 ---@param e uiActivatedEventData
 local function showDialogKey(e)
-    if not cfg.showDialogKey then return end
+    if not cfg.dialog.enable or not cfg.dialog.showKey then return end
     timer.delayOneFrame(function ()
         if not Menu.get() then return end
         for _, button in pairs(Menu:GetService().children) do

@@ -1,99 +1,63 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 ---MenuRestWait Mapped out because it was fun
-local Menu = {}
+local Rest = {}
 
----@return tes3uiElement? MenuRestWait
-function Menu.get()
-    return tes3ui.findMenu(tes3ui.registerID("MenuRestWait"))
+function Rest.get() return tes3ui.findMenu(tes3ui.registerID("MenuRestWait")) end---@return tes3uiElement? MenuRestWait
+function Rest:Update() if not self:get() then return end self.get():updateLayout() end
+function Rest:child(child) if not self:get() then return end return self.get():findChild(child) end
+function Rest:Scrollbar() if not self:get() then return end return self:child("MenuRestWait_scrollbar") end
+function Rest:ScrollWidget() if not self:get() then return end return self:Scrollbar().widget end---@return tes3uiSlider?
+function Rest:Buttons() if not self:get() then return end return self:child("MenuRestWait_buttonlayout" ) end
+function Rest:Wait() if not self:get() then return end return self:child("MenuRestWait_wait_button") end
+function Rest:Rest() if not self:get() then return end return self:child("MenuRestWait_rest_button") end
+function Rest:UntilHealed() if not self:get() then return end return self:child("MenuRestWait_untilhealed_button") end
+function Rest:Cancel() if not self:get() then return end return self:child("MenuRestWait_cancel_button") end
+function Rest:press(button) if not self:get() then return end button:triggerEvent("mouseClick") end
+function Rest:waitUp()
+    if not Rest:ScrollWidget() then return end
+    Rest:ScrollWidget().current = math.min((Rest:ScrollWidget().current + 1), 23)
+    Rest:Scrollbar():triggerEvent("PartScrollBar_changed")
+    Rest:Update()
 end
-
-function Menu:Update()
-    if not self:get() then return end
-    self.get():updateLayout()
+function Rest:waitDown()
+    if not Rest:ScrollWidget() then return end
+    Rest:ScrollWidget().current = math.max((Rest:ScrollWidget().current - 1), 0)
+    Rest:Scrollbar():triggerEvent("PartScrollBar_changed")
+    Rest:Update()
 end
-
-function Menu:child(child)
-    if not self:get() then return end
-    return self.get():findChild(child)
-end
-
-function Menu:Scrollbar()
-    if not self:get() then return end
-    return self:child("MenuRestWait_scrollbar")
-end
-
-function Menu:ScrollWidget()
-    if not self:get() then return end
-    return self:Scrollbar().widget ---@type tes3uiSlider
-end
-
-function Menu:Buttons()
-    if not self:get() then return end
-    return self:child("MenuRestWait_buttonlayout" )
-end
-
-function Menu:Wait()
-    if not self:get() then return end
-    return self:child("MenuRestWait_wait_button")
-end
-
-function Menu:Rest()
-    if not self:get() then return end
-    return self:child("MenuRestWait_rest_button")
-end
-
-function Menu:UntilHealed()
-    if not self:get() then return end
-    return self:child("MenuRestWait_untilhealed_button")
-end
-
-function Menu:Cancel()
-    if not self:get() then return end
-    return self:child("MenuRestWait_cancel_button")
-end
-
-function Menu:press(button)
-    if not self:get() then return end
-    button:triggerEvent("mouseClick")
-end
-
-function Menu:triggerHeal()
+function Rest:triggerHeal()
     if not self:get() then return end
     if self:UntilHealed().visible then
         self:press(self:UntilHealed())
     end
 end
-
-function Menu:triggerWait()
+function Rest:triggerWait()
     if not self:get() then return end
     if self:Wait().visible then
-        ---If Wait Button is visible click it
-        self:press(self:Wait())
         self:press(self:Wait())
     elseif self:Rest().visible then
-        ---If Rest Button is visible click it
         self:press(self:Rest())
     end
 end
 
 ---@param e uiActivatedEventData
-function Menu.onRestMenu(e)
-    if not cfg.enableMenuWaitRest or not cfg.fullRest then return end
+function Rest.onRestMenu(e)
+    if not cfg.wait.enable or not cfg.wait.fullRest then return end
     ---Make Button Block Auto Size
-    Menu:Buttons().autoWidth = true
-    Menu.FullRest = Menu:Buttons():createButton { id = "Full Rest", text = "24 Hours" }
-    Menu.FullRest.borderAllSides = 0
-    Menu.FullRest:register(tes3.uiEvent.mouseClick, function(e)
+    Rest:Buttons().autoWidth = true
+    Rest.FullRest = Rest:Buttons():createButton { id = "Full Rest", text = "24 Hours" }
+    Rest.FullRest.borderAllSides = 0
+    Rest.FullRest:register(tes3.uiEvent.mouseClick, function(e)
         ---Set Wait Time to 24 and Trigger the Event that updates bar
-        Menu:ScrollWidget().current = 23
-        Menu:Scrollbar():triggerEvent("PartScrollBar_changed")
-        Menu:triggerWait()
-        Menu:Update()
+        Rest:ScrollWidget().current = 23
+        Rest:Scrollbar():triggerEvent("PartScrollBar_changed")
+        Rest:triggerWait()
+        Rest:Update()
     end)
     ---Reorder Buttons so DayRest is on the Left
-    Menu:Buttons():reorderChildren(0, Menu.FullRest, 1)
-    Menu:Update()
+    Rest:Buttons():reorderChildren(0, Rest.FullRest, 1)
+    Rest:Update()
 end
-event.register(tes3.event.uiActivated, Menu.onRestMenu, { filter = "MenuRestWait" })
+event.register(tes3.event.uiActivated, Rest.onRestMenu, { filter = "MenuRestWait" })
 
-return Menu
+return Rest

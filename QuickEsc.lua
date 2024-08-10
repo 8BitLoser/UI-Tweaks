@@ -7,8 +7,8 @@ local menuLeft = false
 ---Work around for MenuInventory being not visible whenever MenuOptions is activated
 ---@param e keyDownEventData
 local function Escape(e)
-    if tes3.menuMode() and cfg.enableEscape then
-        for menuID, value in pairs(cfg.escapeMenus) do
+    if tes3.menuMode() and cfg.escape.enable then
+        for menuID, _ in pairs(cfg.escape.menus) do
             if find(menuID) then
                 if menuID == menu.Barter or menuID == menu.Book or menuID == menu.Scroll then
                     return
@@ -27,8 +27,8 @@ event.register(tes3.event.keyDown, Escape, {filter = tes3.scanCode.escape, prior
 ---Destroy/leaveMenuMode on Menus in menus table
 ---@param e uiActivatedEventData
 local function onOptions(e)
-    if not cfg.enableEscape then return end
-    for menuID, enabled in pairs(cfg.escapeMenus) do
+    if not cfg.escape.enable then return end
+    for menuID, enabled in pairs(cfg.escape.menus) do
         if enabled and not leaveNotDestroy[menuID] then
             local foundMenu = find(menuID)
             if foundMenu then
