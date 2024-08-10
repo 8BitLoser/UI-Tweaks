@@ -5,18 +5,13 @@ local configPath = "UI Tweaks"
 local cfg = {}
 ---@class bsUITweaks<K, V>: { [K]: V }
 local defaults = {
-    wait = {
-        enable = true,
-        fullRest = true,
-    },
-
+    wait = { enable = true, fullRest = true, },
     menuBarter = {
         enable = true,
         showDisposition = true,
         showNpcStats = true,
         showPlayerStats = true,
     },
-
     escape = {
         enable = true,
         menus = {
@@ -30,11 +25,8 @@ local defaults = {
         },
     },
     manualAdd = "",
-
-    dialog = {
-        enable = true,
-        showKey = true,
-    },
+    dialog = { enable = true, showKey = true, },
+    repair = { enable = true, duration = 0.1 },
 
     keybind = {
         enable = true,
@@ -63,6 +55,7 @@ local defaults = {
         barterUp = { keyCode = tes3.scanCode.keyUp, isShiftDown = false, isAltDown = false, isControlDown = false, },
         offer = { keyCode = tes3.scanCode.enter, isShiftDown = false, isAltDown = false, isControlDown = false, },
     },
+    take = { enable = true }
 }
 local function updateBarter() event.trigger(bs.UpdateBarter) end
 
@@ -77,50 +70,55 @@ local function registerModConfig()
         cfg.settings:createYesNoButton { label = "Enable Wait/Rest Tweaks", configKey = "enable", config = config.wait }
         cfg.settings:createYesNoButton { label = "Enable Barter Tweaks", configKey = "enable", callback = updateBarter, config = config.menuBarter }
         cfg.settings:createYesNoButton { label = "Enable Dialogue/Persuasion Tweaks", configKey = "enable", config = config.dialog}
-        cfg.settings:createYesNoButton { label = "Enable QuickTake", configKey = "enableTake",}
+        cfg.settings:createYesNoButton { label = "Enable Repair Tweaks", configKey = "enable", config = config.repair}
+        cfg.settings:createYesNoButton { label = "Enable QuickTake", configKey = "enable", config = config.take}
         cfg.settings:createYesNoButton { label = "Enable QuickEsc", configKey = "enable", config = config.escape}
         cfg.settings:createYesNoButton { label = "Enable Hotkeys", configKey = "enable", config = config.keybind}
-
-    cfg.waitRest = cfg.template:createPage{ label = "Wait/Rest Menu", config = config.wait }
-        cfg.waitRest:createYesNoButton({ label = "Enable 24 Hour Wait/Rest", configKey = "fullRest", })
-
-    cfg.dialog = cfg.template:createPage{ label = "Dialogue/Persuasion Menu", config = config.dialog }
-        cfg.dialog:createYesNoButton({label = "Show Dialogue Shortcuts", configKey = "showKey"})
 
     cfg.barter = cfg.template:createPage{ label = "Barter Menu", config = config.menuBarter }
         cfg.barter:createYesNoButton { label = "Show Disposition", configKey = "showDisposition", callback = updateBarter }
         cfg.barter:createYesNoButton { label = "Show NPC Stats", configKey = "showNpcStats", callback = updateBarter }
         cfg.barter:createYesNoButton { label = "Show Player Stats", configKey = "showPlayerStats", callback = updateBarter }
 
+    cfg.dialog = cfg.template:createPage{ label = "Dialogue/Persuasion Menu", config = config.dialog }
+        cfg.dialog:createYesNoButton({label = "Show Dialogue Shortcuts", configKey = "showKey"})
+
+    cfg.repair = cfg.template:createPage{label = "Repair Menu", config = config.repair}
+        cfg.repair:createSlider{label = "Auto Repair Delay", 
+        min = 0.01, max = 1, step = 0.01,jump = 0.1, decimalPlaces = 2, configKey = "duration"}
+
+    cfg.waitRest = cfg.template:createPage{ label = "Wait/Rest Menu", config = config.wait }
+        cfg.waitRest:createYesNoButton({ label = "Enable 24 Hour Wait/Rest", configKey = "fullRest", })
+
     cfg.hotkeys = cfg.template:createPage({label = "Hotkeys", showReset = true, config = config.keybind, defaultConfig = defaults.keybind})
         cfg.barterKey = cfg:newCat(cfg.hotkeys, "Barter")
-            cfg.barterKey:createKeyBinder{ label = "Confirm Offer", configKey = "offer"}
-            -- cfg.barterKey:createKeyBinder{ label = "Barter +", configKey = "barterUp"}
-            -- cfg.barterKey:createKeyBinder{ label = "Barter -", configKey = "barterDown"}
+            cfg:keybind(cfg.barterKey, "Confirm Offer", "offer")
+            -- cfg:keybind(cfg.barterKey, "Barter +", "barterUp")
+            -- cfg:keybind(cfg.barterKey, "Barter -", "barterDown")
 
         cfg.dialogKey = cfg:newCat(cfg.hotkeys, "Dialogue/Persuasion")
-            cfg.dialogKey:createKeyBinder({ label = "Open Barter", configKey = "barter" })
-            cfg.dialogKey:createKeyBinder({ label = "Open Companion", configKey = "companion" })
-            cfg.dialogKey:createKeyBinder({ label = "Open Enchanting", configKey = "enchanting" })
-            cfg.dialogKey:createKeyBinder({ label = "Open Persuasion", configKey = "persuasion" })
-            cfg.dialogKey:createKeyBinder({ label = "Open Repair", configKey = "repair" })
-            cfg.dialogKey:createKeyBinder({ label = "Open Spellmaking", configKey = "spellmaking" })
-            cfg.dialogKey:createKeyBinder({ label = "Open Spells", configKey = "spells" })
-            cfg.dialogKey:createKeyBinder({ label = "Open Training", configKey = "training" })
-            cfg.dialogKey:createKeyBinder({ label = "Open Travel", configKey = "travel" })
-            cfg.dialogKey:createKeyBinder({ label = "Admire", configKey = "admire" })
-            cfg.dialogKey:createKeyBinder({ label = "Intimidate", configKey = "intimidate" })
-            cfg.dialogKey:createKeyBinder({ label = "Taunt", configKey = "taunt", })
+            cfg:keybind(cfg.dialogKey, "Open Barter", "barter")
+            cfg:keybind(cfg.dialogKey, "Open Companion", "companion")
+            cfg:keybind(cfg.dialogKey, "Open Enchanting", "enchanting")
+            cfg:keybind(cfg.dialogKey, "Open Persuasion", "persuasion")
+            cfg:keybind(cfg.dialogKey, "Open Repair", "repair")
+            cfg:keybind(cfg.dialogKey, "Open Spellmaking", "spellmaking")
+            cfg:keybind(cfg.dialogKey, "Open Spells", "spells")
+            cfg:keybind(cfg.dialogKey, "Open Training", "training")
+            cfg:keybind(cfg.dialogKey, "Open Travel", "travel")
+            cfg:keybind(cfg.dialogKey, "Admire", "admire")
+            cfg:keybind(cfg.dialogKey, "Intimidate", "intimidate")
+            cfg:keybind(cfg.dialogKey, "Taunt", "taunt")
 
         cfg.takeKey = cfg:newCat(cfg.hotkeys, "Take Book/Scroll")
-            cfg.takeKey:createKeyBinder({ label = "Take", configKey = "take" })
+        cfg:keybind(cfg.takeKey, "Take", "take")
 
         cfg.fullRestKey = cfg:newCat(cfg.hotkeys, "Wait/Rest")
-        cfg.fullRestKey:createKeyBinder({ label = "Wait/Rest", configKey = "wait" })
-        cfg.fullRestKey:createKeyBinder({ label = "Wait/Rest - 1hr", configKey = "waitDown" })
-        cfg.fullRestKey:createKeyBinder({ label = "Wait/Rest + 1hr", configKey = "waitUp" })
-        cfg.fullRestKey:createKeyBinder({ label = "Until Healed", configKey = "heal" })
-        cfg.fullRestKey:createKeyBinder({ label = "Rest/Wait 24hr", configKey = "day" })
+            cfg:keybind(cfg.fullRestKey, "Wait/Rest", "wait")
+            cfg:keybind(cfg.fullRestKey, "Wait/Rest - 1hr", "waitDown")
+            cfg:keybind(cfg.fullRestKey, "Wait/Rest + 1hr", "waitUp")
+            cfg:keybind(cfg.fullRestKey, "Until Healed", "heal")
+            cfg:keybind(cfg.fullRestKey, "Rest/Wait 24hr", "day")
 
 
     cfg.quickEsc = cfg.template:createExclusionsPage({
@@ -176,6 +174,10 @@ event.register(tes3.event.modConfigReady, registerModConfig)
 ---@param label string
 function cfg:newCat(page, label)
     return page:createCategory({label = label})
+end
+
+function cfg:keybind(page, label, key)
+    return page:createKeyBinder({ label = label, configKey = key })
 end
 -- event.register("keyDown", function (e)
 --     tes3.messageBox("Clearing UITweaks Config")

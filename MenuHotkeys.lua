@@ -73,7 +73,9 @@ end
 ---@param e keyDownEventData
 local function Keybinds(e)
     if keybind.enable then
-        if key(e, keybind.take) then Take.Scroll() Take.Book() end
+        if cfg.take.enable then
+            if key(e, keybind.take) then Take.Scroll() Take.Book() end
+        end
 
         if dialog.enable then
             if key(e, keybind.barter) then click(Dialog:Barter()) end

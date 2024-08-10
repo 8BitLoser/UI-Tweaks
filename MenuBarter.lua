@@ -4,82 +4,36 @@ local sf = string.format
 ---MenuBarter Elements Mapped Out. Just cause I wanted to
 local Menu = {}
 
----Find Child of MenuBarter
-function Menu:find(name)
-    if self.get() then
-        return self.get():findChild(name)
-    end
-end
 ---MenuBarter Menu
-function Menu.get()
-    return tes3ui.findMenu(tes3ui.registerID("MenuBarter"))
-end
+function Menu.get() return tes3ui.findMenu(tes3ui.registerID("MenuBarter")) end
+---Find Child of MenuBarter
+function Menu:find(name) if self.get() then return self.get():findChild(name) end end
 ---Where MenuBarter Shunts Children `PartDragMenu_main`
-function Menu:Main()
-    if self.get() then
-        return self:find("PartDragMenu_main")
-    end
-end
+function Menu:Main() if self.get() then return self:find("PartDragMenu_main") end end
 ---Title Element
-function Menu:Title()
-    if self.get() then
-        return Menu:find("PartDragMenu_title")
-    end
-end
+function Menu:Title() if self.get() then return Menu:find("PartDragMenu_title") end end
 ---Merchant Inventory Block
-function Menu:ItemTileBlock()
-    if self.get() then
-        return self:find("PartScrollPane_pane")
-    end
-end
+function Menu:ItemTileBlock() if self.get() then return self:find("PartScrollPane_pane") end end
 ---null parent of UIEXP Filter elements
-function Menu:UIExpParent()
-    if self:find("UIEXP:FiltersearchBlock") then
-        return self:find("UIEXP:FiltersearchBlock").parent.parent
-    end
-end
+function Menu:UIExpParent() if self:find("UIEXP:FiltersearchBlock") then return self:find("UIEXP:FiltersearchBlock").parent.parent end end
 ---Parent of Haggle/Cost
-function Menu:BarterBlock()
-    if self:Price() then
-        return self:find("MenuBarter_Price").parent
-    end
-end
+function Menu:BarterBlock() if self:Price() then return self:find("MenuBarter_Price").parent end end
 ---Cost Block
-function Menu:Price()
-    return self:find("MenuBarter_Price")
-end
+function Menu:Price() return self:find("MenuBarter_Price") end
 ---Haggle + Button
-function Menu:BarterUp()
-    return self:find("MenuBarter_arrowup")
-end
+function Menu:BarterUp() return self:find("MenuBarter_arrowup") end
 ---Haggle - Button
-function Menu:BarterDown()
-    return self:find("MenuBarter_arrowdown")
-end
+function Menu:BarterDown() return self:find("MenuBarter_arrowdown") end
 ---Parent of Offer/Cancel/Max Sale
-function Menu:Buttons()
-    if self:Offer() then
-        return self:Offer().parent.parent
-    end
-end
+function Menu:Buttons() if self:Offer() then return self:Offer().parent.parent end end
 ---MaxSale Button
-function Menu:MaxSale()
-    return self:find("MenuBarter_Goldbutton")
-end
+function Menu:MaxSale() return self:find("MenuBarter_Goldbutton") end
 ---Offer Button
-function Menu:Offer()
-    return self:find("MenuBarter_Offerbutton")
-end
+function Menu:Offer() return self:find("MenuBarter_Offerbutton") end
 ---Cancel Button
-function Menu:Cancel()
-    return self:find("MenuBarter_Cancelbutton")
-end
+function Menu:Cancel() return self:find("MenuBarter_Cancelbutton") end
 ---Get NPC Mobile MenuBarter is Associated with
-function Menu:getTrader()
-    if self:get() then
-        return tes3ui.getServiceActor() ---@type tes3mobileCreature|tes3mobileNPC|tes3mobilePlayer
-    end
-end
+function Menu:getTrader() if self:get() then return tes3ui.getServiceActor() end end---@type tes3mobileCreature|tes3mobileNPC|tes3mobilePlayer
 
 --- @param e uiActivatedEventData
 local function BarterInfo(e)
