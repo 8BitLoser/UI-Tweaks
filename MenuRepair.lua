@@ -1,7 +1,6 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
-local id = require("BeefStranger.UI Tweaks.tes3Menus")
+local id = require("BeefStranger.UI Tweaks.menuID")
 local startTime = os.clock()
-local repairTimer ---@type mwseTimer|nil?
 
 ---@class bsDebugRepair
 local Repair = {}
@@ -9,7 +8,7 @@ function Repair:get() return tes3ui.findMenu(id.Repair) end
 function Repair:Items() if not self:get() then return end return self:get():findChild("PartScrollPane_pane") end
 function Repair:Close() if not self:get() then return end return self:get():findChild("MenuRepair_Okbutton") end
 
-
+-- local repairTimer ---@type mwseTimer|nil?
 -- ---@param e uiActivatedEventData
 -- local function repair(e)
 --     if not cfg.repair.enable then return end

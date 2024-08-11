@@ -1,5 +1,5 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
-local menu = require("BeefStranger.UI Tweaks.tes3Menus")
+local menu = require("BeefStranger.UI Tweaks.menuID")
 local find = tes3ui.findMenu
 local leaveNotDestroy = { MenuInventory = true, MenuContents = true, }
 local menuLeft = false

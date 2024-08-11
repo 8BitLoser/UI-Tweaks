@@ -1,5 +1,5 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
-local id = require("BeefStranger.UI Tweaks.tes3Menus")
+local id = require("BeefStranger.UI Tweaks.menuID")
 local sf = string.format
 local keyName = tes3.getKeyName
 
@@ -23,12 +23,13 @@ function Menu.get() return tes3ui.findMenu(id.Dialog) end
 function Menu.click(child)
     if not Menu.get() then return end
     child:triggerEvent("mouseClick")
+    tes3.playSound({sound = "Menu Click"})
 end
 
 
 ---@param e uiActivatedEventData
 local function showDialogKey(e)
-    if not cfg.dialog.enable or not cfg.dialog.showKey then return end
+    if not cfg.dialog.enable or not cfg.dialog.showKey or not cfg.keybind.enable then return end
     timer.delayOneFrame(function ()
         if not Menu.get() then return end
         for _, button in pairs(Menu:GetService().children) do

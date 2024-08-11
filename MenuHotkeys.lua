@@ -1,11 +1,15 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 local keybind = cfg.keybind
 local dialog = cfg.dialog
-local RestWait = require("BeefStranger.UI Tweaks.MenuRestWait")
 local Barter = require("BeefStranger.UI Tweaks.MenuBarter")
 local Dialog = require("BeefStranger.UI Tweaks.MenuDialog")
-local menu = require("BeefStranger.UI Tweaks.tes3Menus")
+local Persuasion = require("BeefStranger.UI Tweaks.MenuPersuasion")
+local RestWait = require("BeefStranger.UI Tweaks.MenuRestWait")
+local menu = require("BeefStranger.UI Tweaks.menuID")
 local find = tes3ui.findMenu
+local function key(e, cfgKey) return tes3.isKeyEqual({actual = e, expected = cfgKey}) end
+local function keyCode(e, setting) return e.keyCode == setting.keyCode end
+local function isKeyDown(scanCode) return tes3.worldController.inputController:isKeyDown(scanCode) end
 
 
 local Take = {}
@@ -22,32 +26,32 @@ function Take.Scroll()
     end
 end
 
-local Persuasion = {}
---- @param name "Admire"|"Intimidate"|"Taunt"
-function Persuasion.press(name)
-    local persuasion = find("MenuPersuasion")
-    if persuasion then
-        local serviceList = persuasion:findChild("MenuPersuasion_ServiceList")
-        for _, element in pairs(serviceList.children) do
-            if element.children[1].text == name then
-                return element.children[1]:triggerEvent(tes3.uiEvent.mouseClick)
-            end
+local persuadeTime = os.clock()
+---@param e enterFrameEventData
+local function buttonHold(e)
+    if not cfg.persuade.enable or not Persuasion:get() or not cfg.persuade.hold then return end
+    if os.clock() - persuadeTime >= cfg.persuade.delay then
+        if isKeyDown(cfg.keybind.admire.keyCode) then Persuasion:trigger("Admire") end
+        if isKeyDown(cfg.keybind.intimidate.keyCode) then Persuasion:trigger("Intimidate") end
+        if isKeyDown(cfg.keybind.taunt.keyCode) then Persuasion:trigger("Taunt") end
+        if cfg.persuade.holdBribe then
+            if isKeyDown(cfg.keybind.bribe10.keyCode) then Persuasion:trigger("Bribe10") end
+            if isKeyDown(cfg.keybind.bribe100.keyCode) then Persuasion:trigger("Bribe100") end
+            if isKeyDown(cfg.keybind.bribe1000.keyCode) then Persuasion:trigger("Bribe1000") end
         end
+        persuadeTime = os.clock()
     end
 end
+event.register(tes3.event.enterFrame, buttonHold)
 
-local function key(e, cfgKey) return tes3.isKeyEqual({actual = e, expected = cfgKey}) end
-local function keyCode(e, setting) return e.keyCode == setting.keyCode end
-local function isKeyDown(scanCode) return tes3.worldController.inputController:isKeyDown(scanCode) end
-
-local currentKey = nil
-local keyDown = false
-local frame = 0
 
 --Lots of hoops to jump through to get bater +/- to work right
 ---Currently wanting to use Shift to + 100 is breaking with key() check, and bypassing
 ---lets you do increase even if you arent holding a required key, probably just gonna
 ---let it be, and move on, take another look later
+-- local currentKey = nil
+-- local keyDown = false
+-- local frame = 0
 -- ---@param e keyUpEventData
 -- local function keyUp(e)
 --     debug.log(keyCode(e, cfg.barterUp))
@@ -87,9 +91,19 @@ local function Keybinds(e)
             if key(e, keybind.spellmaking) then click(Dialog:Spellmaking()) end
             if key(e, keybind.training) then click(Dialog:Training()) end
             if key(e, keybind.travel) then click(Dialog:Travel()) end
-            if key(e, keybind.admire) then Persuasion.press("Admire") end
-            if key(e, keybind.intimidate) then Persuasion.press("Intimidate") end
-            if key(e, keybind.taunt) then Persuasion.press("Taunt") end
+        end
+
+        if cfg.persuade.enable then
+            -- if not cfg.persuade.hold then
+                if key(e, keybind.admire) then Persuasion:trigger("Admire") end
+                if key(e, keybind.intimidate) then Persuasion:trigger("Intimidate") end
+                if key(e, keybind.taunt) then Persuasion:trigger("Taunt") end
+                if not cfg.persuade.holdBribe then
+                    if key(e, keybind.bribe10) then Persuasion:trigger("Bribe10") end
+                    if key(e, keybind.bribe100) then Persuasion:trigger("Bribe100") end
+                    if key(e, keybind.bribe1000) then Persuasion:trigger("Bribe1000") end
+                -- end
+            end
         end
 
         if key(e, keybind.waitDown) then RestWait:waitDown() end
