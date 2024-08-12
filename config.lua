@@ -15,6 +15,7 @@ local defaults = {
     escape = {
         enable = true,
         menus = {
+            bsItemSelect = true,
             bsTransferEnchant = true, MenuAlchemy = true,
             MenuBarter = true, MenuBook = true, MenuDialog = true,
             MenuEnchantment = true, MenuInventory = true, MenuJournal = true,

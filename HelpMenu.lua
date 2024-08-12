@@ -14,14 +14,14 @@ function Help:Effect() if not self:get() then return end return self:child("effe
 --- @param e uiObjectTooltipEventData
 local function Tooltips(e)
     if not cfg.tooltip.enable then return end
+    local enchant = e.object.enchantment
     if cfg.tooltip.charge then
-        if e.object.enchantment then
-            local main = e.tooltip:findChild("HelpMenu_enchantmentContainer")
-            local baseCost = e.object.enchantment.chargeCost
-            local eCost =  baseCost - (baseCost / 100) * (tes3.mobilePlayer.enchant.current - 10)
-            local displayCost = math.max(1, math.floor(eCost))
+        if enchant and enchant.castType ~= tes3.enchantmentType.constant then
+            local baseCost = enchant.chargeCost
+            local actualCost =  baseCost - (baseCost / 100) * (tes3.mobilePlayer.enchant.current - 10)
+            local displayCost = math.max(1, math.floor(actualCost))
             local new = e.tooltip:createLabel({id = "ChargeCost", text = "Charge Cost: ".. displayCost})
-            e.tooltip.children[1]:reorderChildren(main, new, 1)
+            e.tooltip.children[1]:reorderChildren(Help:Enchant(), new, 1)
         end
     end
 end

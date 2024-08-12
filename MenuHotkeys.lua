@@ -69,7 +69,7 @@ event.register(tes3.event.enterFrame, buttonHold)
 -- event.register(tes3.event.keyUp, keyUp, {priority = -10000})
 ---@param element tes3uiElement
 local function click(element)
-    if element and element.visible then
+    if element and Dialog.get().visible then
         Dialog.click(element)
     end
 end
