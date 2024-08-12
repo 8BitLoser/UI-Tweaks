@@ -34,7 +34,6 @@ local function effectTime()
             local source = value.instance.source.id
             local helpId = "bsDur" .. source
             local duration = value.duration
-            local remaining = duration - value.effectInstance.timeActive
             local effect = tes3.getMagicEffect(value.effectId)
             if not effect then return end
             for _, child in pairs(Multi:MagicIcons().children) do
@@ -42,6 +41,7 @@ local function effectTime()
                 if effect.icon == path then
                     if duration > 1 then
                         child:registerAfter(tes3.uiEvent.help, function(e)
+                            local remaining = duration - value.effectInstance.timeActive
                             if not Help:get() then return end
                             if Help:child(helpId) then return end
                             Help:Main():createLabel { id = helpId, text = sf("Duration: %s sec", math.floor(remaining)) }
@@ -53,4 +53,5 @@ local function effectTime()
     end
 end
 event.register(tes3.event.menuEnter, effectTime)
+
 return Help
