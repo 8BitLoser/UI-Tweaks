@@ -21,7 +21,7 @@ function Menu.get() return tes3ui.findMenu(id.Dialog) end
 
 ---@param child tes3uiElement
 function Menu.click(child)
-    if not Menu.get() then return end
+    if not Menu.get() and not Menu:get().visible then return end
     child:triggerEvent("mouseClick")
     tes3.playSound({sound = "Menu Click"})
 end

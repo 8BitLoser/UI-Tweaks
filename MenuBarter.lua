@@ -43,8 +43,7 @@ local function BarterInfo(e)
     end
     if cfg.barter.showPlayerStats then
         if not Menu:find("PlayerStat") then
-            local playerText = sf("Mercantile: %s | Personality: %s", tes3.mobilePlayer.mercantile.current,
-                tes3.mobilePlayer.personality.current)
+            local playerText = sf("Mercantile: %s | Personality: %s", tes3.mobilePlayer.mercantile.current, tes3.mobilePlayer.personality.current)
             PlayerStat = Menu:Buttons():createLabel({ id = "PlayerStat", text = playerText })
             PlayerStat.absolutePosAlignX = 0.5
             PlayerStat.absolutePosAlignY = 0.5

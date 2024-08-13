@@ -67,6 +67,20 @@ event.register(tes3.event.enterFrame, buttonHold)
 --     currentKey = nil
 -- end
 -- event.register(tes3.event.keyUp, keyUp, {priority = -10000})
+
+local disableKeybind = {
+    menu.Barter,
+    menu.Enchantment,
+    menu.Persuasion,
+    menu.Repair,
+    menu.ServiceSpells,
+    menu.ServiceTraining,
+    menu.ServiceTravel,
+    menu.Spellmaking,
+}
+
+
+
 ---@param element tes3uiElement
 local function click(element)
     if element and Dialog.get().visible then
@@ -82,6 +96,9 @@ local function Keybinds(e)
         end
 
         if dialog.enable then
+            for i, value in ipairs(disableKeybind) do
+                if tes3ui.findMenu(value) then return end
+            end
             if key(e, keybind.barter) then click(Dialog:Barter()) end
             if key(e, keybind.companion) then click(Dialog:Companion()) end
             if key(e, keybind.enchanting) then click(Dialog:Enchanting()) end
