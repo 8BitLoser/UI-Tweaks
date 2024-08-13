@@ -26,8 +26,8 @@ local function enchantActivated(e)
             gold.color = tes3ui.getPalette(tes3.palette.positiveColor)
             local amount = Enchant:Price():createLabel{id = "bsValue", text = ts(playerGold)}
             amount.borderLeft = 10
+            Enchant:get():updateLayout()
         end
     end
 end
-
 event.register(tes3.event.uiActivated, enchantActivated, {filter = id.Enchantment})

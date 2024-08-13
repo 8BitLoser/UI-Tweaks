@@ -1,5 +1,5 @@
-local cfg = require("BeefStranger.UI Tweaks.config")
 local Multi = require("BeefStranger.UI Tweaks.MenuMulti") 
+local cfg = require("BeefStranger.UI Tweaks.config")
 local id = require("BeefStranger.UI Tweaks.menuID")
 local sf = string.format
 

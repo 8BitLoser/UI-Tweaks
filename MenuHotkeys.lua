@@ -5,7 +5,10 @@ local Barter = require("BeefStranger.UI Tweaks.MenuBarter")
 local Dialog = require("BeefStranger.UI Tweaks.MenuDialog")
 local Persuasion = require("BeefStranger.UI Tweaks.MenuPersuasion")
 local RestWait = require("BeefStranger.UI Tweaks.MenuRestWait")
+local Travel = require("BeefStranger.UI Tweaks.MenuServiceTravel")
 local id = require("BeefStranger.UI Tweaks.menuID")
+local ts = tostring
+local sf = string.format
 local find = tes3ui.findMenu
 local function key(e, cfgKey) return tes3.isKeyEqual({actual = e, expected = cfgKey}) end
 local function keyCode(e, setting) return e.keyCode == setting.keyCode end
@@ -30,7 +33,6 @@ local persuadeTime = os.clock()
 ---@param e enterFrameEventData
 local function buttonHold(e)
     if not cfg.keybind.enable then return end
-    -- if not cfg.persuade.enable or not Persuasion:get() or not cfg.persuade.hold then return end
     if Barter:get() then
         if keyDown(cfg.keybind.barterUp) then
             Barter:BarterUp():triggerEvent(tes3.uiEvent.mouseStillPressed)
@@ -56,28 +58,13 @@ end
 event.register(tes3.event.enterFrame, buttonHold)
 
 
---Lots of hoops to jump through to get bater +/- to work right
----Currently wanting to use Shift to + 100 is breaking with key() check, and bypassing
----lets you do increase even if you arent holding a required key, probably just gonna
----let it be, and move on, take another look later
--- local currentKey = nil
--- local keyDown = false
--- local frame = 0
--- ---@param e keyUpEventData
--- local function keyUp(e)
---     debug.log(keyCode(e, cfg.barterUp))
---     if not Barter:get() then return end
---     if e.isShiftDown then
---         if keyCode(e, cfg.barterUp) then Barter:BarterUp():triggerEvent("pressed") end
---         if keyCode(e, cfg.barterDown) then Barter:BarterDown():triggerEvent("pressed") end
---     else
---         if key(e, cfg.barterUp) then Barter:BarterUp():triggerEvent("pressed") end
---         if key(e, cfg.barterDown) then Barter:BarterDown():triggerEvent("pressed") end
---     end
---     keyDown = false
---     currentKey = nil
--- end
--- event.register(tes3.event.keyUp, keyUp, {priority = -10000})
+
+---@param element tes3uiElement
+local function click(element)
+    if element and Dialog:get().visible then
+        Dialog.click(element)
+    end
+end
 
 local disableKeybind = {
     id.Barter,
@@ -89,15 +76,6 @@ local disableKeybind = {
     id.ServiceTravel,
     id.Spellmaking,
 }
-
-
-
----@param element tes3uiElement
-local function click(element)
-    if element and Dialog:get().visible then
-        Dialog.click(element)
-    end
-end
 
 ---@param e keyDownEventData
 local function Keybinds(e)
@@ -139,6 +117,12 @@ local function Keybinds(e)
             if key(e, keybind.day) and cfg.wait.fullRest then RestWait:press(RestWait.FullRest) end
         end
 
+        if cfg.travel.enable and Travel:get() then
+            for index, _ in ipairs(Travel:Destination().children) do
+                if e.keyCode == tes3.scanCode[ts(index)] then Travel:Hotkey(index.."TravelKey") end
+            end
+        end
+
         if Barter:get() then
             if keyDown(keybind.barterDown) then Barter:BarterDown():triggerEvent("pressed") end
             if keyDown(keybind.barterUp) then Barter:BarterUp():triggerEvent("pressed") end
@@ -147,17 +131,3 @@ local function Keybinds(e)
     end
 end
 event.register(tes3.event.keyDown, Keybinds, {priority = -10000})
-
-
--- local function enterFrame()
---     if keyDown and Barter:get() and currentKey then
---         frame = frame + 1
---         if frame % 2 == 0 then
---             if key(currentKey, cfg.barterUp) then Barter:BarterUp():triggerEvent("still_pressed") end
---             if key(currentKey, cfg.barterDown) then Barter:BarterDown():triggerEvent("still_pressed") end
---         end
---     else
---         frame = 0
---     end
--- end
--- event.register("enterFrame", enterFrame)
