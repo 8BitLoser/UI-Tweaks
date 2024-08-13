@@ -11,9 +11,4 @@ function bs.inspect(table)
 end
 
 
-
-event.register(bs.keyStillDown, function (e)
-    
-end)
-
 return bs

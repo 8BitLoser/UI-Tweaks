@@ -8,9 +8,14 @@ local defaults = {
     wait = { enable = true, fullRest = true, },
     barter = {
         enable = true,
+        hold = true,
         showDisposition = true,
         showNpcStats = true,
         showPlayerStats = true,
+    },
+    enchant = {
+        enable = true,
+        showGold = true
     },
     escape = {
         enable = true,
@@ -89,6 +94,7 @@ local function registerModConfig()
         -- cfg.settings:createYesNoButton { label = "Enable HUD Tweaks", configKey = "enable", config = config.multi}
         cfg.settings:createYesNoButton { label = "Enable Barter Tweaks", configKey = "enable", callback = updateBarter, config = config.barter }
         cfg.settings:createYesNoButton { label = "Enable Dialogue", configKey = "enable", config = config.dialog}
+        cfg.settings:createYesNoButton { label = "Enable Enchantment", configKey = "enable", config = config.enchant}
         cfg.settings:createYesNoButton { label = "Enable Hotkeys", configKey = "enable", config = config.keybind}
         cfg.settings:createYesNoButton { label = "Enable Persuasion", configKey = "enable", config = config.persuade}
         cfg.settings:createYesNoButton { label = "Enable QuickEsc", configKey = "enable", config = config.escape}
@@ -98,6 +104,7 @@ local function registerModConfig()
         cfg.settings:createYesNoButton { label = "Enable Wait/Rest Tweaks", configKey = "enable", config = config.wait }
 
     cfg.barter = cfg.template:createPage{ label = "Barter", config = config.barter }
+        -- cfg.barter:createYesNoButton { label = "Show Disposition", configKey = "hold" }
         cfg.barter:createYesNoButton { label = "Show Disposition", configKey = "showDisposition", callback = updateBarter }
         cfg.barter:createYesNoButton { label = "Show NPC Stats", configKey = "showNpcStats", callback = updateBarter }
         cfg.barter:createYesNoButton { label = "Show Player Stats", configKey = "showPlayerStats", callback = updateBarter }
@@ -105,12 +112,15 @@ local function registerModConfig()
         cfg.dialog = cfg.template:createPage{ label = "Dialogue", config = config.dialog }
             cfg.dialog:createYesNoButton({label = "Show Dialogue Shortcuts", configKey = "showKey"})
 
+        cfg.enchant = cfg.template:createPage{ label = "Enchantment", config = config.enchant }
+            cfg.enchant:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
+
         cfg.persuade = cfg.template:createPage{ label = "Persuasion", config = config.persuade }
             cfg.persuade:createYesNoButton({label = "Hold Key to Quickly Persuade", configKey = "hold"})
             cfg.persuade:createYesNoButton({label = "Hold Key to Quickly Bribe", configKey = "holdBribe"})
             cfg.persuade:createSlider { label = "Hold Persuade Delay", configKey = "delay",
             min = 0.01, max = 1, step = 0.01, jump = 0.01, decimalPlaces = 2 }
-        
+
     -- cfg.hud = cfg.template:createPage{ label = "HUD Menu", config = config.multi }
     --     cfg.hud:createYesNoButton({label = "Show Duration on Active Effect Icons", configKey = "showDur"})
 
@@ -127,9 +137,9 @@ local function registerModConfig()
 
     cfg.hotkeys = cfg.template:createPage({label = "Hotkeys", showReset = true, config = config.keybind, defaultConfig = defaults.keybind})
         cfg.barterKey = cfg:newCat(cfg.hotkeys, "Barter")
+            cfg:keybind(cfg.barterKey, "Barter -", "barterDown")
+            cfg:keybind(cfg.barterKey, "Barter +", "barterUp")
             cfg:keybind(cfg.barterKey, "Confirm Offer", "offer")
-            -- cfg:keybind(cfg.barterKey, "Barter +", "barterUp")
-            -- cfg:keybind(cfg.barterKey, "Barter -", "barterDown")
 
         cfg.dialogKey = cfg:newCat(cfg.hotkeys, "Dialogue")
             cfg:keybind(cfg.dialogKey, "Open Barter", "barter")
