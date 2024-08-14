@@ -16,6 +16,7 @@ local function ServiceTravel(e)
         for i, destParent in ipairs(Travel:Destination().children) do
             local dest = destParent.children[1]
             local travelKey = destParent:createLabel{id = i.."TravelKey", text = i..":  "}
+            travelKey.color = { 0.875, 0.788, 0.624 }
             travelKey:register("bsHotkey", function () dest:triggerEvent(tes3.uiEvent.mouseClick) end)
             destParent:reorderChildren(0, travelKey, 1)
             Travel:get():updateLayout()

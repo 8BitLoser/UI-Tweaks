@@ -61,7 +61,7 @@ event.register(tes3.event.enterFrame, buttonHold)
 
 ---@param element tes3uiElement
 local function click(element)
-    if element and Dialog:get().visible then
+    if element and element.visible then
         Dialog.click(element)
     end
 end
