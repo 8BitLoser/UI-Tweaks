@@ -7,7 +7,7 @@ require("BeefStranger.UI Tweaks.MenuDialog")
 require("BeefStranger.UI Tweaks.MenuHotkeys")
 require("BeefStranger.UI Tweaks.MenuRepair")
 require("BeefStranger.UI Tweaks.MenuSpellmaking")
-require("BeefStranger.UI Tweaks.MenuServiceTravel")
+require("BeefStranger.UI Tweaks.MenuServices")
 require("BeefStranger.UI Tweaks.MenuRestWait")
 require("BeefStranger.UI Tweaks.QuickEsc")
 

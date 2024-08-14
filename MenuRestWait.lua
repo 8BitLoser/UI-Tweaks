@@ -11,7 +11,7 @@ function Rest:Buttons() if not self:get() then return end return self:child("Men
 function Rest:Wait() if not self:get() then return end return self:child("MenuRestWait_wait_button") end
 function Rest:Rest() if not self:get() then return end return self:child("MenuRestWait_rest_button") end
 function Rest:UntilHealed() if not self:get() then return end return self:child("MenuRestWait_untilhealed_button") end
-function Rest:Cancel() if not self:get() then return end return self:child("MenuRestWait_cancel_button") end
+function Rest:Close() if not self:get() then return end return self:child("MenuRestWait_cancel_button") end
 function Rest:press(button) if not self:get() then return end button:triggerEvent("mouseClick") tes3.playSound({sound = "Menu Click"}) end
 function Rest:waitUp()
     if not Rest:ScrollWidget() then return end

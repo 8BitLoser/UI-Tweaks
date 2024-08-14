@@ -3,9 +3,11 @@ local keybind = cfg.keybind
 local dialog = cfg.dialog
 local Barter = require("BeefStranger.UI Tweaks.MenuBarter")
 local Dialog = require("BeefStranger.UI Tweaks.MenuDialog")
+local Book = require("BeefStranger.UI Tweaks.MenuBook")
+local Scroll = require("BeefStranger.UI Tweaks.MenuScroll")
 local Persuasion = require("BeefStranger.UI Tweaks.MenuPersuasion")
 local RestWait = require("BeefStranger.UI Tweaks.MenuRestWait")
-local Travel = require("BeefStranger.UI Tweaks.MenuServiceTravel")
+local Service = require("BeefStranger.UI Tweaks.MenuServices")
 local id = require("BeefStranger.UI Tweaks.menuID")
 local ts = tostring
 local sf = string.format
@@ -17,15 +19,13 @@ local function keyDown(keybind) return tes3.worldController.inputController:isKe
 
 local Take = {}
 function Take.Book()
-    local book = find(tes3ui.registerID("MenuBook"))
-    if book then
-        book:findChild("MenuBook_button_take"):triggerEvent("mouseClick")
+    if Book:get() then
+       Book:Take():triggerEvent("mouseClick")
     end
 end
 function Take.Scroll()
-    local scroll = find(tes3ui.registerID("MenuScroll"))
-    if scroll then
-        scroll:findChild("MenuBook_PickupButton"):triggerEvent("mouseClick")
+    if Scroll:get() then
+        Scroll:Take():triggerEvent("mouseClick")
     end
 end
 
@@ -95,17 +95,14 @@ local function Keybinds(e)
             if key(e, keybind.travel) then click(Dialog:Travel()) end
         end
 
-
         if cfg.persuade.enable and Persuasion:get() then
-            -- if not cfg.persuade.hold then
-                if key(e, keybind.admire) then Persuasion:trigger("Admire") end
-                if key(e, keybind.intimidate) then Persuasion:trigger("Intimidate") end
-                if key(e, keybind.taunt) then Persuasion:trigger("Taunt") end
-                if not cfg.persuade.holdBribe then
-                    if key(e, keybind.bribe10) then Persuasion:trigger("Bribe10") end
-                    if key(e, keybind.bribe100) then Persuasion:trigger("Bribe100") end
-                    if key(e, keybind.bribe1000) then Persuasion:trigger("Bribe1000") end
-                -- end
+            if key(e, keybind.admire) then Persuasion:trigger("Admire") end
+            if key(e, keybind.intimidate) then Persuasion:trigger("Intimidate") end
+            if key(e, keybind.taunt) then Persuasion:trigger("Taunt") end
+            if not cfg.persuade.holdBribe then
+                if key(e, keybind.bribe10) then Persuasion:trigger("Bribe10") end
+                if key(e, keybind.bribe100) then Persuasion:trigger("Bribe100") end
+                if key(e, keybind.bribe1000) then Persuasion:trigger("Bribe1000") end
             end
         end
 
@@ -117,9 +114,9 @@ local function Keybinds(e)
             if key(e, keybind.day) and cfg.wait.fullRest then RestWait:press(RestWait.FullRest) end
         end
 
-        if cfg.travel.enable and Travel:get() then
-            for index, _ in ipairs(Travel:Destination().children) do
-                if e.keyCode == tes3.scanCode[ts(index)] then Travel:Hotkey(index.."TravelKey") end
+        if cfg.travel.enable and Service.Travel:get() then
+            for index, _ in ipairs(Service.Travel:Destination().children) do
+                if e.keyCode == tes3.scanCode[ts(index)] then Service.Travel:Hotkey(index.."TravelKey") end
             end
         end
 

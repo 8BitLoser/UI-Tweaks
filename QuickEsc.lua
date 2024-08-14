@@ -1,23 +1,99 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 local Barter = require("BeefStranger.UI Tweaks.MenuBarter")
+local Book = require("BeefStranger.UI Tweaks.MenuBook")
+local Dialog = require("BeefStranger.UI Tweaks.MenuDialog")
+local Enchant = require("BeefStranger.UI Tweaks.MenuEnchantment")
+local InventorySelect = require("BeefStranger.UI Tweaks.MenuInventorySelect")
+local Journal = require("BeefStranger.UI Tweaks.MenuJournal")
+local Persuasion = require("BeefStranger.UI Tweaks.MenuPersuasion")
+local Repair = require("BeefStranger.UI Tweaks.MenuRepair")
+local RestWait = require("BeefStranger.UI Tweaks.MenuRestWait")
+local Scroll = require("BeefStranger.UI Tweaks.MenuScroll")
+local Service = require("BeefStranger.UI Tweaks.MenuServices")
+local Spellmaking = require("BeefStranger.UI Tweaks.MenuSpellmaking")
+local TransferEnchant = require("BeefStranger.UI Tweaks.TransferEnchant")
 local id = require("BeefStranger.UI Tweaks.menuID")
 local find = tes3ui.findMenu
 local leaveNotDestroy = { MenuInventory = true, MenuContents = true, }
+local leave = { [id.Inventory] = function() tes3ui.leaveMenuMode() end, }
 local menuLeft = false
+local leaveMenu
+
+local close = {
+    [id.Barter] = function() return Barter:Close() end,
+    [id.Book] = function() return Book:Close() end,
+    [id.Dialog] = function() return Dialog:Close() end,
+    [id.Enchantment] = function() return Enchant:Close() end,
+    [id.Journal] = function() return Journal:Close() end,
+    [id.Persuasion] = function() return Persuasion:Close() end,
+    [id.Repair] = function()return Repair:Close() end,
+    [id.InventorySelect] = function() return InventorySelect:Close() end,
+    ["bsTransferEnchant"] = function() return TransferEnchant:Close() end,
+    ["bsItemSelect"] = function() return TransferEnchant.Select:Close() end,
+    [id.ServiceRepair] = function()return Service.Repair:Close() end,
+    [id.ServiceTraining] = function() return Service.Train:Close() end,
+    [id.ServiceTravel] = function() return Service.Travel:Close() end,
+    [id.RestWait] = function() return RestWait:Close() end,
+    [id.Scroll] = function() return Scroll:Close() end,
+    [id.ServiceSpells] = function() return Service.Spells:Close() end,
+    [id.Spellmaking] = function() return Spellmaking:Close() end,
+}
+
 
 ---Work around for MenuInventory being not visible whenever MenuOptions is activated
 ---@param e keyDownEventData
 local function Escape(e)
+    leaveMenu = false
+    menuLeft = false ---Track if menu in close has been left
     if tes3.menuMode() and cfg.escape.enable then
-        for menuID, _ in pairs(cfg.escape.menus) do
-            if find(menuID) then
-                if menuID == id.Barter or menuID == id.Book or menuID == id.Scroll then
-                    return
-                elseif menuID == id.Inventory then
-                    if find(menuID).visible then
-                        tes3ui.leaveMenuMode()
+        for menuID, button in pairs(close) do
+            local menu = find(menuID)
+
+            if menu and menu.visible then
+                if find(id.Persuasion) then ---Menus that need Manual Handling
+                    Persuasion:Close():triggerEvent("click")
+                    tes3.playSound{sound = "Menu Click"}
+                    menuLeft = true
+                    break
+                elseif find(id.Barter) then
+                    Barter:Close():triggerEvent("click")
+                    tes3.playSound{sound = "Menu Click"}
+                    menuLeft = true
+                    break
+                elseif find(id.Spellmaking) then
+                    Spellmaking:Close():triggerEvent("click")
+                    tes3.playSound{sound = "Menu Click"}
+                    menuLeft = true
+                    break
+                elseif find(id.InventorySelect) then
+                    InventorySelect:Close():triggerEvent("click")
+                    tes3.playSound{sound = "Menu Click"}
+                    menuLeft = true
+                    break
+                elseif find("bsItemSelect") then
+                    TransferEnchant.Select:Close():triggerEvent("click")
+                    tes3.playSound{sound = "Menu Click"}
+                    menuLeft = true
+                    break
+                end
+
+                timer.delayOneFrame(function() ---Some menus exit too fast and then exit the next
+                    if menu.visible then
+                        button():triggerEvent("click")
+                        tes3.playSound { sound = "Menu Click" }
                         menuLeft = true
                     end
+                end, timer.real)
+
+            end
+        end
+
+        if not menuLeft then ---If No menu was left and a leaveMenu was visible leaveMenuMode
+            for key, value in pairs(leave) do
+                if find(key) and find(key).visible then
+                    tes3.playSound{sound = "Menu Click"}
+                    value()
+                    leaveMenu = true
                 end
             end
         end
@@ -25,31 +101,16 @@ local function Escape(e)
 end
 event.register(tes3.event.keyDown, Escape, {filter = tes3.scanCode.escape, priority = -10000})
 
----Destroy/leaveMenuMode on Menus in menus table
 ---@param e uiActivatedEventData
 local function onOptions(e)
     if not cfg.escape.enable then return end
-    for menuID, enabled in pairs(cfg.escape.menus) do
-        if enabled and not leaveNotDestroy[menuID] then
-            local foundMenu = find(menuID)
-            if foundMenu then
-                ---Prevent Exiting Dialog if theres something to Select
-                if foundMenu:findChild("MenuDialog_answer_block") then return end
-                -- if foundMenu.name == id.Barter then
-                --     Barter:Cancel():triggerEvent("mouseClick")
-                -- else
-                --     foundMenu:destroy() ---Destroy foundMenu in menus table
-                -- end
-                foundMenu:destroy() ---Destroy foundMenu in menus table
-                if find(id.Options) then ---Destroy Options as soon as it opens
-                    find(id.Options):destroy()
-                    tes3ui.leaveMenuMode()
-                end
-            end
+    if leaveMenu then ---If menuMode was left destroy Options
+        if find(id.Options) then
+            find(id.Options):destroy()
         end
     end
 
-    if menuLeft then     ---If the Inventory is Open
+    if menuLeft then     ---If a Menu was left destroy Options
         menuLeft = false ---Update visibility
         if find(id.Options) then
             find(id.Options):destroy()

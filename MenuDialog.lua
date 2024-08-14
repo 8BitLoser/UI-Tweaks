@@ -1,13 +1,14 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 local id = require("BeefStranger.UI Tweaks.menuID")
+local bs = require("BeefStranger.UI Tweaks.common")
 local sf = string.format
 local keyName = tes3.getKeyName
 
 ---@class bsMenuDialog
 local Menu = {}
 function Menu:Barter() if not self:get() then return end return self:child("MenuDialog_service_barter") end
-function Menu:Bye() if not self:get() then return end return self:child("MenuDialog_button_bye") end
 function Menu:child(child) if not self:get() then return end return self:get():findChild(child) end
+function Menu:Close() if not self:get() then return end return self:child("MenuDialog_button_bye") end
 function Menu:Companion() if not self:get() then return end return self:child("MenuDialog_service_companion") end
 function Menu:Enchanting() if not self:get() then return end return self:child("MenuDialog_service_enchanting") end
 function Menu:get() return tes3ui.findMenu(id.Dialog) end
@@ -23,9 +24,8 @@ function Menu:Visible() if self:get() then return self:get().visible end end
 function Menu.click(child)
     if not Menu:get() and not Menu:get().visible then return end
     child:triggerEvent("mouseClick")
-    tes3.playSound({sound = "Menu Click"})
+    bs.click()
 end
-
 
 ---@param e uiActivatedEventData
 local function showDialogKey(e)

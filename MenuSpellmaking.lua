@@ -3,11 +3,11 @@ local id = require("BeefStranger.UI Tweaks.menuID")
 local ts = tostring
 
 ---@class bsMenuSpellMaking
-local SpellMaking = {}
-function SpellMaking:get() return tes3ui.findMenu(tes3ui.registerID(id.Spellmaking)) end
-function SpellMaking:child(child) if not self:get() then return end return self:get():findChild(child) end
-function SpellMaking:Price() if not self:get() then return end return self:child("MenuSpellmaking_PriceLayout") end
-
+local Spellmaking = {}
+function Spellmaking:get() return tes3ui.findMenu(tes3ui.registerID(id.Spellmaking)) end
+function Spellmaking:child(child) if not self:get() then return end return self:get():findChild(child) end
+function Spellmaking:Price() if not self:get() then return end return self:child("MenuSpellmaking_PriceLayout") end
+function Spellmaking:Close() if not self:get() then return end return self:child("MenuSpellmaking_Cancelbutton") end
 
 
 ---@param e uiActivatedEventData
@@ -22,12 +22,12 @@ local function enchantActivated(e)
                 end
             end
 
-            local gold = SpellMaking:Price():createLabel{id = "bsPlayerGold", text = "Gold"}
+            local gold = Spellmaking:Price():createLabel{id = "bsPlayerGold", text = "Gold"}
             gold.borderLeft = 20
             gold.borderRight = 10
             gold.color = { 0.875, 0.788, 0.624 }
 
-            local amount = SpellMaking:Price():createLabel{id = "bsValue", text = ts(playerGold)}
+            local amount = Spellmaking:Price():createLabel{id = "bsValue", text = ts(playerGold)}
             amount.color = { 1.000, 0.647, 0.376 }
         end
     end
@@ -35,4 +35,4 @@ end
 event.register(tes3.event.uiActivated, enchantActivated, {filter = id.Spellmaking})
 
 
-return SpellMaking
+return Spellmaking

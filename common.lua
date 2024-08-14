@@ -10,5 +10,8 @@ function bs.inspect(table)
     mwse.log("%s", inspect(table))
 end
 
+function bs.click()
+    tes3.playSound{sound = "Menu Click"}
+end
 
 return bs

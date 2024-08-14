@@ -8,7 +8,7 @@ function Enchant:get() return tes3ui.findMenu(id.Enchantment) end
 function Enchant:child(child) if not self:get() then return end return self:get():findChild(child) end
 function Enchant:Price() if not self:get() then return end return self:child("MenuEnchantment_priceContainer") end
 function Enchant:PriceLabel() if not self:get() then return end return self:child("MenuEnchantment_priceLabel") end
-
+function Enchant:Close() if not self:get() then return end return self:child("MenuEnchantment_Cancelbutton") end
 
 ---@param e uiActivatedEventData
 local function enchantActivated(e)
@@ -31,3 +31,5 @@ local function enchantActivated(e)
     end
 end
 event.register(tes3.event.uiActivated, enchantActivated, {filter = id.Enchantment})
+
+return Enchant

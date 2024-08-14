@@ -17,7 +17,7 @@ function Barter:BarterDown() return self:find("MenuBarter_arrowdown") end
 function Barter:Buttons() if self:Offer() then return self:Offer().parent.parent end end
 function Barter:MaxSale() return self:find("MenuBarter_Goldbutton") end
 function Barter:Offer() return self:find("MenuBarter_Offerbutton") end
-function Barter:Cancel() return self:find("MenuBarter_Cancelbutton") end
+function Barter:Close() return self:find("MenuBarter_Cancelbutton") end
 function Barter:getTrader() if self:get() then return tes3ui.getServiceActor() end end---@type tes3mobileCreature|tes3mobileNPC|tes3mobilePlayer
 
 --- @param e uiActivatedEventData

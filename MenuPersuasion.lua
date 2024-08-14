@@ -2,16 +2,17 @@ local cfg = require("BeefStranger.UI Tweaks.config")
 
 ---@class bsMenuPersuasion
 local Persuasion = {}
-function Persuasion:get() return tes3ui.findMenu("MenuPersuasion") end
-function Persuasion:Visible() if self:get() and self:get().visible then return true else return false end end
-function Persuasion:child(child) if not self:get() then return end return self:get():findChild(child) end
-function Persuasion:ServiceList() if not self:get() then return end return self:child("MenuPersuasion_ServiceList") end
 function Persuasion:Admire() if not self:get() then return end return self:ServiceList().children[1].children[1] end
-function Persuasion:Intimidate() if not self:get() then return end return self:ServiceList().children[2].children[1] end
-function Persuasion:Taunt() if not self:get() then return end return self:ServiceList().children[3].children[1] end
 function Persuasion:Bribe10() if not self:get() then return end return self:ServiceList().children[4].children[1] end
 function Persuasion:Bribe100() if not self:get() then return end return self:ServiceList().children[5].children[1] end
 function Persuasion:Bribe1000() if not self:get() then return end return self:ServiceList().children[6].children[1] end
+function Persuasion:child(child) if not self:get() then return end return self:get():findChild(child) end
+function Persuasion:Close() if not self:get() then return end return self:child("MenuPersuasion_Okbutton") end
+function Persuasion:get() return tes3ui.findMenu("MenuPersuasion") end
+function Persuasion:Intimidate() if not self:get() then return end return self:ServiceList().children[2].children[1] end
+function Persuasion:ServiceList() if not self:get() then return end return self:child("MenuPersuasion_ServiceList") end
+function Persuasion:Taunt() if not self:get() then return end return self:ServiceList().children[3].children[1] end
+function Persuasion:Visible() if self:get() and self:get().visible then return true else return false end end
 
 --- @param name "Admire"|"Intimidate"|"Taunt"|"Bribe10"|"Bribe100"|"Bribe1000"
 function Persuasion:trigger(name)
