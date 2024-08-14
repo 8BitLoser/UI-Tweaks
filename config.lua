@@ -184,34 +184,34 @@ local function registerModConfig()
             cfg:keybind(cfg.fullRestKey, "Rest/Wait 24hr", "day")
 
 
-    cfg.quickEsc = cfg.template:createExclusionsPage({
-        label = "QuickEsc",
-        config = config.escape, configKey = "menus",
-        leftListLabel = "Enabled", rightListLabel = "Disabled",
-        showReset = true,
-        filters = {{
-            label = "Menus", callback = function ()
-                local menus = {}
-                for key, value in pairs(defaults.escape.menus) do table.insert(menus, key) end
-                table.sort(menus)
-                return menus
-            end
-        }},
-    })
+    -- cfg.quickEsc = cfg.template:createExclusionsPage({
+    --     label = "QuickEsc",
+    --     config = config.escape, configKey = "menus",
+    --     leftListLabel = "Enabled", rightListLabel = "Disabled",
+    --     showReset = true,
+    --     filters = {{
+    --         label = "Menus", callback = function ()
+    --             local menus = {}
+    --             for key, value in pairs(defaults.escape.menus) do table.insert(menus, key) end
+    --             table.sort(menus)
+    --             return menus
+    --         end
+    --     }},
+    -- })
 
-    cfg.debug = cfg.template:createPage{label = "Advanced"}
-            cfg.debug:createTextField{label = "Add MenuID", configKey = "manualAdd", callback = function (self)
-                debug.log(self.variable.value)
-                config.escape.menus[self.variable.value] = true
-                tes3.messageBox("%s added to Escape list", self.variable.value)
-                bs.inspect(config.escape.menus)
-            end}
-            cfg.debug:createTextField{label = "Remove MenuID", configKey = "manualAdd", callback = function (self)
-                debug.log(self.variable.value)
-                config.escape.menus[self.variable.value] = nil
-                tes3.messageBox("%s removed from Escape list", self.variable.value)
-                bs.inspect(config.escape.menus)
-            end}
+    -- cfg.debug = cfg.template:createPage { label = "Advanced" }
+    -- cfg.debug:createTextField { label = "Add MenuID", configKey = "manualAdd", callback = function(self)
+    --     debug.log(self.variable.value)
+    --     config.escape.menus[self.variable.value] = true
+    --     tes3.messageBox("%s added to Escape list", self.variable.value)
+    --     bs.inspect(config.escape.menus)
+    -- end }
+    -- cfg.debug:createTextField { label = "Remove MenuID", configKey = "manualAdd", callback = function(self)
+    --     debug.log(self.variable.value)
+    --     config.escape.menus[self.variable.value] = nil
+    --     tes3.messageBox("%s removed from Escape list", self.variable.value)
+    --     bs.inspect(config.escape.menus)
+    -- end }
 
     -- cfg.test = cfg.template:createExclusionsPage({
     --     label = "Debug Menus",
