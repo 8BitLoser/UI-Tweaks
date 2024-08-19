@@ -23,6 +23,7 @@ local delay = initialDelay
 local accelFactor = 0.9 -- Factor to reduce delay each time
 local keyHeldDown = false
 
+
 -- local persuadeTime = os.clock()
 ---@param e enterFrameEventData
 local function buttonHold(e)
@@ -134,7 +135,7 @@ local function Keybinds(e)
         if Barter:get() then
             if keyDown(keybind.barterDown) then Barter:BarterDown():triggerEvent("pressed") end
             if keyDown(keybind.barterUp) then Barter:BarterUp():triggerEvent("pressed") end
-            if key(e, keybind.offer) then Barter:Offer():triggerEvent("mouseClick") end
+            if key(e, keybind.offer) then Barter:Offer():triggerEvent("mouseClick") bs.click() end
         end
     end
 end

@@ -45,7 +45,7 @@ local function showDialogKey(e)
                     end
                 end
             end
-            Dialog:get():updateLayout()
+            -- Dialog:get():updateLayout()
         end
     end, timer.real)
 
@@ -59,6 +59,6 @@ local function showDialogKey(e)
         Dialog:get():updateLayout()
     end
 end
-event.register(tes3.event.uiActivated, showDialogKey, {filter = id.Dialog, priority = -1000000})
+event.register(tes3.event.uiActivated, showDialogKey, {filter = id.Dialog, priority = 1000000})
 
 return Dialog

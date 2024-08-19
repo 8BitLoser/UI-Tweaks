@@ -36,19 +36,19 @@ local function barterChance()
     local fDispositionMod = GMST(tes3.gmst.fDispositionMod)
     local fBargainOfferBase = GMST(tes3.gmst.fBargainOfferBase)
     local fBargainOfferMulti = GMST(tes3.gmst.fBargainOfferMulti)
-    local d
+    local priceDifference
     local npc = tes3ui.getServiceActor()
     local pc = tes3.mobilePlayer
     local playerOffer = math.abs(Barter:playerOffer())
 
-    if isBuying then d = math.floor(100 * (merchantOffer - playerOffer) / merchantOffer) end
-    if not isBuying then d = math.floor(100 * (playerOffer - merchantOffer) / playerOffer) end
+    if isBuying then priceDifference = math.floor(100 * (merchantOffer - playerOffer) / merchantOffer) end
+    if not isBuying then priceDifference = math.floor(100 * (playerOffer - merchantOffer) / playerOffer) end
 
     local clampedDisposition = math.clamp(npc.object.disposition, 0, 100)
     local dispositionTerm = fDispositionMod * (clampedDisposition - 50)
     local pcTerm = (dispositionTerm + pc.mercantile.current + 0.1 * pc.luck.current + 0.2 * pc.personality.current) * pc:getFatigueTerm()
     local npcTerm = (npc.mercantile.current + 0.1 * npc.luck.current + 0.2 * npc.personality.current) * npc:getFatigueTerm()
-    local x = fBargainOfferMulti * d + fBargainOfferBase
+    local x = fBargainOfferMulti * priceDifference + fBargainOfferBase
 
     if isBuying then x = x + math.abs(math.floor(pcTerm - npcTerm)) end
     if not isBuying then x = x + math.abs(math.floor(npcTerm - pcTerm)) end
@@ -63,8 +63,10 @@ end
 local function calcBarterPriceCallback(e)
     if not cfg.barter.showChance then return end
     timer.delayOneFrame(function ()
+        if e.buying then
+            isBuying = true
+        end
         merchantOffer = math.abs(Barter:playerOffer()) ---calcBarter e.price only updates current item not total
-        isBuying = e.buying
         barterChance()
     end, timer.real)
 end
@@ -135,7 +137,7 @@ local function BarterInfo(e)
         Barter:BarterUp():registerAfter(tes3.uiEvent.mouseStillPressed, barterChance)
         Barter:BarterDown():registerAfter(tes3.uiEvent.mouseStillPressed, barterChance)
         Barter:MaxSale():registerAfter("mouseClick", barterChance)
-        Barter:get():registerAfter(tes3.uiEvent.destroy, function() merchantOffer = 0 end) ---Make sure offer gets reset
+        Barter:get():registerAfter(tes3.uiEvent.destroy, function() merchantOffer = 0 isBuying = false end) ---Make sure offer gets reset
         Barter:BarterBlock():reorderChildren(2, box, -1)
         Barter:get():updateLayout()
     end
