@@ -1,4 +1,5 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
+local bs = require("BeefStranger.UI Tweaks.common")
 local keybind = cfg.keybind
 local dialog = cfg.dialog
 local Barter = require("BeefStranger.UI Tweaks.MenuBarter")
@@ -10,39 +11,47 @@ local RestWait = require("BeefStranger.UI Tweaks.MenuRestWait")
 local Service = require("BeefStranger.UI Tweaks.MenuServices")
 local id = require("BeefStranger.UI Tweaks.menuID")
 local ts = tostring
-local sf = string.format
-local find = tes3ui.findMenu
+-- local sf = string.format
 local function key(e, cfgKey) return tes3.isKeyEqual({actual = e, expected = cfgKey}) end
-local function keyCode(e, setting) return e.keyCode == setting.keyCode end
+-- local function keyCode(e, setting) return e.keyCode == setting.keyCode end
 local function keyDown(keybind) return tes3.worldController.inputController:isKeyDown(keybind.keyCode) end
 
+local time = os.clock()
+local initialDelay = 0.45
+local minDelay = 0.10 -- Minimum delay to avoid too fast repetition
+local delay = initialDelay
+local accelFactor = 0.9 -- Factor to reduce delay each time
+local keyHeldDown = false
 
-local Take = {}
-function Take.Book()
-    if Book:get() then
-       Book:Take():triggerEvent("mouseClick")
-    end
-end
-function Take.Scroll()
-    if Scroll:get() then
-        Scroll:Take():triggerEvent("mouseClick")
-    end
-end
-
-local persuadeTime = os.clock()
+-- local persuadeTime = os.clock()
 ---@param e enterFrameEventData
 local function buttonHold(e)
     if not cfg.keybind.enable then return end
+
     if Barter:get() then
         if keyDown(cfg.keybind.barterUp) then
             Barter:BarterUp():triggerEvent(tes3.uiEvent.mouseStillPressed)
         elseif keyDown(cfg.keybind.barterDown) then
             Barter:BarterDown():triggerEvent(tes3.uiEvent.mouseStillPressed)
         end
+        -- if keyDown(cfg.keybind.offer) then
+        --     if not keyHeldDown then
+        --         Barter:Offer():triggerEvent("mouseStillPressed")
+        --         keyHeldDown = true
+        --         time = os.clock()
+        --     elseif os.clock() - time >= delay then
+        --         Barter:Offer():triggerEvent("mouseStillPressed")
+        --         time = os.clock()
+        --         delay = math.max(minDelay, delay * accelFactor)
+        --     end
+        -- else
+        --     keyHeldDown = false
+        --     delay = initialDelay
+        -- end
     end
 
     if cfg.persuade.enable and Persuasion:get() and cfg.persuade.hold then
-        if os.clock() - persuadeTime >= cfg.persuade.delay then
+        if os.clock() - time >= cfg.persuade.delay then
             if keyDown(cfg.keybind.admire) then Persuasion:trigger("Admire") end
             if keyDown(cfg.keybind.intimidate) then Persuasion:trigger("Intimidate") end
             if keyDown(cfg.keybind.taunt) then Persuasion:trigger("Taunt") end
@@ -51,13 +60,15 @@ local function buttonHold(e)
                 if keyDown(cfg.keybind.bribe100) then Persuasion:trigger("Bribe100") end
                 if keyDown(cfg.keybind.bribe1000) then Persuasion:trigger("Bribe1000") end
             end
-            persuadeTime = os.clock()
+            time = os.clock()
         end
     end
 end
 event.register(tes3.event.enterFrame, buttonHold)
 
-
+local Take = {}
+function Take.Book() if Book:get() then Book:Take():triggerEvent("mouseClick") end end
+function Take.Scroll() if Scroll:get() then Scroll:Take():triggerEvent("mouseClick") end end
 
 ---@param element tes3uiElement
 local function click(element)

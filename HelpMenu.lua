@@ -2,6 +2,7 @@ local Multi = require("BeefStranger.UI Tweaks.MenuMulti")
 local cfg = require("BeefStranger.UI Tweaks.config")
 local id = require("BeefStranger.UI Tweaks.menuID")
 local sf = string.format
+local find = tes3ui.findMenu
 
 ---@class bsHelpMenu
 local Help = {}
@@ -29,7 +30,7 @@ end
 event.register(tes3.event.uiObjectTooltip, Tooltips)
 
 local function effectTime()
-    if not tes3ui.findMenu(id.Inventory).visible or not cfg.tooltip.enable then return end
+    if (find(id.Inventory) and not find(id.Inventory).visible) or not cfg.tooltip.enable then return end
     if cfg.tooltip.showDur then
         for _, activeEffect in ipairs(tes3.mobilePlayer.activeMagicEffectList) do
             local source = activeEffect.instance.source.id

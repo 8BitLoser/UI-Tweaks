@@ -39,7 +39,6 @@ local close = {
     [id.Spellmaking] = function() return Spellmaking:Close() end,
 }
 
-
 ---Work around for MenuInventory being not visible whenever MenuOptions is activated
 ---@param e keyDownEventData
 local function Escape(e)
