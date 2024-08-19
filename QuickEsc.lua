@@ -36,6 +36,7 @@ local close = {
     [id.RestWait] = function() return RestWait:Close() end,
     [id.Scroll] = function() return Scroll:Close() end,
     [id.ServiceSpells] = function() return Service.Spells:Close() end,
+    [id.SetValues] = function() return Spellmaking.SetValues:Close() end,
     [id.Spellmaking] = function() return Spellmaking:Close() end,
 }
 
@@ -59,6 +60,11 @@ local function Escape(e)
                     tes3.playSound{sound = "Menu Click"}
                     menuLeft = true
                     break
+                elseif find(id.SetValues) then
+                    Spellmaking.SetValues:Close():triggerEvent("click")
+                    tes3.playSound{sound = "Menu Click"}
+                    menuLeft = true
+                    break
                 elseif find(id.Spellmaking) then
                     Spellmaking:Close():triggerEvent("click")
                     tes3.playSound{sound = "Menu Click"}
@@ -77,13 +83,12 @@ local function Escape(e)
                 end
 
                 timer.delayOneFrame(function() ---Some menus exit too fast and then exit the next
-                    if menu.visible then
+                    if find(menuID) and menu.visible then
                         button():triggerEvent("click")
                         tes3.playSound { sound = "Menu Click" }
                         menuLeft = true
                     end
                 end, timer.real)
-
             end
         end
 

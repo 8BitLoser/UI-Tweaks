@@ -54,7 +54,7 @@ local function barterChance()
     if not isBuying then x = x + math.abs(math.floor(npcTerm - pcTerm)) end
 
     if Barter:child("Chance") then
-        Barter:child("Chance").text = "Chance: ".. tostring(math.round(x, 2))
+        Barter:child("Chance").text = "Chance: ".. tostring(math.round(x, 2).."%")
     end
 end
 

@@ -119,7 +119,7 @@ local function registerModConfig()
         cfg.repair:createSlider { label = "Hold to Repair Delay", configKey = "duration",
         min = 0.01, max = 1, step = 0.01, jump = 0.1, decimalPlaces = 2 }
 
-    cfg.enchant = cfg.template:createPage{ label = "SpellMaking", config = config.spellmaking }
+    cfg.enchant = cfg.template:createPage{ label = "Spellmaking", config = config.spellmaking }
         cfg.enchant:createYesNoButton({label = "Show Gold in NPC Spellmaking only", configKey = "serviceOnly"})
         cfg.enchant:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
 
