@@ -7,6 +7,7 @@ local cfg = {}
 local defaults = {
     barter = {
         enable = true,
+        chanceColor = true,
         hold = true,
         showChance = false,
         showDisposition = true,
@@ -95,9 +96,8 @@ local function registerModConfig()
         cfg.settings:createYesNoButton { label = "Enable Wait/Rest", configKey = "enable", config = config.wait }
 
     cfg.barter = cfg.template:createPage{ label = "Barter", config = config.barter }
-        -- cfg.barter:createYesNoButton { label = "Show Disposition", configKey = "hold" }
-        
         cfg.barter:createYesNoButton { label = "Show Barter Chance", configKey = "showChance"}
+        cfg.barter:createYesNoButton { label = "Change Chance Color Based on Success Chance", configKey = "chanceColor"}
         cfg.barter:createYesNoButton { label = "Show Disposition", configKey = "showDisposition", callback = updateBarter }
         cfg.barter:createYesNoButton { label = "Show NPC Stats", configKey = "showNpcStats", callback = updateBarter }
         cfg.barter:createYesNoButton { label = "Show Player Stats", configKey = "showPlayerStats", callback = updateBarter }

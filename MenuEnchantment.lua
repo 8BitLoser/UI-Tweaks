@@ -23,9 +23,9 @@ local function enchantActivated(e)
             end
             Enchant:PriceLabel().borderRight = 10
             local gold = Enchant:Price():createLabel{id = "bsPlayerGold", text = "Gold"}
-            gold.color = tes3ui.getPalette(tes3.palette.positiveColor)
+                gold.color = tes3ui.getPalette(tes3.palette.positiveColor)
             local amount = Enchant:Price():createLabel{id = "bsValue", text = ts(playerGold)}
-            amount.borderLeft = 10
+                amount.borderLeft = 10
             Enchant:get():updateLayout()
         end
     end

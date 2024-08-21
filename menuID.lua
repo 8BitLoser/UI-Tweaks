@@ -1,4 +1,5 @@
-return {
+---@enum MenuID
+local MenuID = {
     Alchemy = "MenuAlchemy",
     Attributes = "MenuAttributes",
     AttributesList = "MenuAttributesList",
@@ -57,5 +58,7 @@ return {
     SwimFillBar = "MenuSwimFillBar",
     TimePass = "MenuTimePass",
     Topic = "MenuTopic",
-    Video = "MenuVideo"
+    Video = "MenuVideo",
 }
+
+return MenuID

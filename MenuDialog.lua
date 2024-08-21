@@ -51,6 +51,7 @@ local function showDialogKey(e)
 
     if cfg.dialog.showClass then
         local service = tes3ui.getServiceActor()
+        if not service.object.class then return end
         local title = "|  "..service.object.class.name
         local class = Dialog:Title():createLabel({id = "bsTitle_Class", text = title})
         class.borderRight = 10
