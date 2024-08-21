@@ -13,6 +13,8 @@ local defaults = {
         showDisposition = true,
         showNpcStats = false,
         showPlayerStats = false,
+        enableJunk = true,
+        maxSell = 20
     },
     dialog = { enable = true, showKey = true, showClass = false },
     enchant = { enable = true, showGold = true },
@@ -29,6 +31,7 @@ local defaults = {
             MenuServiceTraining = true, MenuServiceTravel = true, MenuSpellmaking = true,
         },
     },
+    -- junk = {enable = true, maxSell = 20},
     manualAdd = "",
     multi = { enable = true, },
     persuade = { enable = true, hold = true, holdBribe = false, delay = 0.5, },
@@ -98,6 +101,9 @@ local function registerModConfig()
     cfg.barter = cfg.template:createPage{ label = "Barter", config = config.barter }
         cfg.barter:createYesNoButton { label = "Show Barter Chance", configKey = "showChance"}
         cfg.barter:createYesNoButton { label = "Change Chance Color Based on Success Chance", configKey = "chanceColor"}
+        cfg.barter:createYesNoButton { label = "Enable Sell Junk Button", configKey = "enableJunk"}
+        cfg.repair:createSlider { label = "Max Amount of Junk to Barter", configKey = "maxSell",
+        min = 1, max = 50, step = 1, jump = 1 }
         cfg.barter:createYesNoButton { label = "Show Disposition", configKey = "showDisposition", callback = updateBarter }
         cfg.barter:createYesNoButton { label = "Show NPC Stats", configKey = "showNpcStats", callback = updateBarter }
         cfg.barter:createYesNoButton { label = "Show Player Stats", configKey = "showPlayerStats", callback = updateBarter }
