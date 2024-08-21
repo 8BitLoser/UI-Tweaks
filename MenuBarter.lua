@@ -117,7 +117,6 @@ function Barter.showStats()
         Barter:Update()
         updateDisp()
     end
-
     if cfg.barter.showNpcStats then
         if not Barter:child("NpcStat") then
             local NpcStat = Barter:Main():createBlock({ id = "NpcStat" })
@@ -186,13 +185,40 @@ end
 function Barter.sellJunk()
     if not cfg.barter.enableJunk then return end
     Barter.SellJunk = Barter:Buttons():createButton{id = "bsJunkButton", text = "Sell Junk"}
-    Barter.SellJunk:register("mouseClick", function (e)
+
+    ---ChatGPT assisted optimized, Does seem better Lag spike is far better
+    ---Notes: Remember Reverse Order for loop
+    Barter:child("bsJunkButton"):register("mouseClick", function (e)
         local cycle = 0
-        while Inventory:child("bsJunkMarker") and cycle < cfg.barter.maxSell do
-            cycle = cycle + 1
-            Inventory:child("bsJunkMarker").parent:triggerEvent("click")
+        debug.log(cycle)
+        -- While loop until no more junk items or cycle limit is reached
+        while cycle < cfg.barter.maxSell do
+            local junkItem = nil
+            -- Iterate through inventory in reverse order
+            for i = #Inventory:ItemTilesColumns(), 1, -1 do
+                local junkMarker = Inventory:ItemTilesColumns()[i]:findChild("bsJunkMarker")
+                if junkMarker then
+                    junkItem = junkMarker.parent
+                    break
+                end
+            end
+            if junkItem then
+                junkItem:triggerEvent("click")
+                cycle = cycle + 1
+            else
+                break -- No more junk items found
+            end
         end
     end)
+
+    -- ---My solution
+    -- Barter.SellJunk:register("mouseClick", function (e)
+    --     local cycle = 0
+    --     while Inventory:child("bsJunkMarker") and cycle < cfg.barter.maxSell do
+    --         cycle = cycle + 1
+    --         Inventory:child("bsJunkMarker").parent:triggerEvent("click")
+    --     end
+    -- end)
     Barter:Buttons():reorderChildren(2, Barter.SellJunk, -1)
 end
 
@@ -202,7 +228,7 @@ local function markJunk(e)
     data = tes3.player.data
     data.bsJunk = data.bsJunk or {}
     if data.bsJunk[e.item.id] then
-        e.element.contentPath = "Textures\\menu_icon_select_magic.tga"
+        e.element.contentPath = "Textures\\bsJunkMarker.tga"
         e.element:createBlock{id = "bsJunkMarker"}
     end
     e.element:registerBefore("mouseClick", function (ui)
@@ -213,7 +239,7 @@ local function markJunk(e)
             else
                 data.bsJunk[e.item.id] = true
                 debug.log(e.element.contentPath)
-                e.element.contentPath = "Textures\\menu_icon_select_magic.tga"
+                e.element.contentPath = "Textures\\bsJunkMarker.tga"
             end
             e.element:getTopLevelMenu():updateLayout()
             tes3ui.forcePlayerInventoryUpdate()
@@ -224,10 +250,11 @@ end
 
 --- @param e uiObjectTooltipEventData
 local function junkTooltip(e)
-    if not cfg.barter.enableJunk then return end
-    if data.bsJunk[e.object] then
+    if not cfg.barter.enableJunk or not cfg.tooltip.enable or not cfg.tooltip.junk then return end
+    if data.bsJunk[e.object.id] then
         local junk = e.tooltip:createBlock{id = "bsJunk"}
-        junk:autoSize(true)
+        junk.autoHeight = true
+        junk.autoWidth = true
         local label = junk:createLabel{id = "JunkLabel", text = "Junk"}
         label.color = bs.rgb.bsRoyalPurple
     end

@@ -14,7 +14,7 @@ local defaults = {
         showNpcStats = false,
         showPlayerStats = false,
         enableJunk = true,
-        maxSell = 20
+        maxSell = 30,
     },
     dialog = { enable = true, showKey = true, showClass = false },
     enchant = { enable = true, showGold = true },
@@ -31,13 +31,12 @@ local defaults = {
             MenuServiceTraining = true, MenuServiceTravel = true, MenuSpellmaking = true,
         },
     },
-    -- junk = {enable = true, maxSell = 20},
     manualAdd = "",
     multi = { enable = true, },
     persuade = { enable = true, hold = true, holdBribe = false, delay = 0.5, },
     repair = { enable = true, duration = 0.1 },
     spellmaking = { enable = true, showGold = true, serviceOnly = true },
-    tooltip = { enable = true, charge = true, showDur = true, },
+    tooltip = { enable = true, charge = true, showDur = true, junk = true, },
     travel = { enable = true, },
     wait = { enable = true, fullRest = true, },
     keybind = {
@@ -80,63 +79,66 @@ local function updateBarter() event.trigger(bs.UpdateBarter) end
 local config = mwse.loadConfig(configPath, defaults)
 
 local function registerModConfig()
-    cfg.template = mwse.mcm.createTemplate({ name = configPath, defaultConfig = defaults, config = config })
-    cfg.template:saveOnClose(configPath, config)
+    local template = mwse.mcm.createTemplate({ name = configPath, defaultConfig = defaults, config = config })
+    template:saveOnClose(configPath, config)
 
-    cfg.settings = cfg.template:createPage({ label = "UI Tweaks Features"})
+    local settings = template:createPage({ label = "UI Tweaks Features"})
         -- cfg.settings:createYesNoButton { label = "Enable HUD Tweaks", configKey = "enable", config = config.multi}
-        cfg.settings:createYesNoButton { label = "Enable Barter Tweaks", configKey = "enable", callback = updateBarter, config = config.barter }
-        cfg.settings:createYesNoButton { label = "Enable Dialogue", configKey = "enable", config = config.dialog}
-        cfg.settings:createYesNoButton { label = "Enable Enchantment", configKey = "enable", config = config.enchant}
-        cfg.settings:createYesNoButton { label = "Enable Hotkeys", configKey = "enable", config = config.keybind}
-        cfg.settings:createYesNoButton { label = "Enable Persuasion", configKey = "enable", config = config.persuade}
-        cfg.settings:createYesNoButton { label = "Enable QuickEsc", configKey = "enable", config = config.escape}
-        cfg.settings:createYesNoButton { label = "Enable QuickTake", configKey = "enable", config = config.take}
-        cfg.settings:createYesNoButton { label = "Enable Repair", configKey = "enable", config = config.repair}
-        cfg.settings:createYesNoButton { label = "Enable Spellmaking", configKey = "enable", config = config.spellmaking}
-        cfg.settings:createYesNoButton { label = "Enable Tooltip", configKey = "enable", config = config.tooltip}
-        cfg.settings:createYesNoButton { label = "Enable Travel", configKey = "enable", config = config.travel}
-        cfg.settings:createYesNoButton { label = "Enable Wait/Rest", configKey = "enable", config = config.wait }
+        settings:createYesNoButton { label = "Enable Barter Tweaks", configKey = "enable", callback = updateBarter, config = config.barter }
+        settings:createYesNoButton { label = "Enable Dialogue", configKey = "enable", config = config.dialog}
+        settings:createYesNoButton { label = "Enable Enchantment", configKey = "enable", config = config.enchant}
+        settings:createYesNoButton { label = "Enable Hotkeys", configKey = "enable", config = config.keybind}
+        settings:createYesNoButton { label = "Enable Persuasion", configKey = "enable", config = config.persuade}
+        settings:createYesNoButton { label = "Enable QuickEsc", configKey = "enable", config = config.escape}
+        settings:createYesNoButton { label = "Enable QuickTake", configKey = "enable", config = config.take}
+        settings:createYesNoButton { label = "Enable Repair", configKey = "enable", config = config.repair}
+        settings:createYesNoButton { label = "Enable Spellmaking", configKey = "enable", config = config.spellmaking}
+        settings:createYesNoButton { label = "Enable Tooltip", configKey = "enable", config = config.tooltip}
+        settings:createYesNoButton { label = "Enable Travel", configKey = "enable", config = config.travel}
+        settings:createYesNoButton { label = "Enable Wait/Rest", configKey = "enable", config = config.wait }
 
-    cfg.barter = cfg.template:createPage{ label = "Barter", config = config.barter }
-        cfg.barter:createYesNoButton { label = "Show Barter Chance", configKey = "showChance"}
-        cfg.barter:createYesNoButton { label = "Change Chance Color Based on Success Chance", configKey = "chanceColor"}
-        cfg.barter:createYesNoButton { label = "Enable Sell Junk Button", configKey = "enableJunk"}
-        cfg.repair:createSlider { label = "Max Amount of Junk to Barter", configKey = "maxSell",
-        min = 1, max = 50, step = 1, jump = 1 }
-        cfg.barter:createYesNoButton { label = "Show Disposition", configKey = "showDisposition", callback = updateBarter }
-        cfg.barter:createYesNoButton { label = "Show NPC Stats", configKey = "showNpcStats", callback = updateBarter }
-        cfg.barter:createYesNoButton { label = "Show Player Stats", configKey = "showPlayerStats", callback = updateBarter }
+    local barter = template:createPage{ label = "Barter", config = config.barter }
+        local barter_stats = barter:createCategory({label = "Stats"})
+            barter_stats:createYesNoButton { label = "Show Barter Chance", configKey = "showChance"}
+            barter_stats:createYesNoButton { label = "Change Chance Color Based on Success Chance", configKey = "chanceColor"}
+            barter_stats:createYesNoButton { label = "Show Disposition", configKey = "showDisposition", callback = updateBarter }
+            barter_stats:createYesNoButton { label = "Show NPC Stats", configKey = "showNpcStats", callback = updateBarter }
+            barter_stats:createYesNoButton { label = "Show Player Stats", configKey = "showPlayerStats", callback = updateBarter }
+        local barter_junk = barter:createCategory({label = "Junk"})
+            barter_junk:createYesNoButton { label = "Enable Sell Junk Button", configKey = "enableJunk"}
+            barter_junk:createSlider { label = "Max Amount of Junk to Barter", configKey = "maxSell",
+            min = 1, max = 100, step = 1, jump = 1 }
 
-    cfg.dialog = cfg.template:createPage{ label = "Dialogue", config = config.dialog }
-        cfg.dialog:createYesNoButton({label = "Show NPC Class", configKey = "showClass"})
-        cfg.dialog:createYesNoButton({label = "Show Dialogue Shortcuts", configKey = "showKey"})
+    local dialog = template:createPage{ label = "Dialogue", config = config.dialog }
+        dialog:createYesNoButton({label = "Show NPC Class", configKey = "showClass"})
+        dialog:createYesNoButton({label = "Show Dialogue Shortcuts", configKey = "showKey"})
 
-    cfg.enchant = cfg.template:createPage{ label = "Enchantment", config = config.enchant }
-        cfg.enchant:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
+    local enchant = template:createPage{ label = "Enchantment", config = config.enchant }
+        enchant:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
 
-    cfg.persuade = cfg.template:createPage{ label = "Persuasion", config = config.persuade }
-        cfg.persuade:createYesNoButton({label = "Hold Key to Quickly Persuade", configKey = "hold"})
-        cfg.persuade:createYesNoButton({label = "Hold Key to Quickly Bribe", configKey = "holdBribe"})
-        cfg.persuade:createSlider { label = "Hold Persuade Delay", configKey = "delay",
+    local persuade = template:createPage{ label = "Persuasion", config = config.persuade }
+        persuade:createYesNoButton({label = "Hold Key to Quickly Persuade", configKey = "hold"})
+        persuade:createYesNoButton({label = "Hold Key to Quickly Bribe", configKey = "holdBribe"})
+        persuade:createSlider { label = "Hold Persuade Delay", configKey = "delay",
         min = 0.01, max = 1, step = 0.01, jump = 0.01, decimalPlaces = 2 }
 
-    cfg.repair = cfg.template:createPage{label = "Repair", config = config.repair}
-        cfg.repair:createSlider { label = "Hold to Repair Delay", configKey = "duration",
+    local repair = template:createPage{label = "Repair", config = config.repair}
+        repair:createSlider { label = "Hold to Repair Delay", configKey = "duration",
         min = 0.01, max = 1, step = 0.01, jump = 0.1, decimalPlaces = 2 }
 
-    cfg.enchant = cfg.template:createPage{ label = "Spellmaking", config = config.spellmaking }
-        cfg.enchant:createYesNoButton({label = "Show Gold in NPC Spellmaking only", configKey = "serviceOnly"})
-        cfg.enchant:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
+    local spellmaking = template:createPage{ label = "Spellmaking", config = config.spellmaking }
+        spellmaking:createYesNoButton({label = "Show Gold in NPC Spellmaking only", configKey = "serviceOnly"})
+        spellmaking:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
 
-    cfg.tooltip = cfg.template:createPage{ label = "Tooltips", config = config.tooltip }
-        cfg.tooltip:createYesNoButton({label = "Show Charge Cost of Enchantments", configKey = "charge"})
-        cfg.tooltip:createYesNoButton({label = "Show Duration on Active Effect Icons", configKey = "showDur"})
+    local tooltip = template:createPage{ label = "Tooltips", config = config.tooltip }
+        tooltip:createYesNoButton({label = "Show Charge Cost of Enchantments", configKey = "charge"})
+        tooltip:createYesNoButton({label = "Show Duration on Active Effect Icons", configKey = "showDur"})
+        tooltip:createYesNoButton { label = "Show Junk Tooltip", configKey = "junk"}
 
-    cfg.waitRest = cfg.template:createPage{ label = "Wait/Rest", config = config.wait }
+    cfg.waitRest = template:createPage{ label = "Wait/Rest", config = config.wait }
         cfg.waitRest:createYesNoButton({ label = "Enable 24 Hour Wait/Rest", configKey = "fullRest", })
 
-    cfg.hotkeys = cfg.template:createPage({label = "Hotkeys", showReset = true, config = config.keybind, defaultConfig = defaults.keybind})
+    cfg.hotkeys = template:createPage({label = "Hotkeys", showReset = true, config = config.keybind, defaultConfig = defaults.keybind})
         cfg.barterKey = cfg:newCat(cfg.hotkeys, "Barter")
             cfg:keybind(cfg.barterKey, "Barter -", "barterDown")
             cfg:keybind(cfg.barterKey, "Barter +", "barterUp")
@@ -172,7 +174,7 @@ local function registerModConfig()
             cfg:keybind(cfg.fullRestKey, "Rest/Wait 24hr", "day")
 
 
-    -- cfg.quickEsc = cfg.template:createExclusionsPage({
+    -- cfg.quickEsc = template:createExclusionsPage({
     --     label = "QuickEsc",
     --     config = config.escape, configKey = "menus",
     --     leftListLabel = "Enabled", rightListLabel = "Disabled",
@@ -187,7 +189,7 @@ local function registerModConfig()
     --     }},
     -- })
 
-    -- cfg.debug = cfg.template:createPage { label = "Advanced" }
+    -- cfg.debug = template:createPage { label = "Advanced" }
     -- cfg.debug:createTextField { label = "Add MenuID", configKey = "manualAdd", callback = function(self)
     --     debug.log(self.variable.value)
     --     config.escape.menus[self.variable.value] = true
@@ -201,7 +203,7 @@ local function registerModConfig()
     --     bs.inspect(config.escape.menus)
     -- end }
 
-    -- cfg.test = cfg.template:createExclusionsPage({
+    -- cfg.test = template:createExclusionsPage({
     --     label = "Debug Menus",
     --     config = config.escape,
     --     configKey = "menus",
@@ -215,7 +217,7 @@ local function registerModConfig()
     --     },
     --     showReset = true,
     -- })
-    cfg.template:register()
+    template:register()
 end
 event.register(tes3.event.modConfigReady, registerModConfig)
 

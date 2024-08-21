@@ -7,7 +7,9 @@ local reg = tes3ui.registerID
 local Inventory = {}
 function Inventory:get() return find(reg(id.Inventory)) end
 function Inventory:child(child) if self:get() then return self:get():findChild(child) end end
-function Inventory:ItemTiles() return self:get():findChild("PartScrollPane_pane") end
+function Inventory:ItemTiles() return self:child("PartScrollPane_pane") end
+function Inventory:ItemTilesColumns() return self:ItemTiles().children end ---@return table ItemTiles.children
+
 
 ---@class bsMenuInventorySelect
 Inventory.Select = {}
