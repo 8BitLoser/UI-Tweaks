@@ -1,6 +1,10 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 local bs = require("BeefStranger.UI Tweaks.common")
+local Inventory = require("BeefStranger.UI Tweaks.MenuInventory")
+local id = require("BeefStranger.UI Tweaks.menuID")
 local sf = string.format
+local data
+
 
 ---@param id tes3.gmst
 local function GMST(id) return tes3.findGMST(id).value end
@@ -66,10 +70,10 @@ local function barterChance()
     local npcTerm = (npc.mercantile.current + 0.1 * npc.luck.current + 0.2 * npc.personality.current) * npc:getFatigueTerm()
     local x = fBargainOfferMulti * priceDifference + fBargainOfferBase
 
-
     if isBuying then x = x + math.abs(math.floor(pcTerm - npcTerm)) end
     if not isBuying then x = x + math.abs(math.floor(npcTerm - pcTerm)) end
-    if not isBuying and Barter:isBuying() then
+
+    if not isBuying and Barter:isBuying() then ---If selling, but offering Drakes
         Barter.ChanceText.text = "Gifting"
         Barter.ChanceValue.text = ""
         if cfg.barter.chanceColor then Barter.ChanceText.color = bs.rgb.bsPrettyBlue end
@@ -89,14 +93,14 @@ end
 --- @param e calcBarterPriceEventData
 local function calcBarterPriceCallback(e)
     if not cfg.barter.showChance then return end
-    timer.delayOneFrame(function () ---Needs to be delayed
+    timer.delayOneFrame(function () ---Needs to be delayed, dont remember why
         isBuying = Barter:isBuying() ---Get isBuying from Cost/Sold Text
         merchantOffer = math.abs(Barter:displayedOffer()) ---calcBarter e.price only updates current item not total
         barterChance()
     end, timer.real)
 end
 
-
+---Show Player/NPC Stats in MenuBarter
 function Barter.showStats()
     local trader = Barter:getTrader()
     local player = tes3.mobilePlayer
@@ -148,6 +152,7 @@ function Barter.showStats()
     end
 end
 
+---Show % Chance of Successful Barter
 function Barter.showBarterChance()
     ---Barter Offer Success Chance
     if cfg.barter.showChance then
@@ -161,7 +166,6 @@ function Barter.showBarterChance()
         Barter.ChanceValue = Barter.ChanceBlock:createLabel{id = "ChanceValue", text = ""}
             Barter.ChanceValue.borderLeft = 5
         Barter:Offer():registerAfter("mouseClick", barterChance)
-        -- Barter:Offer():registerAfter(tes3.uiEvent.mouseStillPressed, function () Barter:Offer():triggerEvent("mouseClick") end)
         Barter:BarterUp():registerAfter(tes3.uiEvent.mouseStillPressed, barterChance)
         Barter:BarterDown():registerAfter(tes3.uiEvent.mouseStillPressed, barterChance)
         Barter:MaxSale():registerAfter("mouseClick", barterChance)
@@ -178,15 +182,78 @@ function Barter.showBarterChance()
     end
 end
 
+
+function Barter.sellJunk()
+    if not cfg.barter.enableJunk then return end
+    Barter.SellJunk = Barter:Buttons():createButton{id = "bsJunkButton", text = "Sell Junk"}
+    Barter.SellJunk:register("mouseClick", function (e)
+        local cycle = 0
+        while Inventory:child("bsJunkMarker") and cycle < cfg.barter.maxSell do
+            cycle = cycle + 1
+            Inventory:child("bsJunkMarker").parent:triggerEvent("click")
+        end
+    end)
+    Barter:Buttons():reorderChildren(2, Barter.SellJunk, -1)
+end
+
+--- @param e itemTileUpdatedEventData
+local function markJunk(e)
+    if not cfg.barter.enableJunk then return end
+    data = tes3.player.data
+    data.bsJunk = data.bsJunk or {}
+    if data.bsJunk[e.item.id] then
+        e.element.contentPath = "Textures\\menu_icon_select_magic.tga"
+        e.element:createBlock{id = "bsJunkMarker"}
+    end
+    e.element:registerBefore("mouseClick", function (ui)
+        if bs.isKeyDown(tes3.scanCode.lAlt) then
+            if data.bsJunk[e.item.id] then
+                data.bsJunk[e.item.id] = nil
+                e.element.contentPath = "Textures\\menu_icon_none.tga"
+            else
+                data.bsJunk[e.item.id] = true
+                debug.log(e.element.contentPath)
+                e.element.contentPath = "Textures\\menu_icon_select_magic.tga"
+            end
+            e.element:getTopLevelMenu():updateLayout()
+            tes3ui.forcePlayerInventoryUpdate()
+            return false
+        end
+    end)
+end
+
+--- @param e uiObjectTooltipEventData
+local function junkTooltip(e)
+    if not cfg.barter.enableJunk then return end
+    if data.bsJunk[e.object] then
+        local junk = e.tooltip:createBlock{id = "bsJunk"}
+        junk:autoSize(true)
+        local label = junk:createLabel{id = "JunkLabel", text = "Junk"}
+        label.color = bs.rgb.bsRoyalPurple
+    end
+end
+
 --- @param e uiActivatedEventData
 local function BarterActivated(e)
     if not cfg.barter.enable then return end
     Barter.showStats()
     Barter.showBarterChance()
+    Barter.sellJunk()
     Barter:Update()
 end
-event.register(tes3.event.calcBarterPrice, calcBarterPriceCallback, {priority = 10000})
+
+
+-- --- @param e loadedEventData
+-- local function loadedCallback(e)
+--     data = tes3.player.data
+--     data.bsJunk = data.bsJunk or {}
+-- end
+-- event.register(tes3.event.loaded, loadedCallback)
+
 event.register(tes3.event.uiActivated, BarterActivated, { filter = "MenuBarter", priority = -1000 })
+event.register(tes3.event.calcBarterPrice, calcBarterPriceCallback, {priority = 10000})
 event.register(bs.UpdateBarter, BarterActivated, { priority = -1000 })
+event.register(tes3.event.uiObjectTooltip, junkTooltip)
+event.register(tes3.event.itemTileUpdated, markJunk, { filter = id.Inventory})
 
 return Barter

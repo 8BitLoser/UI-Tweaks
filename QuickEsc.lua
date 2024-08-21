@@ -3,7 +3,7 @@ local Barter = require("BeefStranger.UI Tweaks.MenuBarter")
 local Book = require("BeefStranger.UI Tweaks.MenuBook")
 local Dialog = require("BeefStranger.UI Tweaks.MenuDialog")
 local Enchant = require("BeefStranger.UI Tweaks.MenuEnchantment")
-local InventorySelect = require("BeefStranger.UI Tweaks.MenuInventorySelect")
+local Inventory = require("BeefStranger.UI Tweaks.MenuInventory")
 local Journal = require("BeefStranger.UI Tweaks.MenuJournal")
 local Persuasion = require("BeefStranger.UI Tweaks.MenuPersuasion")
 local Repair = require("BeefStranger.UI Tweaks.MenuRepair")
@@ -27,7 +27,7 @@ local close = {
     [id.Journal] = function() return Journal:Close() end,
     [id.Persuasion] = function() return Persuasion:Close() end,
     [id.Repair] = function()return Repair:Close() end,
-    [id.InventorySelect] = function() return InventorySelect:Close() end,
+    [id.InventorySelect] = function() return Inventory.Select:Close() end,
     ["bsTransferEnchant"] = function() return TransferEnchant:Close() end,
     ["bsItemSelect"] = function() return TransferEnchant.Select:Close() end,
     [id.ServiceRepair] = function()return Service.Repair:Close() end,
@@ -50,7 +50,7 @@ local function Escape(e)
             local menu = find(menuID)
 
             if menu and menu.visible then
-                if find(id.Persuasion) then ---Menus that need Manual Handling
+                if --[[ cfg.escape.menus[id.Persuasion] and  ]]find(id.Persuasion) then ---Menus that need Manual Handling
                     Persuasion:Close():triggerEvent("click")
                     tes3.playSound{sound = "Menu Click"}
                     menuLeft = true
@@ -71,7 +71,7 @@ local function Escape(e)
                     menuLeft = true
                     break
                 elseif find(id.InventorySelect) then
-                    InventorySelect:Close():triggerEvent("click")
+                    Inventory.Select:Close():triggerEvent("click")
                     tes3.playSound{sound = "Menu Click"}
                     menuLeft = true
                     break
@@ -93,10 +93,10 @@ local function Escape(e)
         end
 
         if not menuLeft then ---If No menu was left and a leaveMenu was visible leaveMenuMode
-            for key, value in pairs(leave) do
+            for key, doLeave in pairs(leave) do
                 if find(key) and find(key).visible then
                     tes3.playSound{sound = "Menu Click"}
-                    value()
+                    doLeave()
                     leaveMenu = true
                 end
             end
