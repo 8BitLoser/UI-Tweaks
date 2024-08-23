@@ -231,7 +231,7 @@ local function markJunk(e)
         e.element.contentPath = "Textures\\bsJunkMarker.tga"
         e.element:createBlock{id = "bsJunkMarker"}
     end
-    e.element:registerBefore("mouseClick", function (ui)
+    e.element:registerBefore("mouseDown", function (ui)
         if bs.isKeyDown(tes3.scanCode.lAlt) then
             if data.bsJunk[e.item.id] then
                 data.bsJunk[e.item.id] = nil

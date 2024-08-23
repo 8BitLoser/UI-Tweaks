@@ -10,6 +10,7 @@ require("BeefStranger.UI Tweaks.MenuSpellmaking")
 require("BeefStranger.UI Tweaks.MenuServices")
 require("BeefStranger.UI Tweaks.MenuRestWait")
 require("BeefStranger.UI Tweaks.QuickEsc")
+require("BeefStranger.UI Tweaks.tes3uiElementExt")
 
 -- require("BeefStranger.UI Tweaks.MenuMulti")
 event.register("initialized", function()

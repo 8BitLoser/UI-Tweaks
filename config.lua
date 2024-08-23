@@ -33,7 +33,7 @@ local defaults = {
     },
     manualAdd = "",
     multi = { enable = true, },
-    persuade = { enable = true, hold = true, holdBribe = false, delay = 0.5, },
+    persuade = { enable = true, hold = true, holdBribe = false, delay = 0.5, showKey = false },
     repair = { enable = true, duration = 0.1 },
     spellmaking = { enable = true, showGold = true, serviceOnly = true },
     tooltip = { enable = true, charge = true, showDur = true, junk = true, },
@@ -117,6 +117,7 @@ local function registerModConfig()
         enchant:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
 
     local persuade = template:createPage{ label = "Persuasion", config = config.persuade }
+        persuade:createYesNoButton({label = "Show Keybinds", configKey = "showKey"})
         persuade:createYesNoButton({label = "Hold Key to Quickly Persuade", configKey = "hold"})
         persuade:createYesNoButton({label = "Hold Key to Quickly Bribe", configKey = "holdBribe"})
         persuade:createSlider { label = "Hold Persuade Delay", configKey = "delay",
@@ -135,43 +136,43 @@ local function registerModConfig()
         tooltip:createYesNoButton({label = "Show Duration on Active Effect Icons", configKey = "showDur"})
         tooltip:createYesNoButton { label = "Show Junk Tooltip", configKey = "junk"}
 
-    cfg.waitRest = template:createPage{ label = "Wait/Rest", config = config.wait }
-        cfg.waitRest:createYesNoButton({ label = "Enable 24 Hour Wait/Rest", configKey = "fullRest", })
+    local waitRest = template:createPage{ label = "Wait/Rest", config = config.wait }
+        waitRest:createYesNoButton({ label = "Enable 24 Hour Wait/Rest", configKey = "fullRest", })
 
-    cfg.hotkeys = template:createPage({label = "Hotkeys", showReset = true, config = config.keybind, defaultConfig = defaults.keybind})
-        cfg.barterKey = cfg:newCat(cfg.hotkeys, "Barter")
-            cfg:keybind(cfg.barterKey, "Barter -", "barterDown")
-            cfg:keybind(cfg.barterKey, "Barter +", "barterUp")
-            cfg:keybind(cfg.barterKey, "Confirm Offer", "offer")
+    local hotkeys = template:createPage({label = "Hotkeys", showReset = true, config = config.keybind, defaultConfig = defaults.keybind})
+        local barterKey = cfg:newCat(hotkeys, "Barter")
+            cfg:keybind(barterKey, "Barter -", "barterDown")
+            cfg:keybind(barterKey, "Barter +", "barterUp")
+            cfg:keybind(barterKey, "Confirm Offer", "offer")
 
-        cfg.dialogKey = cfg:newCat(cfg.hotkeys, "Dialogue")
-            cfg:keybind(cfg.dialogKey, "Open Barter", "barter")
-            cfg:keybind(cfg.dialogKey, "Open Companion", "companion")
-            cfg:keybind(cfg.dialogKey, "Open Enchanting", "enchanting")
-            cfg:keybind(cfg.dialogKey, "Open Persuasion", "persuasion")
-            cfg:keybind(cfg.dialogKey, "Open Repair", "repair")
-            cfg:keybind(cfg.dialogKey, "Open Spellmaking", "spellmaking")
-            cfg:keybind(cfg.dialogKey, "Open Spells", "spells")
-            cfg:keybind(cfg.dialogKey, "Open Training", "training")
-            cfg:keybind(cfg.dialogKey, "Open Travel", "travel")
+        local dialogKey = cfg:newCat(hotkeys, "Dialogue")
+            cfg:keybind(dialogKey, "Open Barter", "barter")
+            cfg:keybind(dialogKey, "Open Companion", "companion")
+            cfg:keybind(dialogKey, "Open Enchanting", "enchanting")
+            cfg:keybind(dialogKey, "Open Persuasion", "persuasion")
+            cfg:keybind(dialogKey, "Open Repair", "repair")
+            cfg:keybind(dialogKey, "Open Spellmaking", "spellmaking")
+            cfg:keybind(dialogKey, "Open Spells", "spells")
+            cfg:keybind(dialogKey, "Open Training", "training")
+            cfg:keybind(dialogKey, "Open Travel", "travel")
 
-        cfg.persuadeKey = cfg:newCat(cfg.hotkeys, "Persuasion")
-            cfg:keybind(cfg.persuadeKey, "Admire", "admire")
-            cfg:keybind(cfg.persuadeKey, "Intimidate", "intimidate")
-            cfg:keybind(cfg.persuadeKey, "Taunt", "taunt")
-            cfg:keybind(cfg.persuadeKey, "Bribe 10", "bribe10")
-            cfg:keybind(cfg.persuadeKey, "Bribe 100", "bribe100")
-            cfg:keybind(cfg.persuadeKey, "Bribe 1000", "bribe1000")
+        local persuadeKey = cfg:newCat(hotkeys, "Persuasion")
+            cfg:keybind(persuadeKey, "Admire", "admire")
+            cfg:keybind(persuadeKey, "Intimidate", "intimidate")
+            cfg:keybind(persuadeKey, "Taunt", "taunt")
+            cfg:keybind(persuadeKey, "Bribe 10", "bribe10")
+            cfg:keybind(persuadeKey, "Bribe 100", "bribe100")
+            cfg:keybind(persuadeKey, "Bribe 1000", "bribe1000")
 
-        cfg.takeKey = cfg:newCat(cfg.hotkeys, "Take Book/Scroll")
-            cfg:keybind(cfg.takeKey, "Take", "take")
+        local takeKey = cfg:newCat(hotkeys, "Take Book/Scroll")
+            cfg:keybind(takeKey, "Take", "take")
 
-        cfg.fullRestKey = cfg:newCat(cfg.hotkeys, "Wait/Rest")
-            cfg:keybind(cfg.fullRestKey, "Wait/Rest", "wait")
-            cfg:keybind(cfg.fullRestKey, "Wait/Rest - 1hr", "waitDown")
-            cfg:keybind(cfg.fullRestKey, "Wait/Rest + 1hr", "waitUp")
-            cfg:keybind(cfg.fullRestKey, "Until Healed", "heal")
-            cfg:keybind(cfg.fullRestKey, "Rest/Wait 24hr", "day")
+        local fullRestKey = cfg:newCat(hotkeys, "Wait/Rest")
+            cfg:keybind(fullRestKey, "Wait/Rest", "wait")
+            cfg:keybind(fullRestKey, "Wait/Rest - 1hr", "waitDown")
+            cfg:keybind(fullRestKey, "Wait/Rest + 1hr", "waitUp")
+            cfg:keybind(fullRestKey, "Until Healed", "heal")
+            cfg:keybind(fullRestKey, "Rest/Wait 24hr", "day")
 
 
     -- cfg.quickEsc = template:createExclusionsPage({

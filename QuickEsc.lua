@@ -92,15 +92,17 @@ local function Escape(e)
             end
         end
 
-        if not menuLeft then ---If No menu was left and a leaveMenu was visible leaveMenuMode
-            for key, doLeave in pairs(leave) do
-                if find(key) and find(key).visible then
-                    tes3.playSound{sound = "Menu Click"}
-                    doLeave()
-                    leaveMenu = true
+        timer.delayOneFrame(function (e)
+            if not menuLeft then ---If No menu was left and a leaveMenu was visible leaveMenuMode
+                for key, doLeave in pairs(leave) do
+                    if find(key) and find(key).visible then
+                        tes3.playSound{sound = "Menu Click"}
+                        doLeave()
+                        leaveMenu = true
+                    end
                 end
             end
-        end
+        end, timer.real)
     end
 end
 event.register(tes3.event.keyDown, Escape, {filter = tes3.scanCode.escape, priority = -10000})
