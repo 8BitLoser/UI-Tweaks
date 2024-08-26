@@ -16,7 +16,7 @@ local defaults = {
         enableJunk = true,
         maxSell = 30,
     },
-    dialog = { enable = true, showKey = true, showClass = false },
+    dialog = { enable = true, showKey = false, showClass = false },
     enchant = { enable = true, showGold = true },
     escape = {
         enable = true,
@@ -33,10 +33,10 @@ local defaults = {
     },
     manualAdd = "",
     multi = { enable = true, },
-    persuade = { enable = true, hold = true, holdBribe = false, delay = 0.5, showKey = false },
+    persuade = { enable = true, hold = false, holdBribe = false, delay = 0.5, showKey = false },
     repair = { enable = true, duration = 0.1 },
     spellmaking = { enable = true, showGold = true, serviceOnly = true },
-    tooltip = { enable = true, charge = true, showDur = true, junk = true, },
+    tooltip = { enable = true, charge = true, showDur = true, junk = false, },
     travel = { enable = true, },
     wait = { enable = true, fullRest = true, },
     keybind = {

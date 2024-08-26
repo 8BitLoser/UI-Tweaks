@@ -52,19 +52,19 @@ local function buttonHold(e)
         -- end
     end
 
-    -- if cfg.persuade.enable and Persuasion:get() and cfg.persuade.hold then
-    --     if os.clock() - time >= cfg.persuade.delay then
-    --         if keyDown(cfg.keybind.admire) then Persuasion:trigger("Admire") end
-    --         if keyDown(cfg.keybind.intimidate) then Persuasion:trigger("Intimidate") end
-    --         if keyDown(cfg.keybind.taunt) then Persuasion:trigger("Taunt") end
-    --         if cfg.persuade.holdBribe then
-    --             if keyDown(cfg.keybind.bribe10) then Persuasion:trigger("Bribe10") end
-    --             if keyDown(cfg.keybind.bribe100) then Persuasion:trigger("Bribe100") end
-    --             if keyDown(cfg.keybind.bribe1000) then Persuasion:trigger("Bribe1000") end
-    --         end
-    --         time = os.clock()
-    --     end
-    -- end
+    if cfg.persuade.enable and Persuasion:get() and cfg.persuade.hold then
+        if os.clock() - time >= cfg.persuade.delay then
+            if keyDown(cfg.keybind.admire) then Persuasion:trigger("Admire") end
+            if keyDown(cfg.keybind.intimidate) then Persuasion:trigger("Intimidate") end
+            if keyDown(cfg.keybind.taunt) then Persuasion:trigger("Taunt") end
+            if cfg.persuade.holdBribe then
+                if keyDown(cfg.keybind.bribe10) then Persuasion:trigger("Bribe10") end
+                if keyDown(cfg.keybind.bribe100) then Persuasion:trigger("Bribe100") end
+                if keyDown(cfg.keybind.bribe1000) then Persuasion:trigger("Bribe1000") end
+            end
+            time = os.clock()
+        end
+    end
 end
 event.register(tes3.event.enterFrame, buttonHold)
 

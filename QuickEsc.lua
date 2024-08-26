@@ -48,36 +48,11 @@ local function Escape(e)
     if tes3.menuMode() and cfg.escape.enable then
         for menuID, button in pairs(close) do
             local menu = find(menuID)
-
-            if menu and menu.visible then
-                if --[[ cfg.escape.menus[id.Persuasion] and  ]]find(id.Persuasion) then ---Menus that need Manual Handling
-                    Persuasion:Close():triggerEvent("click")
-                    tes3.playSound{sound = "Menu Click"}
-                    menuLeft = true
-                    break
-                elseif find(id.Barter) then
-                    Barter:Close():triggerEvent("click")
-                    tes3.playSound{sound = "Menu Click"}
-                    menuLeft = true
-                    break
-                elseif find(id.SetValues) then
-                    Spellmaking.SetValues:Close():triggerEvent("click")
-                    tes3.playSound{sound = "Menu Click"}
-                    menuLeft = true
-                    break
-                elseif find(id.Spellmaking) then
-                    Spellmaking:Close():triggerEvent("click")
-                    tes3.playSound{sound = "Menu Click"}
-                    menuLeft = true
-                    break
-                elseif find(id.InventorySelect) then
-                    Inventory.Select:Close():triggerEvent("click")
-                    tes3.playSound{sound = "Menu Click"}
-                    menuLeft = true
-                    break
-                elseif find("bsItemSelect") then
-                    TransferEnchant.Select:Close():triggerEvent("click")
-                    tes3.playSound{sound = "Menu Click"}
+            if menu and menu.visible and menu == tes3ui.getMenuOnTop() then
+                if find(menuID) and menu.visible then
+                    debug.log(menuID)
+                    button():triggerEvent("click")
+                    tes3.playSound { sound = "Menu Click" }
                     menuLeft = true
                     break
                 end
@@ -94,6 +69,7 @@ local function Escape(e)
 
         timer.delayOneFrame(function (e)
             if not menuLeft then ---If No menu was left and a leaveMenu was visible leaveMenuMode
+                if Dialog:child("MenuDialog_answer_block") then return end
                 for key, doLeave in pairs(leave) do
                     if find(key) and find(key).visible then
                         tes3.playSound{sound = "Menu Click"}

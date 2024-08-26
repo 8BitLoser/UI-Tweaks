@@ -10,6 +10,10 @@ function Enchant:Price() if not self:get() then return end return self:child("Me
 function Enchant:PriceLabel() if not self:get() then return end return self:child("MenuEnchantment_priceLabel") end
 function Enchant:Close() if not self:get() then return end return self:child("MenuEnchantment_Cancelbutton") end
 
+function Enchant:bsGold() return self:child("bsPlayerGold") end
+function Enchant:bsValue() return self:child("bsValue") end
+
+
 ---@param e uiActivatedEventData
 local function enchantActivated(e)
     if not cfg.enchant.enable then return end

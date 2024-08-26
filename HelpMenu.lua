@@ -8,23 +8,37 @@ local find = tes3ui.findMenu
 local Help = {}
 function Help:get() return tes3ui.findHelpLayerMenu(tes3ui.registerID("HelpMenu")) end
 function Help:child(child) if not self:get() then return end return self:get():findChild(child) end
-function Help:Main() if not self:get() then return end return self:child("PartHelpMenu_main") end
-function Help:Enchant() if not self:get() then return end return self:child("HelpMenu_enchantmentContainer") end
-function Help:Effect() if not self:get() then return end return self:child("effect") end
+function Help:Main() return self:child("PartHelpMenu_main") end
+function Help:Enchant() return self:child("HelpMenu_enchantmentContainer") end
+function Help:Effect() return self:child("effect") end
+
+---Add Charge Cost to Tooltip
+--- @param e uiObjectTooltipEventData
+local function chargeCost(e)
+    local enchant = e.object.enchantment
+    if enchant and enchant.castType ~= tes3.enchantmentType.constant then
+        local baseCost = enchant.chargeCost
+        local actualCost =  baseCost - (baseCost / 100) * (tes3.mobilePlayer.enchant.current - 10)
+        local displayCost = math.max(1, math.floor(actualCost))
+        local new = e.tooltip:createLabel({id = "ChargeCost", text = "Charge Cost: ".. displayCost})
+        e.tooltip.children[1]:reorderChildren(Help:Enchant(), new, 1)
+    end
+end
 
 ---Add Charge Cost to Tooltip
 --- @param e uiObjectTooltipEventData
 local function Tooltips(e)
     if not cfg.tooltip.enable then return end
-    local enchant = e.object.enchantment
+    -- local enchant = e.object.enchantment
     if cfg.tooltip.charge then
-        if enchant and enchant.castType ~= tes3.enchantmentType.constant then
-            local baseCost = enchant.chargeCost
-            local actualCost =  baseCost - (baseCost / 100) * (tes3.mobilePlayer.enchant.current - 10)
-            local displayCost = math.max(1, math.floor(actualCost))
-            local new = e.tooltip:createLabel({id = "ChargeCost", text = "Charge Cost: ".. displayCost})
-            e.tooltip.children[1]:reorderChildren(Help:Enchant(), new, 1)
-        end
+        chargeCost(e)
+        -- if enchant and enchant.castType ~= tes3.enchantmentType.constant then
+        --     local baseCost = enchant.chargeCost
+        --     local actualCost =  baseCost - (baseCost / 100) * (tes3.mobilePlayer.enchant.current - 10)
+        --     local displayCost = math.max(1, math.floor(actualCost))
+        --     local new = e.tooltip:createLabel({id = "ChargeCost", text = "Charge Cost: ".. displayCost})
+        --     e.tooltip.children[1]:reorderChildren(Help:Enchant(), new, 1)
+        -- end
     end
 end
 event.register(tes3.event.uiObjectTooltip, Tooltips)

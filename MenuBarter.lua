@@ -104,7 +104,6 @@ end
 function Barter.showStats()
     local trader = Barter:getTrader()
     local player = tes3.mobilePlayer
-    debug.log(trader.objectType)
     if trader.objectType == tes3.objectType.mobileCreature then return end
     if cfg.barter.showDisposition and trader.object.disposition then
         ---Update Disposition Real Time
@@ -190,7 +189,7 @@ function Barter.sellJunk()
     ---Notes: Remember Reverse Order for loop
     Barter:child("bsJunkButton"):register("mouseClick", function (e)
         local cycle = 0
-        debug.log(cycle)
+        -- debug.log(cycle)
         -- While loop until no more junk items or cycle limit is reached
         while cycle < cfg.barter.maxSell do
             local junkItem = nil
@@ -231,18 +230,17 @@ local function markJunk(e)
         e.element.contentPath = "Textures\\bsJunkMarker.tga"
         e.element:createBlock{id = "bsJunkMarker"}
     end
-    e.element:registerBefore("mouseDown", function (ui)
+    e.element:registerBefore("mouseClick", function (uiEvent)
         if bs.isKeyDown(tes3.scanCode.lAlt) then
             if data.bsJunk[e.item.id] then
                 data.bsJunk[e.item.id] = nil
                 e.element.contentPath = "Textures\\menu_icon_none.tga"
             else
                 data.bsJunk[e.item.id] = true
-                debug.log(e.element.contentPath)
                 e.element.contentPath = "Textures\\bsJunkMarker.tga"
             end
             e.element:getTopLevelMenu():updateLayout()
-            tes3ui.forcePlayerInventoryUpdate()
+            tes3ui.updateInventoryTiles()
             return false
         end
     end)

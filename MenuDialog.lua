@@ -23,6 +23,8 @@ function Dialog:Training() if not self:get() then return end return self:child("
 function Dialog:Travel() if not self:get() then return end return self:child("MenuDialog_service_travel") end
 function Dialog:Visible() if self:get() then return self:get().visible end end
 
+function Dialog:bsClass() return self:child("bsTitle_Class") end
+
 ---@param child tes3uiElement
 function Dialog.click(child)
     if not Dialog:get() and not Dialog:get().visible then return end
@@ -30,9 +32,7 @@ function Dialog.click(child)
     bs.click()
 end
 
----@param e uiActivatedEventData
-local function showDialogKey(e)
-    if not cfg.dialog.enable or not cfg.dialog.showKey or not cfg.keybind.enable then return end
+local function showHotkey()
     timer.delayOneFrame(function() ---text doesnt update unless you delay it
         if cfg.dialog.showKey and cfg.keybind.enable then
             if not Dialog:get() then return end
@@ -45,21 +45,54 @@ local function showDialogKey(e)
                     end
                 end
             end
-            -- Dialog:get():updateLayout()
         end
     end, timer.real)
+end
+
+local function showClass()
+    local service = tes3ui.getServiceActor()
+    if not service.object.class then return end
+    local title = "|  "..service.object.class.name
+    local class = Dialog:Title():createLabel({id = "bsTitle_Class", text = title})
+    class.borderRight = 10
+
+    Dialog:Title():reorderChildren(2, class, 1)
+    Dialog:get():updateLayout()
+end
+---@param e uiActivatedEventData
+local function onDialog(e)
+    if not cfg.dialog.enable then return end
+    if cfg.dialog.showKey and cfg.keybind.enable then
+        showHotkey()
+    end
+    -- timer.delayOneFrame(function() ---text doesnt update unless you delay it
+    --     if cfg.dialog.showKey and cfg.keybind.enable then
+    --         if not Dialog:get() then return end
+    --         for _, button in pairs(Dialog:GetService().children) do
+    --             if button.visible then
+    --                 for setting, keybind in pairs(cfg.keybind) do
+    --                     if string.find(button.name, setting, 1, true) then
+    --                         button.text = sf("%s (%s)", button.text, keyName(keybind.keyCode))
+    --                     end
+    --                 end
+    --             end
+    --         end
+    --         -- Dialog:get():updateLayout()
+    --     end
+    -- end, timer.real)
 
     if cfg.dialog.showClass then
-        local service = tes3ui.getServiceActor()
-        if not service.object.class then return end
-        local title = "|  "..service.object.class.name
-        local class = Dialog:Title():createLabel({id = "bsTitle_Class", text = title})
-        class.borderRight = 10
+        showClass()
+        -- local service = tes3ui.getServiceActor()
+        -- if not service.object.class then return end
+        -- local title = "|  "..service.object.class.name
+        -- local class = Dialog:Title():createLabel({id = "bsTitle_Class", text = title})
+        -- class.borderRight = 10
 
-        Dialog:Title():reorderChildren(2, class, 1)
-        Dialog:get():updateLayout()
+        -- Dialog:Title():reorderChildren(2, class, 1)
+        -- Dialog:get():updateLayout()
     end
 end
-event.register(tes3.event.uiActivated, showDialogKey, {filter = id.Dialog, priority = 1000000})
+event.register(tes3.event.uiActivated, onDialog, {filter = id.Dialog, priority = 1000000})
 
 return Dialog

@@ -15,27 +15,29 @@ function Spellmaking.SetValues:get() return tes3ui.findMenu(tes3ui.registerID(id
 function Spellmaking.SetValues:child(child) if not self:get() then return end return self:get():findChild(child) end
 function Spellmaking.SetValues:Close() if not self:get() then return end return self:child("MenuSetValues_Cancelbutton") end
 
+local function showGold()
+    if cfg.spellmaking.serviceOnly and not tes3ui.getServiceActor() then return end
+    Spellmaking:BottomSpacer().width = 175
+    local playerGold = 0
+    for _, stack in pairs(tes3.mobilePlayer.inventory) do
+        if stack.object.name == "Gold" then
+            playerGold = stack.count
+        end
+    end
+    local gold = Spellmaking:Price():createLabel { id = "bsPlayerGold", text = "Gold" }
+    gold.borderLeft = 20
+    gold.borderRight = 10
+    gold.color = { 0.875, 0.788, 0.624 }
+
+    local amount = Spellmaking:Price():createLabel { id = "bsValue", text = ts(playerGold) }
+    amount.color = { 1.000, 0.647, 0.376 }
+end
+
 ---@param e uiActivatedEventData
 local function enchantActivated(e)
     if not cfg.spellmaking.enable then return end
-    if cfg.spellmaking.showGold then
-        if cfg.spellmaking.serviceOnly and not tes3ui.getServiceActor() then return end
-            Spellmaking:BottomSpacer().width = 175
-            local playerGold = 0
-            for _, stack in pairs(tes3.mobilePlayer.inventory) do
-                if stack.object.name == "Gold" then
-                    playerGold = stack.count
-                end
-            end
-            local gold = Spellmaking:Price():createLabel { id = "bsPlayerGold", text = "Gold" }
-            gold.borderLeft = 20
-            gold.borderRight = 10
-            gold.color = { 0.875, 0.788, 0.624 }
-
-            local amount = Spellmaking:Price():createLabel { id = "bsValue", text = ts(playerGold) }
-            amount.color = { 1.000, 0.647, 0.376 }
-        end
-    end
+    if cfg.spellmaking.showGold then showGold() end
+end
 event.register(tes3.event.uiActivated, enchantActivated, {filter = id.Spellmaking})
 
 

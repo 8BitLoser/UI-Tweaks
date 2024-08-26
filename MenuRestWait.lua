@@ -1,5 +1,6 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 ---MenuRestWait Mapped out because it was fun
+---@class bsMenuRestWait
 local Rest = {}
 
 function Rest.get() return tes3ui.findMenu(tes3ui.registerID("MenuRestWait")) end---@return tes3uiElement? MenuRestWait
@@ -13,19 +14,22 @@ function Rest:Rest() if not self:get() then return end return self:child("MenuRe
 function Rest:UntilHealed() if not self:get() then return end return self:child("MenuRestWait_untilhealed_button") end
 function Rest:Close() if not self:get() then return end return self:child("MenuRestWait_cancel_button") end
 function Rest:press(button) if not self:get() then return end button:triggerEvent("mouseClick") tes3.playSound({sound = "Menu Click"}) end
+
+function Rest:bsFullRest() return self:child("bsFullRest") end
+
 function Rest:waitUp()
-    if not Rest:ScrollWidget() then return end
-    Rest:ScrollWidget().current = math.min((Rest:ScrollWidget().current + 1), 23)
-    Rest:Scrollbar():triggerEvent("PartScrollBar_changed")
+    if not self:ScrollWidget() then return end
+    self:ScrollWidget().current = math.min((self:ScrollWidget().current + 1), 23)
+    self:Scrollbar():triggerEvent("PartScrollBar_changed")
     tes3.playSound({sound = "Menu Click"})
-    Rest:Update()
+    self:Update()
 end
 function Rest:waitDown()
-    if not Rest:ScrollWidget() then return end
-    Rest:ScrollWidget().current = math.max((Rest:ScrollWidget().current - 1), 0)
-    Rest:Scrollbar():triggerEvent("PartScrollBar_changed")
+    if not self:ScrollWidget() then return end
+    self:ScrollWidget().current = math.max((self:ScrollWidget().current - 1), 0)
+    self:Scrollbar():triggerEvent("PartScrollBar_changed")
     tes3.playSound({sound = "Menu Click"})
-    Rest:Update()
+    self:Update()
 end
 function Rest:triggerHeal()
     if not self:get() then return end
@@ -47,7 +51,7 @@ function Rest.onRestMenu(e)
     if not cfg.wait.enable or not cfg.wait.fullRest then return end
     ---Make Button Block Auto Size
     Rest:Buttons().autoWidth = true
-    Rest.FullRest = Rest:Buttons():createButton { id = "Full Rest", text = "24 Hours" }
+    Rest.FullRest = Rest:Buttons():createButton { id = "bsFullRest", text = "24 Hours" }
     Rest.FullRest.borderAllSides = 0
     Rest.FullRest:register(tes3.uiEvent.mouseClick, function(e)
         ---Set Wait Time to 24 and Trigger the Event that updates bar
