@@ -50,7 +50,6 @@ local function Escape(e)
             local menu = find(menuID)
             if menu and menu.visible and menu == tes3ui.getMenuOnTop() then
                 if find(menuID) and menu.visible then
-                    debug.log(menuID)
                     button():triggerEvent("click")
                     tes3.playSound { sound = "Menu Click" }
                     menuLeft = true
