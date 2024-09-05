@@ -31,6 +31,7 @@ local defaults = {
             MenuServiceTraining = true, MenuServiceTravel = true, MenuSpellmaking = true,
         },
     },
+    -- junk = {enable = true, maxSell = 20},
     manualAdd = "",
     multi = { enable = true, },
     persuade = { enable = true, hold = false, holdBribe = false, delay = 0.5, showKey = false },
