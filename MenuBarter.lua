@@ -73,7 +73,7 @@ local function barterChance()
     if isBuying then x = x + math.abs(math.floor(pcTerm - npcTerm)) end
     if not isBuying then x = x + math.abs(math.floor(npcTerm - pcTerm)) end
 
-    if not isBuying and Barter:isBuying() then ---If selling, but offering Drakes
+    if not isBuying and Barter:isBuying() then ---If selling, but offering Gold
         Barter.ChanceText.text = "Gifting"
         Barter.ChanceValue.text = ""
         if cfg.barter.chanceColor then Barter.ChanceText.color = bs.rgb.bsPrettyBlue end
@@ -88,6 +88,8 @@ local function barterChance()
         end
     end
 end
+
+event.register("UITweaks:BarterChance", barterChance)
 
 ---Get merchantOffer and isBuying
 --- @param e calcBarterPriceEventData
@@ -227,7 +229,8 @@ local function markJunk(e)
     data = tes3.player.data
     data.bsJunk = data.bsJunk or {}
     if data.bsJunk[e.item.id] then
-        e.element.contentPath = "Textures\\bsJunkMarker.tga"
+        e.element.contentPath = "Textures\\menu_icon_select_magic.tga"
+        e.element.color = {0.61, 0.28, 0.75}
         e.element:createBlock{id = "bsJunkMarker"}
     end
     e.element:registerBefore("mouseClick", function (uiEvent)
@@ -237,7 +240,8 @@ local function markJunk(e)
                 e.element.contentPath = "Textures\\menu_icon_none.tga"
             else
                 data.bsJunk[e.item.id] = true
-                e.element.contentPath = "Textures\\bsJunkMarker.tga"
+                e.element.contentPath = "Textures\\menu_icon_select_magic.tga"
+                e.element.color = {0.61, 0.28, 0.75}
             end
             e.element:getTopLevelMenu():updateLayout()
             tes3ui.updateInventoryTiles()

@@ -67,6 +67,8 @@ local defaults = {
         ---Barter---
         barterDown = { keyCode = tes3.scanCode.keyDown, isShiftDown = false, isAltDown = false, isControlDown = false, },
         barterUp = { keyCode = tes3.scanCode.keyUp, isShiftDown = false, isAltDown = false, isControlDown = false, },
+        barterUp100 = { keyCode = tes3.scanCode.keyRight, isShiftDown = false, isAltDown = false, isControlDown = false, },
+        barterDown100 = { keyCode = tes3.scanCode.keyLeft, isShiftDown = false, isAltDown = false, isControlDown = false, },
         offer = { keyCode = tes3.scanCode.enter, isShiftDown = false, isAltDown = false, isControlDown = false, },
 
         take = { keyCode = tes3.scanCode.e, isShiftDown = false, isAltDown = false, isControlDown = false, },
@@ -143,6 +145,8 @@ local function registerModConfig()
         local barterKey = cfg:newCat(hotkeys, "Barter")
             cfg:keybind(barterKey, "Barter -", "barterDown")
             cfg:keybind(barterKey, "Barter +", "barterUp")
+            cfg:keybind(barterKey, "Barter -100", "barterDown100")
+            cfg:keybind(barterKey, "Barter +100", "barterUp100")
             cfg:keybind(barterKey, "Confirm Offer", "offer")
 
         local dialogKey = cfg:newCat(hotkeys, "Dialogue")

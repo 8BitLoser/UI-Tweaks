@@ -1,4 +1,5 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
+local bs = require("BeefStranger.UI Tweaks.common")
 ---MenuRestWait Mapped out because it was fun
 ---@class bsMenuRestWait
 local Rest = {}
@@ -13,7 +14,7 @@ function Rest:Wait() if not self:get() then return end return self:child("MenuRe
 function Rest:Rest() if not self:get() then return end return self:child("MenuRestWait_rest_button") end
 function Rest:UntilHealed() if not self:get() then return end return self:child("MenuRestWait_untilhealed_button") end
 function Rest:Close() if not self:get() then return end return self:child("MenuRestWait_cancel_button") end
-function Rest:press(button) if not self:get() then return end button:triggerEvent("mouseClick") tes3.playSound({sound = "Menu Click"}) end
+function Rest:press(button) if not self:get() then return end button:triggerEvent("mouseClick") bs.click() end
 
 function Rest:bsFullRest() return self:child("bsFullRest") end
 
@@ -21,14 +22,14 @@ function Rest:waitUp()
     if not self:ScrollWidget() then return end
     self:ScrollWidget().current = math.min((self:ScrollWidget().current + 1), 23)
     self:Scrollbar():triggerEvent("PartScrollBar_changed")
-    tes3.playSound({sound = "Menu Click"})
+    bs.click()
     self:Update()
 end
 function Rest:waitDown()
     if not self:ScrollWidget() then return end
     self:ScrollWidget().current = math.max((self:ScrollWidget().current - 1), 0)
     self:Scrollbar():triggerEvent("PartScrollBar_changed")
-    tes3.playSound({sound = "Menu Click"})
+    bs.click()
     self:Update()
 end
 function Rest:triggerHeal()

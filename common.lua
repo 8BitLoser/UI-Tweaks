@@ -11,8 +11,10 @@ function bs.inspect(table)
 end
 
 function bs.click()
-    tes3.playSound{sound = "Menu Click"}
+    tes3.worldController.menuClickSound:play()
 end
+
+-- bs.menuClick = tes3.worldController.menuClickSound:play()
 
 function bs.interpolateRGB(color1, color2, factor)
     local r = color1[1] + (color2[1] - color1[1]) * factor

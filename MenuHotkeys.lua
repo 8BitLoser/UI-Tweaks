@@ -140,6 +140,8 @@ local function BarterKeyDown(e)
     if Barter:get() then
         if keyDown(keybind.barterDown) then Barter:BarterDown():triggerEvent("pressed") end
         if keyDown(keybind.barterUp) then Barter:BarterUp():triggerEvent("pressed") end
+        if keyDown(keybind.barterDown100) then mge.macros.haggleLess100() event.trigger("UITweaks:BarterChance") end
+        if keyDown(keybind.barterUp100) then mge.macros.haggleMore100() event.trigger("UITweaks:BarterChance") end
         if key(e, keybind.offer) then Barter:Offer():triggerEvent("mouseClick") bs.click() end
     end
 end

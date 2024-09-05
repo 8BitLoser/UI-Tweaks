@@ -9,7 +9,7 @@ function Inventory:get() return find(reg(id.Inventory)) end
 function Inventory:child(child) if self:get() then return self:get():findChild(child) end end
 function Inventory:ItemTiles() return self:child("PartScrollPane_pane") end
 function Inventory:ItemTilesColumns() return self:ItemTiles().children end ---@return table ItemTiles.children
-
+function Inventory:Item(column, row) return self:ItemTiles().children[column].children[row] end
 
 ---@class bsMenuInventorySelect
 Inventory.Select = {}
