@@ -1,4 +1,5 @@
-local Multi = require("BeefStranger.UI Tweaks.MenuMulti") 
+local Multi = require("BeefStranger.UI Tweaks.MenuMulti")
+local Magic = require("BeefStranger.UI Tweaks.MenuMagic")
 local cfg = require("BeefStranger.UI Tweaks.config")
 local id = require("BeefStranger.UI Tweaks.menuID")
 local sf = string.format
@@ -35,40 +36,100 @@ local function itemTooltip(e)
 end
 event.register(tes3.event.uiObjectTooltip, itemTooltip)
 
-local function effectTooltip()
-    if (find(id.Inventory) and not find(id.Inventory).visible) or not cfg.tooltip.enable then return end
-    if cfg.tooltip.showDur then
-        for _, active in pairs(tes3.mobilePlayer.activeMagicEffectList) do
-            local source = active.instance.source.id
-            local activeInstance = active.effectInstance
-            local helpId = "bsDur" .. source                    ---Generate an id using source
-            local duration = active.duration                    ---Active Effects Duration
-            local effect = tes3.getMagicEffect(active.effectId) ---Get activeEffect effect object
-            if effect and active.duration > 1 then
-                for _, child in pairs(Multi:MagicIcons().children) do
-                    local path = string.gsub(child.contentPath, "Icons\\", "") ---Reformat contentPath to Match Icon Path
-                    if effect.icon == path then                                ---If Effect Icons Path matches Active Icon
-                        child:registerAfter(tes3.uiEvent.help, function(e)
-                            for index, helpChild in pairs(Help:Main().children) do
-                                if Help:Main().children[index].name == "null" then ---All Active Labels Have no name set
-                                    local pts = sf(": %s pts", active.magnitude)   ---Format mag to match Label.text
-                                    local percent = sf(": %s%%", active.magnitude)
-                                    if string.find(helpChild.text, pts, 1, true) or string.find(helpChild.text, percent, 1, true) then
-                                        local elapsed = (activeInstance.timeActive) ---If a label has pts in it
-                                        local remaining = (duration - elapsed)      ---Calc remaining duration
-                                        local desc = (helpChild.text)               ---Copy Label.text
-                                        helpChild.visible = false                   ---Hide Label
-                                        local newDesc = sf("%s | Duration: %s sec", desc, math.floor(remaining))
-                                        if Help:child(helpId) then return end
-                                        ---Create New Label with Duration appended to end
-                                        Help:Main():createLabel { id = helpId, text = newDesc }
-                                    end
-                                end
+-- local function effectTooltip()
+--     if (find(id.Inventory) and not find(id.Inventory).visible) or not cfg.tooltip.enable then return end
+--     if cfg.tooltip.showDur then
+--         for _, active in pairs(tes3.mobilePlayer.activeMagicEffectList) do
+--             local source = active.instance.source.id
+--             local activeInstance = active.effectInstance
+--             local helpId = "BS_" .. source                    ---Generate an id using source
+--             local duration = active.duration                    ---Active Effects Duration
+--             local effect = tes3.getMagicEffect(active.effectId) ---Get activeEffect effect object
+--             if effect and active.duration > 1 and active.duration < 1000 then
+--                 for _, child in pairs(Multi:MagicIcons().children) do
+--                     local path = string.gsub(child.contentPath, "Icons\\", "") ---Reformat contentPath to Match Icon Path
+--                     if effect.icon == path then                                ---If Effect Icons Path matches Active Icon
+--                         child:registerAfter(tes3.uiEvent.help, function(e)
+--                             for index, helpChild in pairs(Help:Main().children) do
+--                                 if Help:Main().children[index].name == "null" then ---All Active Labels Have no name set
+--                                     local pts = sf(": %s pts", active.magnitude)   ---Format mag to match Label.text
+--                                     local percent = sf(": %s%%", active.magnitude)
+--                                     if string.find(helpChild.text, pts, 1, true) or string.find(helpChild.text, percent, 1, true) then
+--                                         local elapsed = (activeInstance.timeActive) ---If a label has pts in it
+--                                         local remaining = (duration - elapsed)      ---Calc remaining duration
+--                                         local desc = (helpChild.text)               ---Copy Label.text
+--                                         helpChild.visible = false                   ---Hide Label
+--                                         local newDesc = sf("%s | Duration: %s sec", desc, math.floor(remaining))
+--                                         if Help:child(helpId) then return end
+--                                         ---Create New Label with Duration appended to end
+--                                         Help:Main():createLabel { id = helpId, text = newDesc }
+--                                     end
+--                                 end
+--                             end
+--                         end)
+--                     end
+--                 end
+--             end
+--         end
+--     end
+-- end
+-- event.register(tes3.event.menuEnter, effectTooltip)
+
+---@param active tes3activeMagicEffect
+local function labelText(active)
+    local name = active.instance.item and active.instance.item.name or active.instance.source.name
+    local duration = active.duration
+    local magnitude = active.magnitude
+    local remainingTime = math.round(duration - active.effectInstance.timeActive, cfg.tooltip.durationDigits)
+
+    return string.format("%s: %s%% | Duration: %s sec", name, magnitude, remainingTime)
+end
+
+local function hideNullLabels()
+    for i, label in ipairs(Help:Main().children) do
+        if label.name == "null" then label.visible = false end
+    end
+end
+
+
+---@param active tes3activeMagicEffect
+---@param effectBlock tes3uiElement
+local function createEffectTooltips(active, effectBlock)
+    local source = active.instance.source
+    local isAbility = source.castType == tes3.spellType.ability
+    local isEnchant = source.objectType == tes3.objectType.enchantment
+    local isConstant = (isEnchant and source.castType == tes3.enchantmentType.constant) or false
+    local isValid = not isAbility and not isConstant and active.duration > 0
+    local effect = tes3.getMagicEffect(active.effectId)
+
+    if effect and isValid then
+        for _, blockChildren in ipairs(effectBlock.children) do
+            if #blockChildren.children > 0 then
+                for _, effectIcon in ipairs(blockChildren.children) do
+                    if string.match(effectIcon.contentPath, effect.icon) then
+                        effectIcon:registerAfter(tes3.uiEvent.help, function (e)
+                            hideNullLabels()
+                            local labelMade = Help:child(tostring(source))
+                            if labelMade then
+                                labelMade.text = labelText(active)
+                            else
+                                Help:get():createLabel({id = tostring(source), text = labelText(active)})
                             end
                         end)
                     end
                 end
             end
+        end
+    end
+end
+
+---@param e menuEnterEventData
+local function effectTooltip(e)
+    if cfg.tooltip.showDur then
+        if (not find(id.Inventory).visible and not find(id.Magic).visible) then return end
+        for _, active in pairs(tes3.mobilePlayer.activeMagicEffectList) do
+            createEffectTooltips(active, Magic:EffectBlock())
+            createEffectTooltips(active, Multi:MagicIconsBox())
         end
     end
 end

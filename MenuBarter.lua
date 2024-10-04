@@ -5,7 +5,6 @@ local id = require("BeefStranger.UI Tweaks.menuID")
 local sf = string.format
 local data
 
-
 ---@param id tes3.gmst
 local function GMST(id) return tes3.findGMST(id).value end
 
@@ -272,12 +271,12 @@ local function BarterActivated(e)
 end
 
 
--- --- @param e loadedEventData
--- local function loadedCallback(e)
---     data = tes3.player.data
---     data.bsJunk = data.bsJunk or {}
--- end
--- event.register(tes3.event.loaded, loadedCallback)
+--- @param e loadedEventData
+local function loadedCallback(e)
+    data = tes3.player.data
+    data.bsJunk = data.bsJunk or {}
+end
+event.register(tes3.event.loaded, loadedCallback)
 
 event.register(tes3.event.uiActivated, BarterActivated, { filter = "MenuBarter", priority = -1000 })
 event.register(tes3.event.calcBarterPrice, calcBarterPriceCallback, {priority = 10000})
