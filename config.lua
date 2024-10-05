@@ -38,7 +38,7 @@ local defaults = {
     repair = { enable = true, duration = 0.1 },
     spellmaking = { enable = true, showGold = true, serviceOnly = true },
     tooltip = { enable = true, charge = true, showDur = true, junk = false, durationDigits = 0},
-    travel = { enable = true, },
+    travel = { enable = true, showKey = true },
     wait = { enable = true, fullRest = true, },
     keybind = {
         enable = true,
@@ -139,6 +139,9 @@ local function registerModConfig()
         tooltip:createYesNoButton({label = "Show Duration on Active Effect Icons", configKey = "showDur"})
         tooltip:createYesNoButton { label = "Show Junk Tooltip", configKey = "junk"}
         tooltip:createSlider { label = "Digits in Seconds remaining", configKey = "durationDigits", min = 0, max = 5, step = 1, jump = 1 }
+
+    local travel = template:createPage{ label = "Travel", config = config.travel }
+        travel:createYesNoButton{label = "Show Hotkeys", configKey = "showKey"}
 
     local waitRest = template:createPage{ label = "Wait/Rest", config = config.wait }
         waitRest:createYesNoButton({ label = "Enable 24 Hour Wait/Rest", configKey = "fullRest", })

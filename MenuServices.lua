@@ -38,15 +38,17 @@ function Services.Travel:Close() if not self:get() then return end return self:c
 function Services.Travel:Hotkey(child) if not self:get() then return end self:child(child):triggerEvent("bsHotkey") end
 local Travel = Services.Travel
 
-
 --- @param e uiActivatedEventData
 local function ServiceTravel(e)
     if cfg.travel.enable then
         for i, destParent in ipairs(Travel:Destination().children) do
             local dest = destParent.children[1]
-            local travelKey = destParent:createLabel{id = i.."TravelKey", text = i..":  "}
+            local travelText = cfg.travel.showKey and i..":  " or ""
+
+            local travelKey = destParent:createLabel{id = i.."TravelKey", text = travelText}
             travelKey.color = { 0.875, 0.788, 0.624 }
             travelKey:register("bsHotkey", function () dest:triggerEvent(tes3.uiEvent.mouseClick) bs.click() end)
+
             destParent:reorderChildren(0, travelKey, 1)
             Travel:get():updateLayout()
         end

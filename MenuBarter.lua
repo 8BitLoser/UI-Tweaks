@@ -5,8 +5,10 @@ local id = require("BeefStranger.UI Tweaks.menuID")
 local sf = string.format
 local data
 
----@param id tes3.gmst
-local function GMST(id) return tes3.findGMST(id).value end
+local CREATURE_TEXT = "Creatures Don't Haggle."
+
+---@param gmst tes3.gmst
+local function GMST(gmst) return tes3.findGMST(gmst).value end
 
 ---MenuBarter Elements Mapped Out. Just cause I wanted to
 ---@class bsBarterMenu
@@ -50,12 +52,12 @@ local function barterChance()
 
     ---If Merchant is a Creature
     if npc.objectType == tes3.objectType.mobileCreature then
-        Barter.ChanceText.text = "Creatures Don't Haggle."
+        Barter.ChanceText.text = CREATURE_TEXT
         Barter.ChanceValue.text = ""
         if playerOffer ~= merchantOffer then
-            Barter.ChanceText.color = bs.rgb.bsNiceRed
+            Barter.ChanceText.color = cfg.barter.chanceColor and bs.rgb.bsNiceRed or bs.rgb.normalColor
         else
-            Barter.ChanceText.color = bs.rgb.bsPrettyBlue
+            Barter.ChanceText.color = cfg.barter.chanceColor and bs.rgb.bsPrettyBlue or bs.rgb.normalColor
         end
         return
     end
@@ -172,9 +174,9 @@ function Barter.showBarterChance()
         Barter:BarterBlock():reorderChildren(2, Barter.ChanceBlock, -1)
 
         if Barter:getTrader().objectType == tes3.objectType.mobileCreature then
-            Barter.ChanceText.text = "Creatures Don't Haggle."
+            Barter.ChanceText.text = CREATURE_TEXT
             Barter.ChanceValue.text = ""
-            Barter.ChanceText.color = bs.rgb.bsNiceRed
+            Barter.ChanceText.color = cfg.barter.chanceColor and bs.rgb.bsNiceRed or bs.rgb.normalColor
             return
         end
         Barter:get():updateLayout()
