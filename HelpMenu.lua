@@ -26,13 +26,31 @@ local function chargeCost(e)
     end
 end
 
+---NEED TO ACCOUNT FOR NO UIEXP
+--- @param e uiObjectTooltipEventData
+local function totalWeight(e)
+    if not tes3ui.menuMode() then return end
+    local amount = 0
+    if e.count == 0 and not e.reference then
+        amount = tes3.getItemCount { reference = tes3.player, item = e.object }
+    end
+    if e.count > 0 then
+        amount = e.count
+    end
+    if e.tooltip:findChild("UIEXP_Tooltip_IconWeightBlock") and amount > 1 then
+        local weight = e.tooltip:findChild("UIEXP_Tooltip_IconWeightBlock").children[2]
+        weight.text = string.format("%.2f/%.2f", e.object.weight, e.object.weight * amount)
+        e.tooltip:getContentElement().minWidth = 146
+    end
+end
+
 ---Add Charge Cost to Tooltip
 --- @param e uiObjectTooltipEventData
 local function itemTooltip(e)
+    debug.log("BEEP")
     if not cfg.tooltip.enable then return end
-    if cfg.tooltip.charge then
-        chargeCost(e)
-    end
+    if cfg.tooltip.charge then chargeCost(e) end
+    if cfg.tooltip.totalWeight then totalWeight(e) end
 end
 event.register(tes3.event.uiObjectTooltip, itemTooltip)
 
@@ -58,8 +76,9 @@ local function createEffectTooltips(active, effectBlock)
     local source = active.instance.source
     local isAbility = source.castType == tes3.spellType.ability
     local isEnchant = source.objectType == tes3.objectType.enchantment
+    local isDisease = source.castType == tes3.spellType.disease or source.castType == tes3.spellType.blight
     local isConstant = (isEnchant and source.castType == tes3.enchantmentType.constant) or false
-    local isValid = not isAbility and not isConstant and active.duration > 0
+    local isValid = not isAbility and not isConstant and active.duration > 1 and not isDisease
     local effect = tes3.getMagicEffect(active.effectId)
 
     if effect and isValid then
@@ -83,16 +102,26 @@ local function createEffectTooltips(active, effectBlock)
     end
 end
 
+
+
 ---@param e menuEnterEventData
 local function effectTooltip(e)
-    if cfg.tooltip.showDur then
-        if (not find(id.Inventory).visible and not find(id.Magic).visible) then return end
-        for _, active in pairs(tes3.mobilePlayer.activeMagicEffectList) do
-            createEffectTooltips(active, Magic:EffectBlock())
-            createEffectTooltips(active, Multi:MagicIconsBox())
-        end
+    -- if cfg.tooltip.showDur then
+    local inv = find(id.Inventory)
+
+    if not tes3.isCharGenFinished() or not inv or not inv.visible and not Magic:get() or not Magic:get().visible then return end
+    for _, active in pairs(tes3.mobilePlayer.activeMagicEffectList) do
+        createEffectTooltips(active, Magic:EffectBlock())
+        createEffectTooltips(active, Multi:MagicIconsBox())
     end
+    -- end
 end
-event.register(tes3.event.menuEnter, effectTooltip)
+
+---@param e menuEnterEventData
+local function menuEnter(e)
+    if cfg.tooltip.showDur then effectTooltip(e) end
+end
+
+event.register(tes3.event.menuEnter, menuEnter)
 
 return Help

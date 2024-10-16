@@ -28,8 +28,6 @@ local close = {
     [id.Persuasion] = function() return Persuasion:Close() end,
     [id.Repair] = function()return Repair:Close() end,
     [id.InventorySelect] = function() return Inventory.Select:Close() end,
-    ["bsTransferEnchant"] = function() return TransferEnchant:Close() end,
-    ["bsItemSelect"] = function() return TransferEnchant.Select:Close() end,
     [id.ServiceRepair] = function()return Service.Repair:Close() end,
     [id.ServiceTraining] = function() return Service.Train:Close() end,
     [id.ServiceTravel] = function() return Service.Travel:Close() end,
@@ -38,6 +36,11 @@ local close = {
     [id.ServiceSpells] = function() return Service.Spells:Close() end,
     [id.SetValues] = function() return Spellmaking.SetValues:Close() end,
     [id.Spellmaking] = function() return Spellmaking:Close() end,
+
+    ["bsTransferEnchant"] = function() return TransferEnchant:Close() end,
+    ["bsItemSelect"] = function() return TransferEnchant.Select:Close() end,
+    ["BS_DecipherScroll"] = function() return find("BS_DecipherScroll"):findChild("Close") end,
+    ["BS_IdentifyMenu"] = function() return find("BS_IdentifyMenu"):findChild("close") end,
 }
 
 ---Work around for MenuInventory being not visible whenever MenuOptions is activated

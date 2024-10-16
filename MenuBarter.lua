@@ -197,8 +197,8 @@ function Barter.sellJunk()
         while cycle < cfg.barter.maxSell do
             local junkItem = nil
             -- Iterate through inventory in reverse order
-            for i = #Inventory:ItemTilesColumns(), 1, -1 do
-                local junkMarker = Inventory:ItemTilesColumns()[i]:findChild("bsJunkMarker")
+            for i = #Inventory:ItemTileColumns(), 1, -1 do
+                local junkMarker = Inventory:ItemTileColumns()[i]:findChild("bsJunkMarker")
                 if junkMarker then
                     junkItem = junkMarker.parent
                     break

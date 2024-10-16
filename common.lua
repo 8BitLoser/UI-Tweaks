@@ -2,12 +2,38 @@ local bs = {
     UpdateBarter = "bsUpdateBarter",
     keyStillDown = "bsKeyStillDown"
 }
+mwse.log("UITweaks: common SQUUZE")
+---@return bsUITweaksPData playerData
+function bs.initData()
+    local data = tes3.player.data
+    ---@class bsUITweaksPData
+    data.UITweaks = data.UITweaks or {}
+    data.UITweaks.lookedAt = data.UITweaks.lookedAt or {}
+    return tes3.player.data.UITweaks
+end
+
+---@param id tes3.gmst
+function bs.GMST(id)
+    return tes3.findGMST(id).value
+end
 
 function bs.inspect(table)
     local inspect = require("inspect").inspect
-    local bsF = debug.getinfo(1, "nSl")
-    local bsC = debug.getinfo(2, "nSl")
     mwse.log("%s", inspect(table))
+end
+
+---@param colorATable mwseColorATable
+---@return number[] rgb
+---@return number alpha
+function bs.color(colorATable)
+    return {colorATable.r,colorATable.g,colorATable.b}, colorATable.a
+end
+
+---@param color number[]
+---@param alpha number
+---@return mwseColorATable
+function bs.colorTable(color, alpha)
+    return {r = color[1], g = color[2], b = color[3], a = alpha}
 end
 
 function bs.click()

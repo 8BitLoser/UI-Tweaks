@@ -31,13 +31,16 @@ local defaults = {
             MenuServiceTraining = true, MenuServiceTravel = true, MenuSpellmaking = true,
         },
     },
+    hitChance = {enable = true, updateRate = 0.25, posX = 0.35, posY = 0.65, color = bs.colorTable(bs.rgb.blackColor, 0.8)},
+    inv = {enable = true, potionHighlight = true},
     -- junk = {enable = true, maxSell = 20},
     manualAdd = "",
+    magic = {enable = true, highlightColor = bs.colorTable(bs.rgb.bsPrettyBlue, 1)},
     multi = { enable = true, },
     persuade = { enable = true, hold = false, holdBribe = false, delay = 0.5, showKey = false },
     repair = { enable = true, duration = 0.1 },
     spellmaking = { enable = true, showGold = true, serviceOnly = true },
-    tooltip = { enable = true, charge = true, showDur = true, junk = false, durationDigits = 0},
+    tooltip = { enable = true, charge = true, showDur = true, junk = false, durationDigits = 0, totalWeight = true},
     travel = { enable = true, showKey = true },
     wait = { enable = true, fullRest = true, },
     keybind = {
@@ -74,7 +77,8 @@ local defaults = {
 
         take = { keyCode = tes3.scanCode.e, isShiftDown = false, isAltDown = false, isControlDown = false, },
     },
-    take = { enable = true }
+    take = { enable = true },
+    DEBUG = false
 }
 local function updateBarter() event.trigger(bs.UpdateBarter) end
 
@@ -86,18 +90,22 @@ local function registerModConfig()
     template:saveOnClose(configPath, config)
 
     local settings = template:createPage({ label = "UI Tweaks Features"})
+        local DEBUG = settings:createButton{buttonText = "Reload", label ="[DEBUG]Reload Files BEE"}
+        DEBUG.callback = function (self) event.trigger("UITweaksReloadFile") end
         -- cfg.settings:createYesNoButton { label = "Enable HUD Tweaks", configKey = "enable", config = config.multi}
         settings:createYesNoButton { label = "Enable Barter Tweaks", configKey = "enable", callback = updateBarter, config = config.barter }
-        settings:createYesNoButton { label = "Enable Dialogue", configKey = "enable", config = config.dialog}
-        settings:createYesNoButton { label = "Enable Enchantment", configKey = "enable", config = config.enchant}
-        settings:createYesNoButton { label = "Enable Hotkeys", configKey = "enable", config = config.keybind}
-        settings:createYesNoButton { label = "Enable Persuasion", configKey = "enable", config = config.persuade}
-        settings:createYesNoButton { label = "Enable QuickEsc", configKey = "enable", config = config.escape}
-        settings:createYesNoButton { label = "Enable QuickTake", configKey = "enable", config = config.take}
-        settings:createYesNoButton { label = "Enable Repair", configKey = "enable", config = config.repair}
-        settings:createYesNoButton { label = "Enable Spellmaking", configKey = "enable", config = config.spellmaking}
-        settings:createYesNoButton { label = "Enable Tooltip", configKey = "enable", config = config.tooltip}
-        settings:createYesNoButton { label = "Enable Travel", configKey = "enable", config = config.travel}
+        settings:createYesNoButton { label = "Enable Dialogue", configKey = "enable", config = config.dialog }
+        settings:createYesNoButton { label = "Enable Enchantment", configKey = "enable", config = config.enchant }
+        settings:createYesNoButton { label = "Enable Hit Chance", configKey = "enable", config = config.hitChance }
+        settings:createYesNoButton { label = "Enable Hotkeys", configKey = "enable", config = config.keybind }
+        settings:createYesNoButton { label = "Enable Persuasion", configKey = "enable", config = config.persuade }
+        settings:createYesNoButton { label = "Enable Magic", configKey = "enable", config = config.magic }
+        settings:createYesNoButton { label = "Enable QuickEsc", configKey = "enable", config = config.escape }
+        settings:createYesNoButton { label = "Enable QuickTake", configKey = "enable", config = config.take }
+        settings:createYesNoButton { label = "Enable Repair", configKey = "enable", config = config.repair }
+        settings:createYesNoButton { label = "Enable Spellmaking", configKey = "enable", config = config.spellmaking }
+        settings:createYesNoButton { label = "Enable Tooltip", configKey = "enable", config = config.tooltip }
+        settings:createYesNoButton { label = "Enable Travel", configKey = "enable", config = config.travel }
         settings:createYesNoButton { label = "Enable Wait/Rest", configKey = "enable", config = config.wait }
 
     local barter = template:createPage{ label = "Barter", config = config.barter }
@@ -119,6 +127,26 @@ local function registerModConfig()
     local enchant = template:createPage{ label = "Enchantment", config = config.enchant }
         enchant:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
 
+    local hitChance = template:createPage{label = "Hit Chance", config = config.hitChance, showReset = true, defaultConfig = defaults.hitChance}
+        -- hitChance:createYesNoButton({label = "Show Hit Chance", configKey = "enable"})
+        hitChance:createSlider({label = "Update Rate", min = 0.01, max = 5, configKey = "updateRate", decimalPlaces = 2, step = 0.01, jump = 0.1})
+        local color = hitChance:createColorPicker({label = "Background Color", configKey = "color", alpha = true})
+        color.indent = 0
+        hitChance:createCategory({ label = "Position: X: 0 is Left Edge, Y: 0 is Top Edge"})
+        hitChance:createSlider({label = "Position X", configKey = "posX", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1})
+        hitChance:createSlider({label = "Position Y", configKey = "posY", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1})
+
+    local inv = template:createPage{label = "Inventory", config = config.inv, showReset = true, defaultConfig = defaults}
+        inv:createYesNoButton({label = "Hightlight Potions by Type", configKey = "potionHighlight"})
+
+    local magic = template:createPage{label = "Magic", config = config.magic, showReset = true, defaultConfig = defaults}
+        magic:createColorPicker({label = "New Spell/Enchant Hightlight Color", configKey = "highlightColor", alpha = true})
+        magic:createButton({label = "Reset New Magic List", inGameOnly = true, buttonText = "Reset",callback =
+            function (self)
+                bs.initData().lookedAt = {}
+                tes3.messageBox("New Spell/Enchant List Reset")
+            end})
+
     local persuade = template:createPage{ label = "Persuasion", config = config.persuade }
         persuade:createYesNoButton({label = "Show Keybinds", configKey = "showKey"})
         persuade:createYesNoButton({label = "Hold Key to Quickly Persuade", configKey = "hold"})
@@ -138,6 +166,7 @@ local function registerModConfig()
         tooltip:createYesNoButton({label = "Show Charge Cost of Enchantments", configKey = "charge"})
         tooltip:createYesNoButton({label = "Show Duration on Active Effect Icons", configKey = "showDur"})
         tooltip:createYesNoButton { label = "Show Junk Tooltip", configKey = "junk"}
+        tooltip:createYesNoButton { label = "Show Stacks Total Weight", configKey = "totalWeight"}
         tooltip:createSlider { label = "Digits in Seconds remaining", configKey = "durationDigits", min = 0, max = 5, step = 1, jump = 1 }
 
     local travel = template:createPage{ label = "Travel", config = config.travel }
@@ -184,49 +213,6 @@ local function registerModConfig()
             cfg:keybind(fullRestKey, "Rest/Wait 24hr", "day")
 
 
-    -- cfg.quickEsc = template:createExclusionsPage({
-    --     label = "QuickEsc",
-    --     config = config.escape, configKey = "menus",
-    --     leftListLabel = "Enabled", rightListLabel = "Disabled",
-    --     showReset = true,
-    --     filters = {{
-    --         label = "Menus", callback = function ()
-    --             local menus = {}
-    --             for key, value in pairs(defaults.escape.menus) do table.insert(menus, key) end
-    --             table.sort(menus)
-    --             return menus
-    --         end
-    --     }},
-    -- })
-
-    -- cfg.debug = template:createPage { label = "Advanced" }
-    -- cfg.debug:createTextField { label = "Add MenuID", configKey = "manualAdd", callback = function(self)
-    --     debug.log(self.variable.value)
-    --     config.escape.menus[self.variable.value] = true
-    --     tes3.messageBox("%s added to Escape list", self.variable.value)
-    --     bs.inspect(config.escape.menus)
-    -- end }
-    -- cfg.debug:createTextField { label = "Remove MenuID", configKey = "manualAdd", callback = function(self)
-    --     debug.log(self.variable.value)
-    --     config.escape.menus[self.variable.value] = nil
-    --     tes3.messageBox("%s removed from Escape list", self.variable.value)
-    --     bs.inspect(config.escape.menus)
-    -- end }
-
-    -- cfg.test = template:createExclusionsPage({
-    --     label = "Debug Menus",
-    --     config = config.escape,
-    --     configKey = "menus",
-    --     filters = {
-    --         {label = "Menus", callback = function ()
-    --             local menus = {}
-    --             for key, value in pairs(menu) do table.insert(menus, value) end
-    --             table.sort(menus)
-    --             return menus
-    --         end}
-    --     },
-    --     showReset = true,
-    -- })
     template:register()
 end
 event.register(tes3.event.modConfigReady, registerModConfig)
@@ -240,12 +226,5 @@ end
 function cfg:keybind(page, label, key)
     return page:createKeyBinder({ label = label, configKey = key })
 end
--- event.register("keyDown", function (e)
---     tes3.messageBox("Clearing UITweaks Config")
---     config = {}
--- end, {filter = tes3.scanCode.i})
--- event.register("keyDown", function (e)
---     bs.inspect(config.escapeMenus)
--- end, {filter = tes3.scanCode.q})
 
 return config

@@ -47,12 +47,15 @@ local function uiActivatedCallback(e)
         keybind = string.gsub(keybind, "Numpad", "Num")
         local keyLabel = button:createLabel{id = "bs", text = keybind..":"}
         keyLabel.color = { 0.875, 0.788, 0.624 }
-        keyLabel:autoSize()
+        keyLabel.autoHeight = true
+        keyLabel.autoWidth = true
         keyLabel.borderRight = 5
         keyLabel.parent:reorderChildren(0, keyLabel, -1)
     end
-    Persuasion:get():autoSize()
-    Persuasion:ServiceList():autoSize()
+    Persuasion:get().autoHeight = true
+    Persuasion:get().autoWidth = true
+    Persuasion:ServiceList().autoHeight = true
+    Persuasion:ServiceList().autoWidth = true
     Persuasion:get():updateLayout()
     Persuasion:get():updateLayout()--Needs 2 Updates else auto sizing glitches
 end
