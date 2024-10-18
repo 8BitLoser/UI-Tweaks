@@ -1,7 +1,9 @@
-local Multi = require("BeefStranger.UI Tweaks.MenuMulti")
-local Magic = require("BeefStranger.UI Tweaks.MenuMagic")
+local Multi = require("BeefStranger.UI Tweaks.menu.MenuMulti")
+local Magic = require("BeefStranger.UI Tweaks.menu.MenuMagic")
+local Contents = require("BeefStranger.UI Tweaks.menu.MenuContents")
 local cfg = require("BeefStranger.UI Tweaks.config")
-local id = require("BeefStranger.UI Tweaks.menuID")
+local bs = require("BeefStranger.UI Tweaks.common")
+local id = require("BeefStranger.UI Tweaks.ID")
 local sf = string.format
 local find = tes3ui.findMenu
 
@@ -13,9 +15,22 @@ function Help:Main() return self:child("PartHelpMenu_main") end
 function Help:Enchant() return self:child("HelpMenu_enchantmentContainer") end
 function Help:Effect() return self:child("effect") end
 
+---@class bsUITweaksTooltips
+local this = {}
+
 ---Add Charge Cost to Tooltip
 --- @param e uiObjectTooltipEventData
-local function chargeCost(e)
+local function onTooltipCreation(e)
+    -- debug.log("BEEP")
+    if not cfg.tooltip.enable then return end
+    if cfg.tooltip.charge then this.chargeCost(e) end
+    if cfg.tooltip.totalWeight then this.totalWeight(e) end
+end
+event.register(tes3.event.uiObjectTooltip, onTooltipCreation)
+
+---Add Charge Cost to Tooltip
+--- @param e uiObjectTooltipEventData
+function this.chargeCost(e)
     local enchant = e.object.enchantment
     if enchant and enchant.castType ~= tes3.enchantmentType.constant then
         local baseCost = enchant.chargeCost
@@ -28,34 +43,23 @@ end
 
 ---NEED TO ACCOUNT FOR NO UIEXP
 --- @param e uiObjectTooltipEventData
-local function totalWeight(e)
-    if not tes3ui.menuMode() then return end
-    local amount = 0
-    if e.count == 0 and not e.reference then
-        amount = tes3.getItemCount { reference = tes3.player, item = e.object }
+function this.totalWeight(e)
+    if not tes3ui.menuMode() or e.reference then return end
+    local count = e.count
+    if Contents:visible() and e.count < 1 then
+        count = tes3.getItemCount({item = e.object, reference = Contents:Reference()})
     end
-    if e.count > 0 then
-        amount = e.count
-    end
-    if e.tooltip:findChild("UIEXP_Tooltip_IconWeightBlock") and amount > 1 then
+
+    if e.tooltip:findChild("UIEXP_Tooltip_IconWeightBlock") and count > 1 then
         local weight = e.tooltip:findChild("UIEXP_Tooltip_IconWeightBlock").children[2]
-        weight.text = string.format("%.2f/%.2f", e.object.weight, e.object.weight * amount)
-        e.tooltip:getContentElement().minWidth = 146
+        weight.text = string.format("%.2f/%.2f", e.object.weight, e.object.weight * count)
+        e.tooltip:getContentElement().minWidth = 155
     end
 end
 
----Add Charge Cost to Tooltip
---- @param e uiObjectTooltipEventData
-local function itemTooltip(e)
-    debug.log("BEEP")
-    if not cfg.tooltip.enable then return end
-    if cfg.tooltip.charge then chargeCost(e) end
-    if cfg.tooltip.totalWeight then totalWeight(e) end
-end
-event.register(tes3.event.uiObjectTooltip, itemTooltip)
 
 ---@param active tes3activeMagicEffect
-local function labelText(active)
+function this.labelText(active)
     local name = active.instance.item and active.instance.item.name or active.instance.source.name
     local duration = active.duration
     local magnitude = active.magnitude
@@ -64,7 +68,7 @@ local function labelText(active)
     return string.format("%s: %s%% | Duration: %s sec", name, magnitude, remainingTime)
 end
 
-local function hideNullLabels()
+function this.hideNullLabels()
     for i, label in ipairs(Help:Main().children) do
         if label.name == "null" then label.visible = false end
     end
@@ -72,7 +76,7 @@ end
 
 ---@param active tes3activeMagicEffect
 ---@param effectBlock tes3uiElement
-local function createEffectTooltips(active, effectBlock)
+function this.createEffectTooltips(active, effectBlock)
     local source = active.instance.source
     local isAbility = source.castType == tes3.spellType.ability
     local isEnchant = source.objectType == tes3.objectType.enchantment
@@ -87,12 +91,12 @@ local function createEffectTooltips(active, effectBlock)
                 for _, effectIcon in ipairs(blockChildren.children) do
                     if string.match(effectIcon.contentPath, effect.icon) then
                         effectIcon:registerAfter(tes3.uiEvent.help, function (e)
-                            hideNullLabels()
+                            this.hideNullLabels()
                             local labelMade = Help:child(tostring(source))
                             if labelMade then
-                                labelMade.text = labelText(active)
+                                labelMade.text = this.labelText(active)
                             else
-                                Help:get():createLabel({id = tostring(source), text = labelText(active)})
+                                Help:get():createLabel({id = tostring(source), text = this.labelText(active)})
                             end
                         end)
                     end
@@ -105,23 +109,20 @@ end
 
 
 ---@param e menuEnterEventData
-local function effectTooltip(e)
-    -- if cfg.tooltip.showDur then
+function this.effectTooltip(e)
     local inv = find(id.Inventory)
 
     if not tes3.isCharGenFinished() or not inv or not inv.visible and not Magic:get() or not Magic:get().visible then return end
     for _, active in pairs(tes3.mobilePlayer.activeMagicEffectList) do
-        createEffectTooltips(active, Magic:EffectBlock())
-        createEffectTooltips(active, Multi:MagicIconsBox())
+        this.createEffectTooltips(active, Magic:EffectBlock())
+        this.createEffectTooltips(active, Multi:MagicIconsBox())
     end
-    -- end
 end
 
 ---@param e menuEnterEventData
 local function menuEnter(e)
-    if cfg.tooltip.showDur then effectTooltip(e) end
+    if cfg.tooltip.showDur then this.effectTooltip(e) end
 end
-
 event.register(tes3.event.menuEnter, menuEnter)
 
 return Help

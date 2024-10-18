@@ -1,5 +1,4 @@
 local bs = require("BeefStranger.UI Tweaks.common")
-local menu = require("BeefStranger.UI Tweaks.menuID")
 local configPath = "UI Tweaks"
 ---@class bsDEBUGUITweaksMCM
 local cfg = {}
@@ -16,6 +15,7 @@ local defaults = {
         enableJunk = true,
         maxSell = 30,
     },
+    contents = {enable = true, totalValue = false, showOwner = false},
     dialog = { enable = true, showKey = false, showClass = false },
     enchant = { enable = true, showGold = true },
     escape = {
@@ -40,7 +40,7 @@ local defaults = {
     persuade = { enable = true, hold = false, holdBribe = false, delay = 0.5, showKey = false },
     repair = { enable = true, duration = 0.1 },
     spellmaking = { enable = true, showGold = true, serviceOnly = true },
-    tooltip = { enable = true, charge = true, showDur = true, junk = false, durationDigits = 0, totalWeight = true},
+    tooltip = { enable = true, charge = true, showDur = true, junk = false, durationDigits = 0, totalWeight = true, },
     travel = { enable = true, showKey = true },
     wait = { enable = true, fullRest = true, },
     keybind = {
@@ -93,7 +93,8 @@ local function registerModConfig()
         local DEBUG = settings:createButton{buttonText = "Reload", label ="[DEBUG]Reload Files BEE"}
         DEBUG.callback = function (self) event.trigger("UITweaksReloadFile") end
         -- cfg.settings:createYesNoButton { label = "Enable HUD Tweaks", configKey = "enable", config = config.multi}
-        settings:createYesNoButton { label = "Enable Barter Tweaks", configKey = "enable", callback = updateBarter, config = config.barter }
+        settings:createYesNoButton { label = "Enable Barter", configKey = "enable", callback = updateBarter, config = config.barter }
+        settings:createYesNoButton { label = "Enable Contents", configKey = "enable", config = config.contents }
         settings:createYesNoButton { label = "Enable Dialogue", configKey = "enable", config = config.dialog }
         settings:createYesNoButton { label = "Enable Enchantment", configKey = "enable", config = config.enchant }
         settings:createYesNoButton { label = "Enable Hit Chance", configKey = "enable", config = config.hitChance }
@@ -117,8 +118,11 @@ local function registerModConfig()
             barter_stats:createYesNoButton { label = "Show Player Stats", configKey = "showPlayerStats", callback = updateBarter }
         local barter_junk = barter:createCategory({label = "Junk"})
             barter_junk:createYesNoButton { label = "Enable Sell Junk Button", configKey = "enableJunk"}
-            barter_junk:createSlider { label = "Max Amount of Junk to Barter", configKey = "maxSell",
-            min = 1, max = 100, step = 1, jump = 1 }
+            barter_junk:createSlider { label = "Max Amount of Junk to Barter", configKey = "maxSell", min = 1, max = 100, step = 1, jump = 1 }
+
+    local contents = template:createPage({label = "Contents", config = config.contents})
+        contents:createYesNoButton({label = "Show Total Value of Containers Contents", configKey = "totalValue"})
+        contents:createYesNoButton({label = "Show Owner and Ownership Access in Title Bar", configKey = "showOwner"})
 
     local dialog = template:createPage{ label = "Dialogue", config = config.dialog }
         dialog:createYesNoButton({label = "Show NPC Class", configKey = "showClass"})

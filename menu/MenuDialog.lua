@@ -1,5 +1,5 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
-local id = require("BeefStranger.UI Tweaks.menuID")
+local id = require("BeefStranger.UI Tweaks.ID")
 local bs = require("BeefStranger.UI Tweaks.common")
 local sf = string.format
 local keyName = tes3.getKeyName

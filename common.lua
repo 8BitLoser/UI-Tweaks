@@ -2,7 +2,6 @@ local bs = {
     UpdateBarter = "bsUpdateBarter",
     keyStillDown = "bsKeyStillDown"
 }
-mwse.log("UITweaks: common SQUUZE")
 ---@return bsUITweaksPData playerData
 function bs.initData()
     local data = tes3.player.data
@@ -10,6 +9,23 @@ function bs.initData()
     data.UITweaks = data.UITweaks or {}
     data.UITweaks.lookedAt = data.UITweaks.lookedAt or {}
     return tes3.player.data.UITweaks
+end
+
+function bs.findText(element, string)
+    for _, child in pairs(element.children) do
+        local childText = child.text or ""
+        if childText:lower():find(string:lower(), 1, true) then
+            return child
+        else
+            if #child.children > 0 then
+                local found = child:findText(string)
+                if found then
+                    return found
+                end
+            end
+        end
+    end
+    return nil
 end
 
 ---@param id tes3.gmst

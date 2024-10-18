@@ -1,7 +1,7 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 local bs = require("BeefStranger.UI Tweaks.common")
-local Inventory = require("BeefStranger.UI Tweaks.MenuInventory")
-local id = require("BeefStranger.UI Tweaks.menuID")
+local Inventory = require("BeefStranger.UI Tweaks.menu.MenuInventory")
+local id = require("BeefStranger.UI Tweaks.ID")
 local sf = string.format
 local data
 

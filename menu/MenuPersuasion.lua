@@ -1,19 +1,21 @@
+local bs = require("BeefStranger.UI Tweaks.common")
 local cfg = require("BeefStranger.UI Tweaks.config")
-local id = require("BeefStranger.UI Tweaks.menuID")
+local id = require("BeefStranger.UI Tweaks.ID")
 
 ---@class bsMenuPersuasion
 local Persuasion = {}
-function Persuasion:Admire() return self:ServiceList().children[1]:findText("admire") end
-function Persuasion:Bribe10() return self:ServiceList().children[4]:findText("bribe 10") end
-function Persuasion:Bribe100() return self:ServiceList().children[5]:findText("bribe 100") end
-function Persuasion:Bribe1000() return self:ServiceList().children[6]:findText("bribe 1000") end
-function Persuasion:Intimidate() return self:ServiceList().children[2]:findText("intimidate") end
-function Persuasion:Taunt() return self:ServiceList().children[3]:findText("taunt") end
+function Persuasion:Admire() return bs.findText(self:ServiceList().children[1],"admire") end
+function Persuasion:Intimidate() return bs.findText(self:ServiceList().children[2],"intimidate") end
+function Persuasion:Taunt() return bs.findText(self:ServiceList().children[3], "taunt") end
+function Persuasion:Bribe10() return bs.findText(self:ServiceList().children[4],"bribe 10") end
+function Persuasion:Bribe100() return bs.findText(self:ServiceList().children[5],"bribe 100") end
+function Persuasion:Bribe1000() return bs.findText(self:ServiceList().children[6],"bribe 1000") end
 function Persuasion:child(child) if not self:get() then return end return self:get():findChild(child) end
 function Persuasion:Close() if not self:get() then return end return self:child("MenuPersuasion_Okbutton") end
 function Persuasion:get() return tes3ui.findMenu("MenuPersuasion") end
 function Persuasion:ServiceList() if not self:get() then return end return self:child("MenuPersuasion_ServiceList") end
 function Persuasion:Visible() if self:get() and self:get().visible then return true else return false end end
+
 
 --- @param name "Admire"|"Intimidate"|"Taunt"|"Bribe10"|"Bribe100"|"Bribe1000"
 function Persuasion:trigger(name)

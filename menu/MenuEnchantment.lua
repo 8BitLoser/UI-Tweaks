@@ -1,5 +1,5 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
-local id = require("BeefStranger.UI Tweaks.menuID")
+local id = require("BeefStranger.UI Tweaks.ID")
 local ts = tostring
 
 ---@class bsMenuEnchantment

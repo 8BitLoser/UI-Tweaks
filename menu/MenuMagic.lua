@@ -1,6 +1,6 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 local bs = require("BeefStranger.UI Tweaks.common")
-local id = require("BeefStranger.UI Tweaks.menuID")
+local id = require("BeefStranger.UI Tweaks.ID")
 
 ---@class bsMenuMagic
 local Magic = {}

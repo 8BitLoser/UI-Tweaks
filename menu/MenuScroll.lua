@@ -1,4 +1,4 @@
-local id = require("BeefStranger.UI Tweaks.menuID")
+local id = require("BeefStranger.UI Tweaks.ID")
 local find = tes3ui.findMenu
 local reg = tes3ui.registerID
 
