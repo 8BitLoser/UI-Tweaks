@@ -33,20 +33,31 @@ function Dialog.click(child)
 end
 
 local function showHotkey()
-    timer.delayOneFrame(function() ---text doesnt update unless you delay it
-        if cfg.dialog.showKey and cfg.keybind.enable then
-            if not Dialog:get() then return end
-            for _, button in pairs(Dialog:GetService().children) do
-                if button.visible then
-                    for setting, keybind in pairs(cfg.keybind) do
-                        if string.find(button.name, setting, 1, true) then
-                            button.text = sf("%s (%s)", button.text, keyName(keybind.keyCode))
+    if cfg.dialog.showKey and cfg.keybind.enable then
+        if Dialog:child("Hotkeys") then return end
+        local hotkeys = Dialog:Persuasion().parent.parent:createBlock({ id = "Hotkeys" })
+        hotkeys.absolutePosAlignX = 1
+        -- hotkeys.autoWidth = true
+        hotkeys.height = 200
+        hotkeys.width = 30
+
+        hotkeys.flowDirection = tes3.flowDirection.topToBottom
+        for _, button in pairs(Dialog:GetService().children) do
+            if button.visible then
+                for setting, keybind in pairs(cfg.keybind) do
+                    if string.find(button.name, setting, 1, true) then
+                        local text = sf("(%s)", keyName(keybind.keyCode))
+                        hotkeys:createLabel({ id = keyName(keybind.keyCode), text = text })
+
+                        local size = tes3ui.textLayout.getTextExtent({text = sf("(%s)", keyName(keybind.keyCode))})
+                        if hotkeys.width < size then
+                            hotkeys.width = size
                         end
                     end
                 end
             end
         end
-    end, timer.real)
+    end
 end
 
 local function showClass()
@@ -63,23 +74,10 @@ end
 local function onDialog(e)
     if not cfg.dialog.enable then return end
     if cfg.dialog.showKey and cfg.keybind.enable then
-        showHotkey()
+        if e.newlyCreated then
+            e.element:registerAfter(tes3.uiEvent.update, showHotkey)
+        end
     end
-    -- timer.delayOneFrame(function() ---text doesnt update unless you delay it
-    --     if cfg.dialog.showKey and cfg.keybind.enable then
-    --         if not Dialog:get() then return end
-    --         for _, button in pairs(Dialog:GetService().children) do
-    --             if button.visible then
-    --                 for setting, keybind in pairs(cfg.keybind) do
-    --                     if string.find(button.name, setting, 1, true) then
-    --                         button.text = sf("%s (%s)", button.text, keyName(keybind.keyCode))
-    --                     end
-    --                 end
-    --             end
-    --         end
-    --         -- Dialog:get():updateLayout()
-    --     end
-    -- end, timer.real)
 
     if cfg.dialog.showClass then
         showClass()

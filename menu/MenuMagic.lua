@@ -11,8 +11,15 @@ function Magic:EffectRow(rowNumber) return self:child("MagicMenu_t_icon_row_"..r
 function Magic:EffectRow1() return self:child("MagicMenu_t_icon_row_1") end
 function Magic:EffectRow2() return self:child("MagicMenu_t_icon_row_2") end
 function Magic:EffectRow3() return self:child("MagicMenu_t_icon_row_3") end
-function Magic:Enchants() return self:child("MagicMenu_item_names") end
+function Magic:EnchantNameIndex(index) return self:EnchantNames().children[index] end
+function Magic:EnchantNames() return self:child("MagicMenu_item_names") end
+function Magic:Enchants() return self:child("MagicMenu_item_layout") end
+function Magic:getObject(index) return self:EnchantNames().children[index]:getPropertyObject("MagicMenu_object") end
+function Magic:getObjectData(index) return self:EnchantNames().children[index]:getPropertyObject("MagicMenu_extra", "tes3itemData") end
 function Magic:Spells() return self:child("MagicMenu_spell_names") end
+function Magic:EnchantTitle() return self:child("MagicMenu_item_title").parent end
+
+
 
 --- @param e menuEnterEventData
 local function magicHighlight(e)
@@ -26,7 +33,7 @@ local function magicHighlight(e)
                     spellLabel.color = bs.color(cfg.magic.highlightColor)
                 end
             end
-            for i, enchantLabel in ipairs(Magic:Enchants().children) do
+            for i, enchantLabel in ipairs(Magic:EnchantNames().children) do
                 local object = enchantLabel:getPropertyObject("MagicMenu_object") ---@type tes3object
                 if not lookedAt[object.id] then
                     enchantLabel.color = bs.color(cfg.magic.highlightColor)
@@ -59,6 +66,8 @@ local function markEnchants(e)
     end
 end
 event.register(tes3.event.uiObjectTooltip, markEnchants)
+
+
 
 
 return Magic

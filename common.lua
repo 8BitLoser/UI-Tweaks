@@ -28,6 +28,29 @@ function bs.findText(element, string)
     return nil
 end
 
+---@param menu tes3uiElement
+function bs.savePos(menu)
+    local data = tes3.player.data
+    data.bsMenuSave = data.bsMenuSave or {}
+    local save = data.bsMenuSave
+
+    save[menu.name] = {menu.positionX, menu.positionY,  menu.width,  menu.height}
+end
+
+---@param menu tes3uiElement
+function bs.loadPos(menu)
+    if tes3.player.data.bsMenuSave then
+        local save = tes3.player.data.bsMenuSave[menu.name]
+        if save then
+            local x,y,w,h = table.unpack(save)
+            menu.positionX = x
+            menu.positionY = y
+            menu.width = w
+            menu.height = h
+        end
+    end
+end
+
 ---@param id tes3.gmst
 function bs.GMST(id)
     return tes3.findGMST(id).value
@@ -71,36 +94,62 @@ function bs.keybind(keybind) return tes3.worldController.inputController:isKeyDo
 function bs.isKeyDown(scanCode) return tes3.worldController.inputController:isKeyDown(scanCode) end
 
 bs.rgb = {
-    activeColor = { 0.376, 0.439, 0.792 },
-    activeOverColor = { 0.623, 0.662, 0.874 },
-    activePressedColor = { 0.874, 0.886, 0.956 },
-    answerColor = { 0.588, 0.196, 0.117 },
-    answerPressedColor = { 0.952, 0.929, 0.866 },
-    bigAnswerPressedColor = { 0.952, 0.929, 0.086 },
-    blackColor = { 0, 0, 0 },
-    bsLightGrey = { 0.839, 0.839, 0.839 },
-    bsNiceRed = { 0.941, 0.38, 0.38 },
-    bsPrettyBlue = { 0.235, 0.616, 0.949 },
+    bsPrettyBlue = {0.235, 0.616, 0.949},
+    bsNiceRed = {0.941, 0.38, 0.38},
     bsPrettyGreen = { 0.38, 0.941, 0.525 },
-    bsRoyalPurple = { 0.714, 0.039, 0.902 },
-    disabledColor = { 0.701, 0.658, 0.529 },
-    fatigueColor = { 0, 0.588, 0.235 },
-    focusColor = { 0.313, 0.313, 0.313 },
-    healthColor = { 0.784, 0.235, 0.117 },
-    healthNpcColor = { 1, 0.729, 0 },
-    journalFinishedQuestColor = { 0.235, 0.235, 0.235 },
-    journalFinishedQuestOverColor = { 0.392, 0.392, 0.392 },
-    journalFinishedQuestPressedColor = { 0.862, 0.862, 0.862 },
-    journalLinkColor = { 0.145, 0.192, 0.439 },
-    journalTopicOverColor = { 0.227, 0.301, 0.686 },
-    linkColor = { 0.439, 0.494, 0.811 },
-    linkOverColor = { 0.560, 0.607, 0.854 },
-    linkPressedColor = { 0.686, 0.721, 0.894 },
-    magicColor = { 0.207, 0.270, 0.623 },
-    miscColor = { 0, 0.803, 0.803 },
-    normalColor = { 0.792, 0.647, 0.376 },
-    positiveColor = { 0.874, 0.788, 0.623 },
+    bsLightGrey = { 0.839, 0.839, 0.839 },
+    bsRoyalPurple = {0.714, 0.039, 0.902},
+    activeColor = { 0.37647062540054, 0.43921571969986, 0.79215693473816 },
+    activeOverColor = { 0.6235294342041, 0.66274511814117, 0.87450987100601 },
+    activePressedColor = { 0.87450987100601, 0.88627457618713, 0.95686280727386 },
+    answerColor = { 0.58823531866074, 0.19607844948769, 0.11764706671238 },
+    answerOverColor = { 0.87450987100601, 0.78823536634445, 0.6235294342041 },
+    answerPressedColor = { 0.95294123888016, 0.92941182851791, 0.8666667342186 },
+    backgroundColor = { 0, 0, 0 },
+    bigAnswerColor = { 0.58823531866074, 0.19607844948769, 0.11764706671238 },
+    bigAnswerOverColor = { 0.87450987100601, 0.78823536634445, 0.6235294342041 },
+    bigAnswerPressedColor = { 0.95294123888016, 0.92941182851791, 0.086274512112141 },
+    bigHeaderColor = { 0.87450987100601, 0.78823536634445, 0.6235294342041 },
+    bigLinkColor = { 0.43921571969986, 0.49411767721176, 0.8117647767067 },
+    bigLinkOverColor = { 0.56078433990479, 0.60784316062927, 0.85490202903748 },
+    bigLinkPressedColor = { 0.68627452850342, 0.72156864404678, 0.89411771297455 },
+    bigNormalColor = { 0.79215693473816, 0.64705884456635, 0.37647062540054 },
+    bigNormalOverColor = { 0.87450987100601, 0.78823536634445, 0.6235294342041 },
+    bigNormalPressedColor = { 0.95294123888016, 0.92941182851791, 0.8666667342186 },
+    bigNotifyColor = { 0.87450987100601, 0.78823536634445, 0.6235294342041 },
+    blackColor = { 0, 0, 0 },
+    countColor = { 0.87450987100601, 0.78823536634445, 0.6235294342041 },
+    disabledColor = { 0.70196080207825, 0.65882354974747, 0.52941179275513 },
+    disabledOverColor = { 0.87450987100601, 0.78823536634445, 0.6235294342041 },
+    disabledPressedColor = { 0.95294123888016, 0.92941182851791, 0.8666667342186 },
+    fatigueColor = { 0, 0.58823531866074, 0.23529413342476 },
+    focusColor = { 0.3137255012989, 0.3137255012989, 0.3137255012989 },
+    headerColor = { 0.87450987100601, 0.78823536634445, 0.6235294342041 },
+    healthColor = { 0.78431379795074, 0.23529413342476, 0.11764706671238 },
+    healthNpcColor = { 1, 0.7294117808342, 0 },
+    journalFinishedQuestColor = { 0.23529413342476, 0.23529413342476, 0.23529413342476 },
+    journalFinishedQuestOverColor = { 0.39215689897537, 0.39215689897537, 0.39215689897537 },
+    journalFinishedQuestPressedColor = { 0.86274516582489, 0.86274516582489, 0.86274516582489 },
+    journalLinkColor = { 0.14509804546833, 0.19215688109398, 0.43921571969986 },
+    journalLinkOverColor = { 0.22745099663734, 0.30196079611778, 0.68627452850342 },
+    journalLinkPressedColor = { 0.43921571969986, 0.49411767721176, 0.8117647767067 },
+    journalTopicColor = { 0, 0, 0 },
+    journalTopicOverColor = { 0.22745099663734, 0.30196079611778, 0.68627452850342 },
+    journalTopicPressedColor = { 0.43921571969986, 0.49411767721176, 0.8117647767067 },
+    linkColor = { 0.43921571969986, 0.49411767721176, 0.8117647767067 },
+    linkOverColor = { 0.56078433990479, 0.60784316062927, 0.85490202903748 },
+    linkPressedColor = { 0.68627452850342, 0.72156864404678, 0.89411771297455 },
+    magicColor = { 0.20784315466881, 0.27058824896812, 0.6235294342041 },
+    magicFillColor = { 0.78431379795074, 0.23529413342476, 0.11764706671238 },
+    miscColor = { 0, 0.80392163991928, 0.80392163991928 },
+    negativeColor = { 0.78431379795074, 0.23529413342476, 0.11764706671238 },
+    normalColor = { 0.79215693473816, 0.64705884456635, 0.37647062540054 },
+    normalOverColor = { 0.87450987100601, 0.78823536634445, 0.6235294342041 },
+    normalPressedColor = { 0.95294123888016, 0.92941182851791, 0.8666667342186 },
+    notifyColor = { 0.87450987100601, 0.78823536634445, 0.6235294342041 },
+    positiveColor = { 0.87450987100601, 0.78823536634445, 0.6235294342041 },
+    weaponFillColor = { 0.78431379795074, 0.23529413342476, 0.11764706671238 },
     whiteColor = { 1, 1, 1 }
-}
+  }
 
 return bs

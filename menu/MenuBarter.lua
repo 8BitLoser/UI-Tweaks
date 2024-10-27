@@ -24,7 +24,7 @@ function Barter:get() return tes3ui.findMenu(tes3ui.registerID("MenuBarter")) en
 function Barter:getTrader() return tes3ui.getServiceActor() end---@return tes3mobileCreature|tes3mobileNPC|tes3mobilePlayer
 function Barter:isBuying() return string.find(self:CostSold(), "COST") ~= nil end
 function Barter:ItemTileBlock() return self:child("PartScrollPane_pane") end
-function Barter:Main() return self:child("PartDragMenu_main") end 
+function Barter:Main() return self:child("PartDragMenu_main") end
 function Barter:MaxSale() return self:child("MenuBarter_Goldbutton") end
 function Barter:Offer() return self:child("MenuBarter_Offerbutton") end
 function Barter:displayedOffer() return tonumber(self:Price().children[2].text) end
@@ -107,7 +107,7 @@ end
 function Barter.showStats()
     local trader = Barter:getTrader()
     local player = tes3.mobilePlayer
-    if trader.objectType == tes3.objectType.mobileCreature then return end
+    if not trader or not player or trader.objectType == tes3.objectType.mobileCreature then return end
     if cfg.barter.showDisposition and trader.object.disposition then
         ---Update Disposition Real Time
         local function updateDisp() Barter:child("bsTitle_Disp").text = ": "..trader.object.disposition end
@@ -158,14 +158,17 @@ function Barter.showBarterChance()
     ---Barter Offer Success Chance
     if cfg.barter.showChance then
         Barter.ChanceBlock = Barter:BarterBlock():createThinBorder({id = "bsChanceBlock"})
-            Barter.ChanceBlock.positionY = 0
-            Barter.ChanceBlock.borderLeft = 20
-            Barter.ChanceBlock.paddingAllSides = 5
-            Barter.ChanceBlock.autoHeight = true
-            Barter.ChanceBlock.autoWidth = true
+        Barter.ChanceBlock.positionY = 0
+        Barter.ChanceBlock.borderLeft = 20
+        Barter.ChanceBlock.paddingAllSides = 5
+        Barter.ChanceBlock.autoHeight = true
+        Barter.ChanceBlock.autoWidth = true
+
         Barter.ChanceText = Barter.ChanceBlock:createLabel{id = "Chance", text = "Chance:"}
+
         Barter.ChanceValue = Barter.ChanceBlock:createLabel{id = "ChanceValue", text = ""}
-            Barter.ChanceValue.borderLeft = 5
+        Barter.ChanceValue.borderLeft = 5
+
         Barter:Offer():registerAfter("mouseClick", barterChance)
         Barter:BarterUp():registerAfter(tes3.uiEvent.mouseStillPressed, barterChance)
         Barter:BarterDown():registerAfter(tes3.uiEvent.mouseStillPressed, barterChance)
@@ -235,7 +238,7 @@ local function markJunk(e)
         e.element:createBlock{id = "bsJunkMarker"}
     end
     e.element:registerBefore("mouseClick", function (uiEvent)
-        if bs.isKeyDown(tes3.scanCode.lAlt) then
+        if bs.isKeyDown(cfg.keybind.markJunk.keyCode) then
             if data.bsJunk[e.item.id] then
                 data.bsJunk[e.item.id] = nil
                 e.element.contentPath = "Textures\\menu_icon_none.tga"
@@ -265,13 +268,12 @@ end
 
 --- @param e uiActivatedEventData
 local function BarterActivated(e)
-    if not cfg.barter.enable then return end
+    if not cfg.barter.enable or not Barter:get() then return end
     Barter.showStats()
     Barter.showBarterChance()
     Barter.sellJunk()
     Barter:Update()
 end
-
 
 --- @param e loadedEventData
 local function loadedCallback(e)

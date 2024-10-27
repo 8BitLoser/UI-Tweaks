@@ -53,7 +53,7 @@ function this.totalWeight(e)
     if e.tooltip:findChild("UIEXP_Tooltip_IconWeightBlock") and count > 1 then
         local weight = e.tooltip:findChild("UIEXP_Tooltip_IconWeightBlock").children[2]
         weight.text = string.format("%.2f/%.2f", e.object.weight, e.object.weight * count)
-        e.tooltip:getContentElement().minWidth = 155
+        e.tooltip:getContentElement().minWidth = 155 ---Have to expand, editing weight doesnt seem to jive well with auto sizing
     end
 end
 

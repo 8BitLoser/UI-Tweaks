@@ -76,13 +76,13 @@ local modules = {
     "BeefStranger.UI Tweaks.common",
     "BeefStranger.UI Tweaks.config",
     "BeefStranger.UI Tweaks.ID",
-    "BeefStranger.UI Tweaks.tes3uiElementExt",
     "BeefStranger.UI Tweaks.menu.HelpMenu",
     "BeefStranger.UI Tweaks.menu.MenuBarter",
     "BeefStranger.UI Tweaks.menu.MenuBook",
     "BeefStranger.UI Tweaks.menu.MenuContents",
     "BeefStranger.UI Tweaks.menu.MenuDialog",
     "BeefStranger.UI Tweaks.menu.MenuEnchantment",
+    "BeefStranger.UI Tweaks.menu.MenuEnchanted",
     "BeefStranger.UI Tweaks.menu.MenuHitChance",
     "BeefStranger.UI Tweaks.menu.MenuHotkeys",
     "BeefStranger.UI Tweaks.menu.MenuMagic",
@@ -115,25 +115,25 @@ end
 
 -- requireMenu()
 
-local function reloadFiles()
-    for _, modname in ipairs(modules) do
-        package.loaded[string.lower(modname)] = nil
-        require(string.lower(modname))
-    end
-    tes3.messageBox("UI Tweaks: Files Reloading:")
-end
-event.register("UITweaksReloadFile", reloadFiles)
+-- local function reloadFiles()
+--     for _, modname in ipairs(modules) do
+--         package.loaded[string.lower(modname)] = nil
+--         require(string.lower(modname))
+--     end
+--     tes3.messageBox("UI Tweaks: Files Reloading:")
+-- end
+-- event.register("UITweaksReloadFile", reloadFiles)
 
----@param e keyDownEventData
-local function onKeyDownAltU(e)
-    if e.isAltDown then
-        reloadFiles()
-        tes3.saveGame({file = "UITweaksReload", name = "UITweaksReload"})
-        tes3.loadGame("UITweaksReload.ess")
-        return false
-    end
-end
-event.register("keyDown", onKeyDownAltU, {filter=tes3.scanCode.u})
+-- ---@param e keyDownEventData
+-- local function onKeyDownAltU(e)
+--     if e.isAltDown then
+--         reloadFiles()
+--         tes3.saveGame({file = "UITweaksReload", name = "UITweaksReload"})
+--         tes3.loadGame("UITweaksReload.ess")
+--         return false
+--     end
+-- end
+-- event.register("keyDown", onKeyDownAltU, {filter=tes3.scanCode.u})
 
 requireFiles()
 
