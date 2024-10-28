@@ -82,7 +82,7 @@ local modules = {
     "BeefStranger.UI Tweaks.menu.MenuContents",
     "BeefStranger.UI Tweaks.menu.MenuDialog",
     "BeefStranger.UI Tweaks.menu.MenuEnchantment",
-    "BeefStranger.UI Tweaks.menu.MenuEnchanted",
+    "BeefStranger.UI Tweaks.menu.MenuEnchantedGear",
     "BeefStranger.UI Tweaks.menu.MenuHitChance",
     "BeefStranger.UI Tweaks.menu.MenuHotkeys",
     "BeefStranger.UI Tweaks.menu.MenuMagic",

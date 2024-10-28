@@ -18,7 +18,7 @@ local defaults = {
     contents = {enable = true, totalValue = false, showOwner = false},
     dialog = { enable = true, showKey = false, showClass = false },
     enchant = { enable = true, showGold = true },
-    enchantedGear = {enable = true, highlightNew = true, hideVanilla = true},
+    enchantedGear = {enable = true, highlightNew = true, hideVanilla = true, showVanillaOnHide = true},
     escape = {
         enable = true,
         menus = {
@@ -169,6 +169,11 @@ local function registerModConfig()
     local contents = inventory:createPage({label = "Contents", config = config.contents, showReset = true, defaultConfig = defaults.contents})
         contents:createYesNoButton({label = "Show Total Value of Containers Contents", configKey = "totalValue"})
         contents:createYesNoButton({label = "Show Owner and Ownership Access in Title Bar", configKey = "showOwner"})
+        
+    local gear = inventory:createPage{label = "Enchanted Gear", config = config.enchantedGear, showReset = true, defaultConfig = defaults.enchantedGear}
+        gear:createYesNoButton({label = "Highlight New Enchants/Scrolls", configKey = "highlightNew"})
+        gear:createYesNoButton({label = "Hide Vanilla Enchantments/Scrolls", configKey = "hideVanilla"})
+        gear:createYesNoButton({label = "Show Vanilla Enchantments/Scrolls When Enchanted Gear Window Hidden", configKey = "showVanillaOnHide"})
 
     local inv = inventory:createPage{label = "Inventory", config = config.inv, showReset = true, defaultConfig = defaults.inv}
         inv:createYesNoButton({label = "Hightlight Potions by Type", configKey = "potionHighlight"})
