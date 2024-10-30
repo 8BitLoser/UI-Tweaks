@@ -95,7 +95,7 @@ event.register("UITweaks:BarterChance", barterChance)
 ---Get merchantOffer and isBuying
 --- @param e calcBarterPriceEventData
 local function calcBarterPriceCallback(e)
-    if not cfg.barter.showChance then return end
+    if not cfg.barter.showChance or not Barter:get() then return end
     timer.delayOneFrame(function () ---Needs to be delayed, dont remember why
         isBuying = Barter:isBuying() ---Get isBuying from Cost/Sold Text
         merchantOffer = math.abs(Barter:displayedOffer()) ---calcBarter e.price only updates current item not total
