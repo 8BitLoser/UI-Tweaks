@@ -14,6 +14,7 @@ function Magic:EffectRow3() return self:child("MagicMenu_t_icon_row_3") end
 function Magic:EnchantNameIndex(index) return self:EnchantNames().children[index] end
 function Magic:EnchantNames() return self:child("MagicMenu_item_names") end
 function Magic:Enchants() return self:child("MagicMenu_item_layout") end
+function Magic:SpellScrollPane() return self:child("MagicMenu_spells_list") end
 function Magic:getObject(index) return self:EnchantNames().children[index]:getPropertyObject("MagicMenu_object") end
 function Magic:getObjectData(index) return self:EnchantNames().children[index]:getPropertyObject("MagicMenu_extra", "tes3itemData") end
 function Magic:Spells() return self:child("MagicMenu_spell_names") end
