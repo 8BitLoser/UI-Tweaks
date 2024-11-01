@@ -88,7 +88,7 @@ function this.activeUpdate(e)
                 local remaining = active.duration - active.effectInstance.timeActive
                 for index, effectBlock in ipairs(child.children) do
                     if effectBlock.name == tes3.getMagicEffectName({ effect = active.effectId }) then
-                        effectBlock:findChild("Fillbar").widget.current = math.floor(remaining)
+                        effectBlock:findChild("Fillbar").widget.current = math.round(remaining)
                         if math.round(remaining, 2) <= 0.5 then
                             if effectBlock then
                                 effectBlock:destroy()
