@@ -17,6 +17,7 @@ local defaults = {
     },
     contents = {enable = true, totalValue = false, showOwner = false},
     dialog = { enable = true, showKey = false, showClass = false },
+    effects = {enable = false, menuModeAlpha = 0.5, updateRate = 0.2, borderMode = 3, durationThreshold = 2, pinnedAlpha = 0},
     enchant = { enable = true, showGold = true },
     enchantedGear = {enable = true, highlightNew = true, hideVanilla = true, showVanillaOnHide = true},
     escape = {
@@ -100,6 +101,7 @@ local function registerModConfig()
     settings:createYesNoButton { label = "Enable Barter", configKey = "enable", callback = updateBarter, config = config.barter }
     settings:createYesNoButton { label = "Enable Contents", configKey = "enable", config = config.contents }
     settings:createYesNoButton { label = "Enable Dialogue", configKey = "enable", config = config.dialog }
+    settings:createYesNoButton { label = "Enable Active Effects", configKey = "enable", config = config.effects }
     settings:createYesNoButton { label = "Enable Enchantment", configKey = "enable", config = config.enchant }
     settings:createYesNoButton { label = "Enable Enchanted Gear", configKey = "enable", config = config.enchantedGear }
     settings:createYesNoButton { label = "Enable Hit Chance", configKey = "enable", config = config.hitChance }
@@ -154,6 +156,18 @@ local function registerModConfig()
 ---==========================================================Inventory=============================================================================
     local inventory = mwse.mcm.createTemplate({ name = configPath..": Inventory", defaultConfig = defaults, config = config })
     inventory:saveOnClose(configPath, config)
+
+    local active = inventory:createPage({label = "Active Effects", config = config.effects, showReset = true, defaultConfig = defaults.effects})
+        active:createDropdown({
+            label = "Pinned Active Effects Border Type", configKey = "borderMode",
+            options = { {label = "Thin Border", value = 1}, {label = "Background", value = 2}, {label = "None", value = 3}, },
+            callback = function (self) event.trigger("bs_MenuEffects_Update") end,
+        })
+
+        active:createSlider{label = "Menu Alpha in MenuMode", min = 0, max = 1, configKey = "menuModeAlpha", step = 0.05, jump = 0.1, decimalPlaces = 2}
+        active:createSlider{label = "Menu Alpha when Pinned", min = 0, max = 1, configKey = "pinnedAlpha", step = 0.05, jump = 0.1, decimalPlaces = 2}
+        active:createSlider{label = "Effect Duration Threshold", min = 0, max = 30, configKey = "durationThreshold"}
+        active:createSlider{label = "Update Rate", min = 0.05, max = 1, configKey = "updateRate", step = 0.1, jump = 0.1, decimalPlaces = 2}
 
     local barter = inventory:createPage{ label = "Barter", config = config.barter, showReset = true, defaultConfig = defaults.barter }
         local barter_stats = barter:createCategory({label = "Stats"})

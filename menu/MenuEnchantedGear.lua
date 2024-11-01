@@ -105,8 +105,9 @@ local function createMenuEnchanted()
     gearIcons.paddingLeft = 2
     gearIcons.paddingRight = 4
     gearIcons.flowDirection = tes3.flowDirection.topToBottom
-    gearIcons.autoHeight = true
-    gearIcons.autoWidth = true
+    gearIcons:bs_autoSize(true)
+    -- gearIcons.autoHeight = true
+    -- gearIcons.autoWidth = true
 
     local gearNames = gearBlock:createBlock({ id = UID.GearNames })
     gearNames.flowDirection = tes3.flowDirection.topToBottom
@@ -117,14 +118,16 @@ local function createMenuEnchanted()
     local cost = gearBlock:createBlock({ id = UID.CostBlock })
     cost.flowDirection = tes3.flowDirection.topToBottom
     cost.borderLeft = 4
-    cost.autoHeight = true
-    cost.autoWidth = true
+    cost:bs_autoSize(true)
+    -- cost.autoHeight = true
+    -- cost.autoWidth = true
     cost.childAlignX = 1
 
     local charge = gearBlock:createBlock({ id = UID.ChargeBlock })
     charge.flowDirection = tes3.flowDirection.topToBottom
-    charge.autoHeight = true
-    charge.autoWidth = true
+    charge:bs_autoSize(true)
+    -- charge.autoHeight = true
+    -- charge.autoWidth = true
     charge.borderRight = 4
 
 ---=============================================
@@ -229,13 +232,15 @@ local function createMenuEnchanted()
     ---@param e tes3uiEventData
     local function preUpdate(e)
         createEnchantList()
-        bs.savePos(e.source)
+        e.source:bs_savePos()
+        -- bs.savePos(e.source)
     end
 
     enchantedGear:register(tes3.uiEvent.preUpdate, preUpdate)
     Magic:get():registerAfter(tes3.uiEvent.preUpdate, this.MagicPre)
 
-    bs.loadPos(enchantedGear)
+    enchantedGear:bs_loadPos()
+    -- bs.loadPos(enchantedGear)
 end
 
 ---===============================================
@@ -335,15 +340,18 @@ end
 
 ---Update Enchanted Gear layout everytime Vanilla Magic Menu Updates
 function this.MagicPre()
+    local enchant = Magic:Enchants()
+    local title = Magic:EnchantTitle()
+    local div = enchant.parent.children[6]
     if cfg.enchantedGear.hideVanilla then
-        Magic:Enchants().visible = false
-        Magic:EnchantTitle().visible = false
-        Magic:Enchants().parent.children[6].visible = false
+        enchant.visible = false
+        title.visible = false
+        div.visible = false
     end
     if cfg.enchantedGear.showVanillaOnHide and this.getHidden() then
-        Magic:Enchants().visible = true
-        Magic:EnchantTitle().visible = true
-        Magic:Enchants().parent.children[6].visible = true
+       enchant.visible = true
+        title.visible = true
+        div.visible = true
     end
     if Enchant:get() then
         Enchant:get():updateLayout()

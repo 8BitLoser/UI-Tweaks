@@ -1,3 +1,4 @@
+---@diagnostic disable: duplicate-set-field, duplicate-doc-field
 local bs = {
     UpdateBarter = "bsUpdateBarter",
     keyStillDown = "bsKeyStillDown"
@@ -28,28 +29,139 @@ function bs.findText(element, string)
     return nil
 end
 
----@param menu tes3uiElement
-function bs.savePos(menu)
+---@class bs_tes3ui.createPinButton.params
+---@field property string|nil? The Name of the Pinned Property (Defaults to "Menu_Pinned")
+---Create a Pin/Unpin Button that toggles a Pinned Boolean Property
+---@param params bs_tes3ui.createPinButton.params?
+function tes3uiElement:bs_createPinButton(params)
+    params = params or {}
+    assert(type(params) == "table", "Invalid parameters provided.")
+    local topLevel = self:getTopLevelMenu()
+    local title = topLevel:findChild("PartDragMenu_title_tint")
+  
+    if not title then
+      error("PartDragMenu_title_tint not found. This should be used on a dragFrame Menu.")
+    end
+  
+    local property = params.property or "Menu_Pinned"
+  
+    ---Default to false
+    topLevel:setPropertyBool(property, false)
+  
+    local button = title:createBlock({id = "Pin"})
+    button.width = 16
+    button.height = 16
+    button.absolutePosAlignX = 0.99
+    button.absolutePosAlignY = 0.50
+  
+    local pin = button:createNif({ id = "Pin_Button", path = "menu_rightbuttonup.NIF" })
+  
+    local unpin = button:createNif({ id = "Unpin_Button", path = "menu_rightbuttondown.NIF" })
+    unpin.visible = false
+  
+    --- @param e tes3uiEventData
+    local function onPinClick(e)
+      e.source.visible = false
+      unpin.visible = true
+      topLevel:setPropertyBool(property, true)
+    end
+  
+    --- @param e tes3uiEventData
+    local function onUnpinClick(e)
+      e.source.visible = false
+      pin.visible = true
+      topLevel:setPropertyBool(property, false)
+    end
+  
+    pin:registerAfter(tes3.uiEvent.mouseClick, onPinClick)
+    unpin:registerAfter(tes3.uiEvent.mouseClick, onUnpinClick)
+  
+    return button
+  end
+  
+---@class bs_tes3ui.savePos.params
+---@field id string|number? The id to save position under (Default: menu.name)
+---@field pinProperty string|nil? The Name of the Pinned Property if it exists (Default: "Menu_Pinned")
+---An alternate to saveMenuPosition as it doesn't work on menu creation
+---@param params bs_tes3ui.savePos.params?
+function tes3uiElement:bs_savePos(params)
+    local menu = self:getTopLevelMenu()
+    params = params or {}
+    params.id = params.id or menu.name
+    params.pinProperty = params.pinProperty or "Menu_Pinned"
+    -- pinProperty = pinProperty or "Menu_Pinned"
     local data = tes3.player.data
     data.bsMenuSave = data.bsMenuSave or {}
     local save = data.bsMenuSave
+    local pinned = menu:getPropertyBool(params.pinProperty)
 
-    save[menu.name] = {menu.positionX, menu.positionY,  menu.width,  menu.height}
+    save[params.id] = { menu.positionX, menu.positionY, menu.width, menu.height, pinned }
 end
-
----@param menu tes3uiElement
-function bs.loadPos(menu)
+  
+  ---@class bs_tes3ui.loadPos.params
+  ---@field id string|number? The id to save position under (Default: menu.name)
+  ---@field pinProperty string|nil? The Name of the Pinned Property if it exists (Default: "Menu_Pinned")
+  ---An alternate to loadMenuPosition as it doesn't work on menu creation
+  ---@param params bs_tes3ui.loadPos.params?
+  function tes3uiElement:bs_loadPos(params)
+    -- pinProperty = pinProperty or "Menu_Pinned"
+    local menu = self:getTopLevelMenu()
+    params = params or {}
+    params.id = params.id or menu.name
+    params.pinProperty = params.pinProperty or "Menu_Pinned"
     if tes3.player.data.bsMenuSave then
-        local save = tes3.player.data.bsMenuSave[menu.name]
-        if save then
-            local x,y,w,h = table.unpack(save)
-            menu.positionX = x
-            menu.positionY = y
-            menu.width = w
-            menu.height = h
+      local save = tes3.player.data.bsMenuSave[params.id]
+      if save then
+        local x, y, w, h, p = table.unpack(save)
+        menu.positionX = x
+        menu.positionY = y
+        menu.width = w
+        menu.height = h
+        if p then
+          menu:setPropertyBool(params.pinProperty, p)
+          menu:findChild("Pin").children[1].visible = false
+          menu:findChild("Pin").children[2].visible = true
         end
+      end
     end
-end
+  end
+  
+  ---Quickyl set autoHeight and autoWidth
+  ---@param bool boolean true/false
+  function tes3uiElement:bs_autoSize(bool)
+    self.autoHeight = bool
+    self.autoWidth = bool
+  end
+  
+  
+  ---@class bs_tes3ui.createClose.param
+  ---@field id string|number? Default:  "Button_Close"
+  ---@field text string? Default:  "Cancel"
+  ---@field leave boolean? Default: false. If true button will also leaveMenuMode
+  ---Creates a `Close Button`. Registers the `mouseClick` event to destroy its topLevelMenu and optionally leaveMenuMode
+  ---@param params bs_tes3ui.createClose.param
+  function tes3uiElement:bs_createClose(params)
+    params = params or {}
+    params.id = params.id or "Button_Close"
+    params.text = params.text or "Cancel"
+    params.leave = params.leave or false
+  
+    local button = self:createButton({ id = params.id, text = params.text })
+  
+    button:registerAfter(tes3.uiEvent.mouseClick, function(e)
+      e.source:getTopLevelMenu():destroy()
+      if params.leave then
+        tes3ui.leaveMenuMode()
+      end
+    end)
+  
+    return button
+  end
+  
+  ---Updates the topLevelMenu
+  function tes3uiElement:bs_Update()
+    self:getTopLevelMenu():updateLayout()
+  end
 
 ---@param id tes3.gmst
 function bs.GMST(id)

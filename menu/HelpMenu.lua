@@ -57,6 +57,9 @@ function this.totalWeight(e)
     end
 end
 
+function this.totalValue(e)
+    
+end
 
 ---@param active tes3activeMagicEffect
 function this.labelText(active)
