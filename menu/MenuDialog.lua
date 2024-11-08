@@ -25,6 +25,9 @@ function Dialog:Visible() if self:get() then return self:get().visible end end
 
 function Dialog:bsClass() return self:child("bsTitle_Class") end
 
+---@class bsDialogMenu_Key
+local dialogKey = {}
+
 ---@param child tes3uiElement
 function Dialog.click(child)
     if not Dialog:get() and not Dialog:get().visible then return end
@@ -81,14 +84,6 @@ local function onDialog(e)
 
     if cfg.dialog.showClass then
         showClass()
-        -- local service = tes3ui.getServiceActor()
-        -- if not service.object.class then return end
-        -- local title = "|  "..service.object.class.name
-        -- local class = Dialog:Title():createLabel({id = "bsTitle_Class", text = title})
-        -- class.borderRight = 10
-
-        -- Dialog:Title():reorderChildren(2, class, 1)
-        -- Dialog:get():updateLayout()
     end
 end
 event.register(tes3.event.uiActivated, onDialog, {filter = id.Dialog, priority = 1000000})
