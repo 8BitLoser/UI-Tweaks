@@ -40,9 +40,10 @@ local defaults = {
     magic = {enable = true, highlightNew = true, highlightColor = bs.colorTable(bs.rgb.bsPrettyBlue, 1)},
     multi = { enable = true, },
     persuade = { enable = true, hold = false, holdBribe = false, delay = 0.5, showKey = false },
-    repair = { enable = true, duration = 0.1 },
+    repair = { enable = true, duration = 0.1, select = true },
+    spellBarter = {enable = true, showCantCast = true},
     spellmaking = { enable = true, showGold = true, serviceOnly = true },
-    tooltip = { enable = true, charge = true, showDur = true, junk = false, durationDigits = 0, totalWeight = true, },
+    tooltip = { enable = true, charge = true, showDur = true, junk = false, durationDigits = 0, totalWeight = true, totalValue = true },
     travel = { enable = true, showKey = true },
     wait = { enable = true, fullRest = true, },
     keybind = {
@@ -111,6 +112,7 @@ local function registerModConfig()
     settings:createYesNoButton { label = "Enable QuickEsc", configKey = "enable", config = config.escape }
     settings:createYesNoButton { label = "Enable QuickTake", configKey = "enable", config = config.take }
     settings:createYesNoButton { label = "Enable Repair", configKey = "enable", config = config.repair }
+    settings:createYesNoButton { label = "Enable Spell Barter", configKey = "enable", config = config.spellBarter }
     settings:createYesNoButton { label = "Enable Spellmaking", configKey = "enable", config = config.spellmaking }
     settings:createYesNoButton { label = "Enable Tooltip", configKey = "enable", config = config.tooltip }
     settings:createYesNoButton { label = "Enable Travel", configKey = "enable", config = config.travel }
@@ -208,8 +210,11 @@ local function registerModConfig()
     enchant:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
 
     local repair = service:createPage{label = "Repair", config = config.repair, showReset = true, defaultConfig = defaults.repair}
-        repair:createSlider { label = "Hold to Repair Delay", configKey = "duration",
-        min = 0.01, max = 1, step = 0.01, jump = 0.1, decimalPlaces = 2 }
+        repair:createYesNoButton({label = "Repair Tool Selection", configKey = "select"})
+        repair:createSlider { label = "Hold to Repair Delay", configKey = "duration", min = 0.01, max = 1, step = 0.01, jump = 0.1, decimalPlaces = 2 }
+
+    local spellBarter = service:createPage{ label = "Spell Bartering", config = config.spellBarter, showReset = true, defaultConfig = defaults.spellmaking }
+        spellBarter:createYesNoButton({label = "Highlight Uncastable Spells", configKey = "showCantCast"})
 
     local spellmaking = service:createPage{ label = "Spellmaking", config = config.spellmaking, showReset = true, defaultConfig = defaults.spellmaking }
         spellmaking:createYesNoButton({label = "Show Gold in NPC Spellmaking only", configKey = "serviceOnly"})
