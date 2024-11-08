@@ -11,6 +11,7 @@ local RestWait = require("BeefStranger.UI Tweaks.menu.MenuRestWait")
 local Service = require("BeefStranger.UI Tweaks.menu.MenuServices")
 local id = require("BeefStranger.UI Tweaks.ID")
 local ts = tostring
+
 -- local sf = string.format
 local function key(e, cfgKey) return tes3.isKeyEqual({actual = e, expected = cfgKey}) end
 -- local function keyCode(e, setting) return e.keyCode == setting.keyCode end
@@ -18,38 +19,31 @@ local function key(e, cfgKey) return tes3.isKeyEqual({actual = e, expected = cfg
 local function keyDown(keybind) return tes3.worldController.inputController:isKeyDown(keybind.keyCode) end
 
 local time = os.clock()
-local initialDelay = 0.45
-local minDelay = 0.10 -- Minimum delay to avoid too fast repetition
-local delay = initialDelay
-local accelFactor = 0.9 -- Factor to reduce delay each time
-local keyHeldDown = false
 
+
+local function RestWaitHold()
+    if cfg.wait.enable and RestWait:get() then
+        if keyDown(cfg.keybind.waitUp) then
+            RestWait:TimeUp():bs_triggerHold()
+        elseif keyDown(cfg.keybind.waitDown) then
+            RestWait:TimeDown():bs_triggerHold()
+        end
+    end
+end
 
 -- local persuadeTime = os.clock()
 ---@param e enterFrameEventData
 local function buttonHold(e)
     if not cfg.keybind.enable then return end
 
-    if Barter:get() then
+    RestWaitHold()
+
+    if Barter:get() and cfg.barter.enable then
         if keyDown(cfg.keybind.barterUp) then
             Barter:BarterUp():triggerEvent(tes3.uiEvent.mouseStillPressed)
         elseif keyDown(cfg.keybind.barterDown) then
             Barter:BarterDown():triggerEvent(tes3.uiEvent.mouseStillPressed)
         end
-        -- if keyDown(cfg.keybind.offer) then
-        --     if not keyHeldDown then
-        --         Barter:Offer():triggerEvent("mouseStillPressed")
-        --         keyHeldDown = true
-        --         time = os.clock()
-        --     elseif os.clock() - time >= delay then
-        --         Barter:Offer():triggerEvent("mouseStillPressed")
-        --         time = os.clock()
-        --         delay = math.max(minDelay, delay * accelFactor)
-        --     end
-        -- else
-        --     keyHeldDown = false
-        --     delay = initialDelay
-        -- end
     end
 
     if cfg.persuade.enable and Persuasion:get() and cfg.persuade.hold then
@@ -79,20 +73,8 @@ local function click(element)
     end
 end
 
-local disableKeybind = {
-    id.Barter,
-    id.Enchantment,
-    id.Persuasion,
-    id.Repair,
-    id.ServiceSpells,
-    id.ServiceTraining,
-    id.ServiceTravel,
-    id.Spellmaking,
-}
-
 local function DialogKeyDown(e)
-    if dialog.enable and Dialog:Visible() then
-        for i, value in ipairs(disableKeybind) do if tes3ui.findMenu(value) then return end end
+    if dialog.enable and (Dialog:get() and Dialog:get():bs_isOnTop()) then
         if key(e, keybind.barter) then click(Dialog:Barter()) end
         if key(e, keybind.companion) then click(Dialog:Companion()) end
         if key(e, keybind.enchanting) then click(Dialog:Enchanting()) end
@@ -119,12 +101,12 @@ local function PersuasionKeyDown(e)
 end
 
 local function RestWaitKeyDown(e)
-    if RestWait.get() then
-        if key(e, keybind.waitDown) then RestWait:waitDown() end
-        if key(e, keybind.waitUp) then RestWait:waitUp() end
-        if key(e, keybind.wait) then RestWait:triggerWait() end
-        if key(e, keybind.heal) then RestWait:triggerHeal() end
-        if key(e, keybind.day) and cfg.wait.fullRest then RestWait:press(RestWait.FullRest) end
+    if RestWait:get() then
+        -- if key(e, keybind.waitDown) then RestWait:waitDown(1) end
+        -- if key(e, keybind.waitUp) then RestWait:waitUp(1) end
+        if key(e, keybind.wait) then RestWait:trigger_wait_rest() end
+        if key(e, keybind.heal) then RestWait:HealedButton():bs_click() end
+        if key(e, keybind.day) and cfg.wait.fullRest then RestWait:FullRest():bs_click() end
     end
 end
 
