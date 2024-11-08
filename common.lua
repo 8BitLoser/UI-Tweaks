@@ -34,6 +34,10 @@ end
 ---===========tes3uiElement===========
 ---===================================
 
+-------------------
+---createPinButton
+-------------------
+
 ---@class bs_tes3ui.createPinButton.params
 ---@field property string|nil? The Name of the Pinned Property (Defaults to "Menu_Pinned")
 
@@ -84,6 +88,9 @@ function tes3uiElement:bs_createPinButton(params)
 
   return button
 end
+-------------------
+---savePos
+-------------------
 
 ---@class bs_tes3ui.savePos.params
 ---@field id string|number? The id to save position under (Default: menu.name)
@@ -104,6 +111,9 @@ function tes3uiElement:bs_savePos(params)
 
   save[params.id] = {menu.positionX, menu.positionY,  menu.width,  menu.height, pinned }
 end
+-------------------
+---loadPos
+-------------------
 
 ---@class bs_tes3ui.loadPos.params
 ---@field id string|number? The id to save position under (Default: menu.name)
@@ -133,44 +143,160 @@ function tes3uiElement:bs_loadPos(params)
     end
   end
 end
+-------------------
+---holdClick
+-------------------
 
----Quickyl set autoHeight and autoWidth
----@param bool boolean true/false
-function tes3uiElement:bs_autoSize(bool)
-  self.autoHeight = bool
-  self.autoWidth = bool
+---@class bs_tes3ui.holdClick.params
+---@field triggerClick boolean? *Default `false`*: If `true` will trigger source mouseClick event
+---@field playSound boolean? *Default `false`*: If `true` will play the tes3.worldController.menuClickSound sound
+---@field skipFirstClick boolean? *Default `false`*: If `true` will skip first mouseClick trigger. Useful if interacting with mouse buttons
+---@field startInterval number? *Default `0.5`*
+---@field minInterval number? *Default `0.08`*
+---@field accelerate boolean? *Default `true`*
+---@field acceleration number? *Default `0.90`*. `1` if `accelerate` = `false`. Lower is faster
+---@field keyControl boolean? *Default `false`*. If `true` registers a keyDown event for then skipFirstClick param. Unregisters on Element Destruction
+---@field callback fun(e: tes3uiEventData)? *Optional* For if you want something to happen in the mouseStillPressed Event
+
+---Registers a mouseStillPressed event that behaves similiarly to vanilla, where holding a button causes it to ramp up speed to a set limit
+---@param params bs_tes3ui.holdClick.params
+function tes3uiElement:bs_holdClick(params)
+  params = params or {}
+  params.keyControl = params.keyControl or false
+  params.triggerClick = params.triggerClick or false
+  params.skipFirstClick = params.skipFirstClick or false
+  params.startInterval = params.startInterval or 0.5
+  params.minInterval = params.minInterval or 0.08
+  params.playSound = params.playSound or false
+  params.accelerate = params.accelerate or (params.accelerate == nil and true)
+  params.acceleration = (params.accelerate and (params.acceleration or 0.90)) or 1
+
+  local startTime = os.clock()
+  local clickInterval = params.startInterval -- Initial interval (in seconds).
+  local minInterval = params.minInterval     -- Minimum interval for maximum speed.
+  local accelerationFactor = params.acceleration
+  local currentInterval = clickInterval
+  local firstClick = true
+
+  if params.keyControl then
+    local function keyDown()
+      currentInterval = params.startInterval
+      firstClick = true
+    end
+    event.register(tes3.event.keyDown, keyDown)
+
+    self:registerAfter(tes3.uiEvent.destroy, function(e) event.unregister(tes3.event.keyDown, keyDown) end)
+  end
+
+  self:registerAfter(tes3.uiEvent.mouseDown, function(e) currentInterval = params.startInterval end)
+
+  local function stillPressed(e)
+    if os.clock() - startTime >= currentInterval then
+      currentInterval = math.max(currentInterval * accelerationFactor, minInterval)
+      startTime = os.clock()
+      if params.triggerClick then
+        if (params.skipFirstClick and not firstClick) or not params.skipFirstClick then
+          self:triggerEvent(tes3.uiEvent.mouseClick)
+        end
+      end
+
+      if params.playSound then tes3.playSound({ sound = tes3.worldController.menuClickSound }) end
+      if params.callback then params.callback(e) end
+      firstClick = false
+    end
+  end
+  self:registerAfter(tes3.uiEvent.mouseStillPressed, stillPressed)
 end
-
+-------------------
+---createClose
+-------------------
 
 ---@class bs_tes3ui.createClose.param
----@field id string|number? Default:  "Button_Close"
----@field text string? Default:  "Cancel"
+---@field id string|number? Default: "Button_Close"
+---@field text string? Default: "Cancel" `tes3.gmst.sCancel`
 ---@field leave boolean? Default: false. If true button will also leaveMenuMode
 
 ---Creates a `Close Button`. Registers the `mouseClick` event to destroy its topLevelMenu and optionally leaveMenuMode
----@param params bs_tes3ui.createClose.param?
+---@param params bs_tes3ui.createClose.param
 function tes3uiElement:bs_createClose(params)
   params = params or {}
   params.id = params.id or "Button_Close"
-  params.text = params.text or "Cancel"
+  params.text = params.text or tes3.findGMST(tes3.gmst.sCancel).value
   params.leave = params.leave or false
 
   local button = self:createButton({ id = params.id, text = params.text })
 
   button:registerAfter(tes3.uiEvent.mouseClick, function(e)
     e.source:getTopLevelMenu():destroy()
-    if params.leave then
-      tes3ui.leaveMenuMode()
-    end
-  end, 100)
+    if params.leave then tes3ui.leaveMenuMode() end
+  end)
 
   return button
 end
+-------------------
+---click
+-------------------
+
+---@class bs_tes3ui.click.params
+---@field playSound boolean? `Default: true` Whether or not to play the menuClickSound
+---@field sound string|tes3sound? *Optional*. Play a specific sound
+
+---Triggers the mouseClick Event
+---@param params bs_tes3ui.click.params?
+function tes3uiElement:bs_click(params)
+  params = params or {}
+  -- debug.log(params.playSound)
+  params.playSound = params.playSound or (params.playSound == nil and true)
+  -- debug.log(params.playSound)
+  if params.playSound then
+      if params.sound then
+          tes3.playSound({sound = params.sound})
+      else
+          tes3.playSound({sound = tes3.worldController.menuClickSound})
+      end
+  end
+  self:triggerEvent(tes3.uiEvent.mouseClick)
+end
+-------------------
+---autoSize
+-------------------
+
+---Quickly set autoHeight and autoWidth
+---@param bool boolean true/false
+function tes3uiElement:bs_autoSize(bool) self.autoHeight = bool self.autoWidth = bool end
+-------------------
+---Update
+-------------------
 
 ---Updates the topLevelMenu
-function tes3uiElement:bs_Update()
-  self:getTopLevelMenu():updateLayout()
-end
+function tes3uiElement:bs_Update() self:getTopLevelMenu():updateLayout() end
+-------------------
+---isOnTop
+-------------------
+
+---Returns if menu is onTop, auto calls getTopLevelMenu()
+---@return boolean isOnTop
+function tes3uiElement:bs_isOnTop() return tes3ui.getMenuOnTop() == self:getTopLevelMenu() end
+-------------------
+---mouseDown
+-------------------
+
+---Triggers the mouseDown Event
+function tes3uiElement:bs_mouseDown() self:triggerEvent(tes3.uiEvent.mouseDown) end
+-------------------
+---scrollChanged
+-------------------
+
+---Triggers the PartScrollBar_changed Event
+function tes3uiElement:bs_scrollChanged() self:triggerEvent(tes3.uiEvent.partScrollBarChanged) end
+-------------------
+---triggerHold
+-------------------
+
+---Trigger mouseStillPressed
+function tes3uiElement:bs_triggerHold() self:triggerEvent(tes3.uiEvent.mouseStillPressed) end
+
+
 
 
 ---@class bs_tes3ui.setObj.params
@@ -209,36 +335,6 @@ end
 function tes3uiElement:bs_getItemData(id)
   id = id or self:getTopLevelMenu().name.."_extra"
   return self:getPropertyObject(id, "tes3itemData")
-end
-
----@class bs_tes3ui.click.params
----@field playSound boolean? `Default: true` Whether or not to play the menuClickSound
----@field sound string|tes3sound? *Optional*. Play a specific sound
-
----Triggers the mouseClick Event
----@param params bs_tes3ui.click.params?
-function tes3uiElement:bs_click(params)
-  params = params or {}
-  debug.log(params.playSound)
-  params.playSound = params.playSound or (params.playSound == nil and true)
-  debug.log(params.playSound)
-  if params.playSound then
-      if params.sound then
-          tes3.playSound({sound = params.sound})
-      else
-          tes3.playSound({sound = tes3.worldController.menuClickSound})
-      end
-  end
-  self:triggerEvent(tes3.uiEvent.mouseClick)
-end
-
----Triggers the mouseDown Event
-function tes3uiElement:bs_mouseDown()
-  self:triggerEvent(tes3.uiEvent.mouseDown)
-end
----Triggers the PartScrollBar_changed Event
-function tes3uiElement:bs_scrollChanged()
-  self:triggerEvent(tes3.uiEvent.partScrollBarChanged)
 end
 
 ---===================================
