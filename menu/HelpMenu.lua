@@ -21,10 +21,10 @@ local this = {}
 ---Add Charge Cost to Tooltip
 --- @param e uiObjectTooltipEventData
 local function onTooltipCreation(e)
-    -- debug.log("BEEP")
     if not cfg.tooltip.enable then return end
     if cfg.tooltip.charge then this.chargeCost(e) end
     if cfg.tooltip.totalWeight then this.totalWeight(e) end
+    if cfg.tooltip.totalValue then this.totalValue(e) end
 end
 event.register(tes3.event.uiObjectTooltip, onTooltipCreation)
 
@@ -58,7 +58,17 @@ function this.totalWeight(e)
 end
 
 function this.totalValue(e)
-    
+    if not tes3ui.menuMode() or e.reference then return end
+        
+    local count = e.count
+    if Contents:get() and e.count < 1 then
+        count = tes3.getItemCount({item = e.object, reference = Contents:Reference()})
+    end
+    if e.tooltip:findChild("UIEXP_Tooltip_IconGoldBlock") and count > 1 then
+        local value = e.tooltip:findChild("UIEXP_Tooltip_IconGoldBlock").children[2]
+        value.text = string.format("%d/%d", e.object.value, e.object.value * count)
+        e.tooltip:getContentElement().minWidth = 190 ---Have to expand, editing weight doesnt seem to jive well with auto sizing
+    end
 end
 
 ---@param active tes3activeMagicEffect
