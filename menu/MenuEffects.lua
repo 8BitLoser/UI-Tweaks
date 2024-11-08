@@ -66,7 +66,7 @@ function this.createMissing()
     end
 
     for _, effect in ipairs(tes3.mobilePlayer.activeMagicEffectList) do
-        if effect.instance.source.isActiveCast then
+        if effect.instance.source.isActiveCast or effect.instance.sourceType == tes3.magicSourceType.alchemy then
             local isReg = table.find(current, effect.serial)
             -- debug.log(reg)
             if not isReg then
@@ -111,7 +111,7 @@ function this.createSpellBlock()
     local menu = Menu:get()
     for _, spells in ipairs(tes3.mobilePlayer.activeMagicEffectList) do
         local spell = spells.instance.source
-        if spell.isActiveCast then
+        if spell.isActiveCast or spells.instance.sourceType == tes3.magicSourceType.alchemy then
             if spells.duration >= cfg.effects.durationThreshold then
                 local block = menu:findChild(spell.id)
                 if not block then
