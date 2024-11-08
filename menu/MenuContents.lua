@@ -86,20 +86,56 @@ function MenuContents:Object(itemTile) return itemTile:getPropertyObject(self.pr
 ---@param itemTile tes3uiElement itemTile_tile
 ---@return number stackSize
 function MenuContents:StackSize(itemTile) return itemTile:findChild("MenuContents_count") and tonumber(itemTile:findChild("MenuContents_count").text) or 1 end
----@class bsUITweaksContents
-local this = {}
+
+---@class bsUITweaksContents_totalValue
+local totalValue = {}
+
+---Gets Total Value of all items in Container
+---@return number
+function totalValue.getValue()
+    local total = 0
+    for _, columns in ipairs(MenuContents:Items().children) do
+        for _, itemTile in ipairs(columns.children) do
+            local count = MenuContents:StackSize(itemTile)
+            local obj = MenuContents:Object(itemTile)
+            local value = obj.value
+            if obj.id:match("key_" )  then value = 0 end
+            total = total + (count * value)
+        end
+    end
+    return total
+end
+
+---@param e uiEventEventData
+function totalValue.valueUpdate(e)
+    local element = e.source:findChild("Total Value")
+    if element and cfg.contents.totalValue then
+        element.text = "Total Value: " .. tostring(totalValue.getValue())
+    end
+end
+
+---Refresh Contents to cause TotalValue to update
+--- @param e itemTileUpdatedEventData
+local function tileUpdate(e)
+    if cfg.contents.enable then
+        if e.menu == MenuContents:get() then
+            if cfg.contents.totalValue then e.menu:updateLayout() end
+        end
+    end
+end
+event.register(tes3.event.itemTileUpdated, tileUpdate)
 
 --- @param e uiActivatedEventData
 local function uiActivatedCallback(e)
     if cfg.contents.enable then
         if e.element == MenuContents:get() then
             if cfg.contents.totalValue then
-                local value = MenuContents:ButtonBlock():createLabel { id = "Total Value", text = "Total Value: " .. tostring(this.totalValue()) }
+                local value = MenuContents:ButtonBlock():createLabel { id = "Total Value", text = "Total Value: " .. tostring(totalValue.getValue()) }
                 value.borderAllSides = 4
                 value.color = bs.rgb.normalColor
                 MenuContents:ButtonBlock():reorderChildren(MenuContents:Dispose(), value, -1)
 
-                MenuContents:get():registerAfter(tes3.uiEvent.preUpdate, this.valueUpdate)
+                MenuContents:get():registerAfter(tes3.uiEvent.preUpdate, totalValue.valueUpdate)
             end
 
             if cfg.contents.showOwner then
@@ -118,38 +154,4 @@ local function uiActivatedCallback(e)
 end
 event.register(tes3.event.uiActivated, uiActivatedCallback)
 
----Gets Total Value of all items in Container
----@return number
-function this.totalValue()
-    local total = 0
-    for _, columns in ipairs(MenuContents:Items().children) do
-        for _, itemTile in ipairs(columns.children) do
-            local count = MenuContents:StackSize(itemTile)
-            local obj = MenuContents:Object(itemTile)
-            local value = obj.value
-            if obj.id:match("key_" )  then value = 0 end
-            total = total + (count * value)
-        end
-    end
-    return total
-end
-
----@param e uiEventEventData
-function this.valueUpdate(e)
-    local element = e.source:findChild("Total Value")
-    if element and cfg.contents.totalValue then
-        element.text = "Total Value: " .. tostring(this.totalValue())
-    end
-end
-
----Refresh Contents to cause TotalValue to update
---- @param e itemTileUpdatedEventData
-local function tileUpdate(e)
-    if cfg.contents.enable then
-        if e.menu == MenuContents:get() then
-            if cfg.contents.totalValue then e.menu:updateLayout() end
-        end
-    end
-end
-event.register(tes3.event.itemTileUpdated, tileUpdate)
 return MenuContents
