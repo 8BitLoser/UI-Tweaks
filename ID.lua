@@ -1,3 +1,4 @@
+local reg = tes3ui.registerID
 ---@enum MenuID
 local MenuID = {
     Alchemy = "MenuAlchemy",
@@ -59,6 +60,54 @@ local MenuID = {
     TimePass = "MenuTimePass",
     Topic = "MenuTopic",
     Video = "MenuVideo",
+    embed = {---@class bs_EmbededServices.uid
+        top = reg("BS_Embedded Services"),
+        embed_gold = reg("Player Gold"),
+        header = reg("Header"),
+        title = reg("Title"),
+        border = reg("Border"),
+        footer = reg("Footer"),
+        close = reg("Close"),
+        price = reg("Service Price"),
+        button = reg("Service Button"),
+
+        persuade = reg("BS_Persuade"),
+        persuade_Admire = reg("Admire"),
+        persuade_Bribe_10 = reg("Bribe_10"),
+        persuade_Bribe_100 = reg("Bribe_100"),
+        persuade_Bribe_1000 = reg("Bribe_1000"),
+        persuade_Intimidate = reg("Intimidate"),
+        persuade_list = reg("Persuade List"),
+        persuade_Taunt = reg("Taunt"),
+
+        repair = reg("BS_Repair"),
+        repair_button = reg("Repair Button"),
+        repair_list = reg("Repair List"),
+        repair_price = reg("Repair Cost"),
+
+        spells = reg("BS_Spells"),
+        spells_button = reg("Spell Button"),
+        spells_list = reg("Spell List"),
+        spells_price = reg("Spell Cost"),
+        spells_icon = reg("Spell Icon"),
+        spells_open = reg("Open Spells"),
+
+        train = reg("BS_Train"),
+        train_list = reg("Train List"),
+        train_button = reg("Button"),
+        train_NPCLevel = reg("NPC Level"),
+        train_level = reg("Level"),
+        train_cost = reg("Cost"),
+        train_skillIcon = reg("Skill Icon"),
+        train_bg = reg("Background"),
+        train_info = reg("Info Block"),
+
+        travel = reg("BS_Travel"),
+        travel_destinationPre = "Destination ",
+        travel_keyPre = "TravelKey ",
+        travel_list = reg("Travel List"),
+        travel_placePre = "Place ",
+    }
 }
 
 return MenuID

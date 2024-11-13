@@ -30,10 +30,22 @@ function Menu:setPinned(set) return self:get():setPropertyBool(self.PROP.PIN, se
 
 function this.create()
     local active = tes3ui.createMenu({id = Menu.UID.TOP, dragFrame = true, modal = false})
+    -- local active = tes3ui.bs_createDragFixedFrame({id = Menu.UID.TOP})
     active.width = 300
     active.height = 100
+    active.minWidth = 200
+    active.minHeight = 100
     active.text = "Active Effects"
     active.alpha = tes3.worldController.menuAlpha
+
+    local drag_frame = active:findChild("PartDragMenu_drag_frame")
+    for index, value in ipairs(drag_frame.children) do
+        if value.name == "null" and value.type == tes3.uiElementType.model then
+            value:setPropertyProperty("name", "PartDragMenu_inner_border")
+        end
+    end
+    active:findChild("PartDragMenu_thick_border").contentPath = nil
+    active:findChild("PartDragMenu_inner_border").contentPath = nil
 
     active:bs_createPinButton()
 
@@ -122,6 +134,7 @@ function this.createSpellBlock()
                     elseif cfg.effects.borderMode == 3 then
                         block = menu:createBlock { id = spell.id }
                     end
+                    block:bs_autoSize(true)--DEBUG
                     block.alpha = 0.75
                     block.flowDirection = tes3.flowDirection.topToBottom
                     block.widthProportional = 1
@@ -144,6 +157,7 @@ function this:createEffectBlock(spells)
     local effectBlock = self:getEffectBlock(spells)
     if not effectBlock then
         effectBlock = block:createBlock { id = tes3.getMagicEffectName({effect = spells.effectId}) }
+        effectBlock:bs_autoSize(true) --DEBUG
         effectBlock.alpha = 1
         effectBlock.widthProportional = 1
         effectBlock.autoHeight = true
@@ -162,6 +176,7 @@ function this:createTitle(spells)
     local title = effectBlock:findChild("Title")
     if not title then
         title = effectBlock:createBlock { id = "Title" }
+        title:bs_autoSize(true)--DEBUG
         title.widthProportional = 1
         title.autoHeight = true
         title.childAlignY = 1
@@ -222,7 +237,7 @@ end
 
 --- @param e menuEnterEventData
 local function menuEnter(e)
-    if Magic:get().visible and cfg.effects.enable then
+    if Magic:get().visible and cfg.effects.enable and tes3.isCharGenFinished() then
         local ae = Menu:get()
         if ae then
             if Menu:isPinned() then
@@ -259,7 +274,6 @@ local function menuExitCallback(e)
     end
 end
 event.register(tes3.event.menuExit, menuExitCallback)
-
 
 --- @param e simulateEventData
 local function simulateCallback(e)

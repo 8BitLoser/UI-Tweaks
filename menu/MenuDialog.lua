@@ -14,6 +14,8 @@ function Dialog:Enchanting() if not self:get() then return end return self:child
 function Dialog:get() return tes3ui.findMenu(id.Dialog) end
 function Dialog:GetService() if not self:get() then return end return self:child("MenuDialog_service_spells").parent end
 function Dialog:Persuasion() if not self:get() then return end return self:child("MenuDialog_persuasion") end
+function Dialog:ResponseBlock() return self:child("MenuDialog_scroll_pane") end
+function Dialog:MainBlock() return self:child("MenuDialog_scroll_pane").parent end
 function Dialog:Repair() if not self:get() then return end return self:child("MenuDialog_service_repair") end
 function Dialog:Spellmaking() if not self:get() then return end return self:child("MenuDialog_service_spellmaking") end
 function Dialog:Spells() if not self:get() then return end return self:child("MenuDialog_service_spells") end
@@ -22,6 +24,12 @@ function Dialog:TitleText() if not self:get() then return end return self:child(
 function Dialog:Training() if not self:get() then return end return self:child("MenuDialog_service_training") end
 function Dialog:Travel() if not self:get() then return end return self:child("MenuDialog_service_travel") end
 function Dialog:Visible() if self:get() then return self:get().visible end end
+
+---@class bs_MenuDialog_Embed
+Dialog.embed = {}
+
+function Dialog.embed:get() return Dialog:get() and Dialog:child(id.embed.top) end
+function Dialog.embed:child(child) return self:get():findChild(child) end
 
 function Dialog:bsClass() return self:child("bsTitle_Class") end
 

@@ -2,7 +2,8 @@ local bs = require("BeefStranger.UI Tweaks.common")
 local configPath = "UI Tweaks"
 ---@class bsDEBUGUITweaksMCM
 local cfg = {}
----@class bsUITweaks<K, V>: { [K]: V }
+
+---@class bsUITweaks.cfg<K, V>: { [K]: V }
 local defaults = {
     barter = {
         enable = true,
@@ -15,11 +16,17 @@ local defaults = {
         enableJunk = true,
         maxSell = 30,
     },
-    contents = {enable = true, totalValue = false, showOwner = false},
+    contents = { enable = true, totalValue = false, showOwner = false },
     dialog = { enable = true, showKey = false, showClass = false },
-    effects = {enable = false, menuModeAlpha = 0.5, updateRate = 0.2, borderMode = 3, durationThreshold = 2, pinnedAlpha = 0},
+    effects = { enable = false, menuModeAlpha = 0.5, updateRate = 0.2, borderMode = 3, durationThreshold = 2, pinnedAlpha = 0 },
     enchant = { enable = true, showGold = true },
     enchantedGear = {enable = true, highlightNew = true, hideVanilla = true, showVanillaOnHide = true},
+    embed = { enable = true, notify = true,},---@class bsUITweaks.cfg.embed
+    embed_persuade = { enable = true, instantFight = true }, ---@class bsUITweaks.cfg.embed.persuade<K, V>: { [K]: V }
+    embed_repair = { enable = true }, ---@class bsUITweaks.cfg.embed.repair<K, V>: { [K]: V }
+    embed_spells = { enable = true }, ---@class bsUITweaks.cfg.embed.spells<K, V>: { [K]: V }
+    embed_train = { enable = true }, ---@class bsUITweaks.cfg.embed.train<K, V>: { [K]: V }
+    embed_travel = { enable = true }, ---@class bsUITweaks.cfg.embed.travel<K, V>: { [K]: V }
     escape = {
         enable = true,
         menus = {
@@ -40,7 +47,7 @@ local defaults = {
     magic = {enable = true, highlightNew = true, highlightColor = bs.colorTable(bs.rgb.bsPrettyBlue, 1)},
     multi = { enable = true, },
     persuade = { enable = true, hold = false, holdBribe = false, delay = 0.5, showKey = false },
-    repair = { enable = true, duration = 0.1, select = true },
+    repair = { enable = true, interval = 0.1, select = true, hold = true },
     spellBarter = {enable = true, showCantCast = true},
     spellmaking = { enable = true, showGold = true, serviceOnly = true },
     tooltip = { enable = true, charge = true, showDur = true, junk = false, durationDigits = 0, totalWeight = true, totalValue = true },
@@ -87,7 +94,7 @@ local defaults = {
 }
 local function updateBarter() event.trigger(bs.UpdateBarter) end
 
----@class bsUITweaks
+---@class bsUITweaks.cfg
 local config = mwse.loadConfig(configPath, defaults)
 
 local function registerModConfig()
@@ -105,6 +112,7 @@ local function registerModConfig()
     settings:createYesNoButton { label = "Enable Active Effects", configKey = "enable", config = config.effects }
     settings:createYesNoButton { label = "Enable Enchantment", configKey = "enable", config = config.enchant }
     settings:createYesNoButton { label = "Enable Enchanted Gear", configKey = "enable", config = config.enchantedGear }
+    settings:createYesNoButton { label = "Enable Embedded Services", configKey = "enable", config = config.embed }
     settings:createYesNoButton { label = "Enable Hit Chance", configKey = "enable", config = config.hitChance }
     settings:createYesNoButton { label = "Enable Hotkeys", configKey = "enable", config = config.keybind }
     settings:createYesNoButton { label = "Enable Persuasion", configKey = "enable", config = config.persuade }
@@ -185,7 +193,7 @@ local function registerModConfig()
     local contents = inventory:createPage({label = "Contents", config = config.contents, showReset = true, defaultConfig = defaults.contents})
         contents:createYesNoButton({label = "Show Total Value of Containers Contents", configKey = "totalValue"})
         contents:createYesNoButton({label = "Show Owner and Ownership Access in Title Bar", configKey = "showOwner"})
-        
+
     local gear = inventory:createPage{label = "Enchanted Gear", config = config.enchantedGear, showReset = true, defaultConfig = defaults.enchantedGear}
         gear:createYesNoButton({label = "Highlight New Enchants/Scrolls", configKey = "highlightNew"})
         gear:createYesNoButton({label = "Hide Vanilla Enchantments/Scrolls", configKey = "hideVanilla"})
@@ -211,7 +219,8 @@ local function registerModConfig()
 
     local repair = service:createPage{label = "Repair", config = config.repair, showReset = true, defaultConfig = defaults.repair}
         repair:createYesNoButton({label = "Repair Tool Selection", configKey = "select"})
-        repair:createSlider { label = "Hold to Repair Delay", configKey = "duration", min = 0.01, max = 1, step = 0.01, jump = 0.1, decimalPlaces = 2 }
+        repair:createYesNoButton({label = "Hold to Repair", configKey = "hold"})
+        repair:createSlider { label = "Hold to Repair Interval", configKey = "duration", min = 0.01, max = 1, step = 0.01, jump = 0.1, decimalPlaces = 2 }
 
     local spellBarter = service:createPage{ label = "Spell Bartering", config = config.spellBarter, showReset = true, defaultConfig = defaults.spellmaking }
         spellBarter:createYesNoButton({label = "Highlight Uncastable Spells", configKey = "showCantCast"})
@@ -222,6 +231,29 @@ local function registerModConfig()
 
     local travel = service:createPage{ label = "Travel", config = config.travel, showReset = true, defaultConfig = defaults.travel }
         travel:createYesNoButton{label = "Show Hotkeys", configKey = "showKey"}
+---==========================================================EmbeddedService=============================================================================
+    local embed = mwse.mcm.createTemplate({ name = configPath .. ": Embedded", defaultConfig = defaults, config = config })
+    embed:saveOnClose(configPath, config)
+
+    local embedMain = embed:createPage { label = "Embedded Services", config = config.embed, showReset = true, defaultConfig = defaults.embed }
+        embedMain:createYesNoButton({ label = "Enable Service Button Notify", configKey = "notify" })
+        embedMain:createYesNoButton({ label = "Enable Embedded Persuasion", config = config.embed_persuade, configKey = "enable" })
+        embedMain:createYesNoButton({ label = "Enable Embedded Repair", config = config.embed_repair, configKey = "enable" })
+        embedMain:createYesNoButton({ label = "Enable Embedded Spells", config = config.embed_spells, configKey = "enable" })
+        embedMain:createYesNoButton({ label = "Enable Embedded Training", config = config.embed_train, configKey = "enable" })
+        embedMain:createYesNoButton({ label = "Enable Embedded Travel", config = config.embed_travel, configKey = "enable" })
+
+    local embedPersuade = embed:createPage{label = "Persuasion", config = config.embed_persuade, showReset = true, defaultConfig = defaults.embed_persuade}
+        -- embedPersuade:createYesNoButton({label = "Enable Embedded Persuadion", configKey = "enable"})
+        embedPersuade:createYesNoButton({label = "Instantly Start Combat on Successful Taunting", configKey = "instantFight"})
+
+    -- local embedRepair = embed:createPage{label = "Repair", config = config.embed_repair, showReset = true, defaultConfig = defaults.embed_repair}
+
+    -- local embedSpells = embed:createPage{label = "Spells", config = config.embed_spells, showReset = true, defaultConfig = defaults.embed_spells}
+
+    -- local embedTrain = embed:createPage{label = "Training", config = config.embed_train, showReset = true, defaultConfig = defaults.embed_train}
+
+    -- local embedTravel = embed:createPage{label = "Travel", config = config.embed_travel, showReset = true, defaultConfig = defaults.embed_travel}
 ---==========================================================Tooltips=============================================================================
     local tooltips = mwse.mcm.createTemplate({ name = configPath .. ": Tooltips", defaultConfig = defaults, config = config })
     tooltips:saveOnClose(configPath, config)
@@ -235,7 +267,7 @@ local function registerModConfig()
 
     local color = hitChance:createColorPicker({ label = "Background Color", configKey = "color", alpha = true })
         color.indent = 0
-    
+
     local tooltip = tooltips:createPage { label = "Tooltips", config = config.tooltip, showReset = true, defaultConfig = defaults.tooltip }
         tooltip:createYesNoButton({ label = "Show Charge Cost of Enchantments", configKey = "charge" })
         tooltip:createYesNoButton({ label = "Show Duration on Active Effect Icons", configKey = "showDur" })
@@ -267,13 +299,11 @@ local function registerModConfig()
 
 
 
-
-
-
     dialogue:register()
     inventory:register()
     main:register()
     misc:register()
+    embed:register()
     service:register()
     tooltips:register()
 end

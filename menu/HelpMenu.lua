@@ -120,7 +120,6 @@ function this.createEffectTooltips(active, effectBlock)
 end
 
 
-
 ---@param e menuEnterEventData
 function this.effectTooltip(e)
     local inv = find(id.Inventory)

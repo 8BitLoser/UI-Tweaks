@@ -1,0 +1,160 @@
+local cfg = require("BeefStranger.UI Tweaks.config")
+local bs = require("BeefStranger.UI Tweaks.common")
+local id = require("BeefStranger.UI Tweaks.ID")
+local Dialog = require("BeefStranger.UI Tweaks.menu.MenuDialog")
+local embed = Dialog.embed
+local prop = require("BeefStranger.UI Tweaks.property").embed
+local uid = id.embed
+
+
+
+
+---@class bs_EmbededServices.persuade
+local persuade = {}
+
+
+persuade.costIndex = {
+    [4] = 10,
+    [5] = 100,
+    [6] = 1000,
+}
+
+
+function persuade:get() return embed:child((uid.persuade)) end
+
+---@param e uiActivatedEventData
+function persuade.creation(e)
+    if not embed:get() then return end
+    persuade.TXT = {
+        TITLE = bs.GMST(tes3.gmst.sPersuasionMenuTitle),
+        ADMIRE = bs.GMST(tes3.gmst.sAdmire),
+        INTIMIDATE = bs.GMST(tes3.gmst.sIntimidate),
+        TAUNT = bs.GMST(tes3.gmst.sTaunt),
+        BRIBE10 = bs.GMST(tes3.gmst.sBribe10Gold),
+        BRIBE100 = bs.GMST(tes3.gmst.sBribe100Gold),
+        BRIBE1000 = bs.GMST(tes3.gmst.sBribe1000Gold),
+        CLOSE = bs.GMST(tes3.gmst.sClose)
+    }
+
+
+    local dialog = Dialog:get()
+
+    ---Close if open
+    if persuade:get() then
+        persuade:get():destroy()
+        dialog:updateLayout()
+        return
+    end
+
+    local actor = tes3ui.getServiceActor()
+    local menu = embed:get():createBlock({id = uid.persuade})
+    menu.flowDirection = tes3.flowDirection.topToBottom
+    menu.autoWidth = true
+    menu.heightProportional = 1
+    menu.widthProportional = 1
+    menu.childAlignX = 0.5
+    menu:setPropertyBool(prop.visible, true)
+
+    local header = menu:createBlock({ id = uid.header })
+    header.widthProportional = 1
+    header.borderBottom = 6
+    header.autoHeight = true
+    header.childAlignX = 0.5
+
+    local title = header:createLabel({ id = uid.title, text = persuade.TXT.TITLE })
+    title.color = bs.rgb.headerColor
+
+    local border = menu:createThinBorder({ id = uid.border })
+    border:bs_autoSize(true)
+    border.widthProportional = 1
+
+    local list = border:createBlock({ id = uid.persuade_list })
+    list.borderAllSides = 4
+    list.borderRight = 40
+    list:bs_autoSize(true)
+    list.flowDirection = tes3.flowDirection.topToBottom
+
+    local admire = list:createTextSelect({ id = uid.persuade_Admire, text = persuade.TXT.ADMIRE })
+    local intimidate = list:createTextSelect({ id = uid.persuade_Intimidate, text = persuade.TXT.INTIMIDATE })
+    local taunt = list:createTextSelect({ id = uid.persuade_Taunt, text = persuade.TXT.TAUNT })
+    local bribe_10 = list:createTextSelect({ id = uid.persuade_Bribe_10, text = persuade.TXT.BRIBE10 })
+    local bribe_100 = list:createTextSelect({ id = uid.persuade_Bribe_100, text = persuade.TXT.BRIBE100 })
+    local bribe_1000 = list:createTextSelect({ id = uid.persuade_Bribe_1000, text = persuade.TXT.BRIBE1000 })
+
+    if cfg.persuade.hold then
+        admire:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
+        intimidate:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
+        taunt:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
+        if cfg.persuade.holdBribe then
+            bribe_10:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
+            bribe_100:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
+            bribe_1000:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
+        end
+    end
+
+    for index, button in ipairs(list.children) do
+        button:register(tes3.uiEvent.mouseClick, function (e)
+            local cost = persuade.costIndex[index]
+            if cost then
+                tes3.payMerchant({merchant = actor, cost = cost})
+            end
+
+            local success = tes3.persuade({actor = actor, index = index - 1})
+            local notifyMsg = ("%s %s"):format(button.text, success and "succeeded" or "failed")
+            tes3ui.showDialogueMessage({ text = ("%s %s"):format(button.text, success and "succeeded" or "failed"), style = 4})
+
+            if cfg.embed.notify then
+                bs.notify({success = success, text = notifyMsg})
+            end
+
+            dialog:updateLayout()
+            -- embed:get():updateLayout()
+            if actor.fight >= 80 then
+                if not cfg.embed_persuade.instantFight then
+                    tes3.messageBox({
+                        message = "That does it!",
+                        buttons = {"Fight!"},
+                        callback = function (e)
+                            tes3ui.leaveMenuMode()
+                        end
+                    })
+                end
+                tes3.closeDialogueMenu({})
+            end
+        end)
+    end
+
+    local footer = menu:createBlock({ id = uid.footer })
+    footer.childAlignX = -1
+    footer.borderTop = 5
+    footer.childAlignY = 0.5
+    footer.widthProportional = 1
+    footer.autoHeight = true
+
+    local close = footer:createButton({ id = uid.close, text = persuade.TXT.CLOSE})
+    close:register(tes3.uiEvent.mouseClick, function(e)
+        menu:destroy()
+        Dialog:get():updateLayout()
+    end)
+
+    menu:registerAfter(tes3.uiEvent.preUpdate, persuade.update)
+    -- embed:get():updateLayout()
+
+    dialog:updateLayout()
+
+end
+
+---@param e tes3uiEventData
+function persuade.update(e)
+    for index, button in ipairs(e.source:findChild(uid.persuade_list).children) do
+        local cost = persuade.costIndex[index]
+        if cost then
+            if tes3.getPlayerGold() < cost then
+                button.color = bs.rgb.disabledColor
+                button.disabled = true
+            end
+        end
+    end
+end
+
+return persuade
