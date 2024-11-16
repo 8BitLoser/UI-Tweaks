@@ -2,8 +2,8 @@ local cfg = require("BeefStranger.UI Tweaks.config")
 local bs = require("BeefStranger.UI Tweaks.common")
 local id = require("BeefStranger.UI Tweaks.ID")
 local Dialog = require("BeefStranger.UI Tweaks.menu.MenuDialog")
-local embed = Dialog.embed
 local prop = require("BeefStranger.UI Tweaks.property").embed
+local embed = Dialog.embed
 local uid = id.embed
 
 -----------------------------------
@@ -85,9 +85,10 @@ function repair.creation(e)
                             button.disabled = true
                         end
 
+                    
                         button:register(tes3.uiEvent.mouseClick, function(e)
                             if cfg.embed.notify then
-                                bs.notify({success = false, text = "-" .. "" .. block:getPropertyInt(prop.repair_cost) .. "gp"})
+                                bs.notify({success = false, text = ("-%sgp"):format(block:getPropertyInt(prop.repair_cost))})
                             end
                             tes3.playSound({ sound = bs.sound.Repair })
                             tes3.payMerchant({ cost = cost, merchant = actor })

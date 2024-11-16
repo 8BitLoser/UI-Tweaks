@@ -1,7 +1,7 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 local bs = require("BeefStranger.UI Tweaks.common")
 local id = require("BeefStranger.UI Tweaks.ID")
-local prop = require("BeefStranger.UI Tweaks.property").embed
+local prop = require("BeefStranger.UI Tweaks.property").embed ---@type bs_EmbededServices.property
 local Dialog = require("BeefStranger.UI Tweaks.menu.MenuDialog")
 local Service = require("BeefStranger.UI Tweaks.menu.MenuServices")
 local Persuasion = require("BeefStranger.UI Tweaks.menu.MenuPersuasion")
@@ -39,7 +39,7 @@ end
 
 ---@param e tes3uiEventData
 function embed.destroy(e)
-    local hours = embed:get():getPropertyInt(prop.trainHours)
+    local hours = e.source:getPropertyInt(prop.trainHours)
     if hours > 0 then
         tes3.fadeOut({duration = 0.5})
         tes3.advanceTime({hours = hours * 2})

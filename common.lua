@@ -256,7 +256,7 @@ function tes3uiElement:bs_holdClick(params)
   params = params or {}
   params.keyControl = params.keyControl or false
   params.triggerClick = params.triggerClick or false
-  params.skipFirstClick = params.skipFirstClick or false
+  params.skipFirstClick = (params.skipFirstClick == nil and true) or params.skipFirstClick
   params.startInterval = params.startInterval or 0.5
   params.minInterval = params.minInterval or 0.08
   params.playSound = params.playSound or false
@@ -304,6 +304,48 @@ function tes3uiElement:bs_holdClick(params)
     end
   end
   self:registerAfter(tes3.uiEvent.mouseStillPressed, stillPressed)
+end
+-------------------
+---hotkey
+-------------------
+
+---Add config.keybind.enable to your config to toggle functionality 
+---@class bs_tes3ui.hotkey.params
+---@field keyCode tes3.scanCode?
+---@field isShiftDown boolean?
+---@field isAltDown boolean?
+---@field isControlDown boolean?
+---configPath if you want to toggle keybinds off with a setting. Make sure to add `config.keybind.enable` to your config 
+---
+---Tip
+-------
+---Adding `configPath = "YourConfigName"` to your mwseKeyCombo lets you do button:bs_hotkey(config.buttonKeybind)
+---@field configPath string? 
+
+
+---comments
+---@param params bs_tes3ui.hotkey.params
+function tes3uiElement:bs_hotkey(params)
+  params.keyCode = params.keyCode
+  params.isShiftDown = params.isShiftDown or false
+  params.isAltDown = params.isAltDown or false
+  params.isControlDown = params.isControlDown or false
+  local combo = { keyCode = params.keyCode, isShiftDown = params.isShiftDown, isAltDown = params.isAltDown, isControlDown = params.isControlDown }
+
+  local cfg = (params.configPath and mwse.loadConfig(params.configPath)) or nil ---@type bsUITweaks.cfg|nil
+  ---@param e keyDownEventData
+  local function hotkey(e)
+    if cfg and cfg.keybind and cfg.keybind.enable == false then return end ---Extra checks
+
+    if tes3.isKeyEqual({ actual = e, expected = combo }) then
+      self:bs_click({})
+    end
+  end
+  event.register(tes3.event.keyDown, hotkey)
+
+  self:registerBefore(tes3.uiEvent.destroy, function(e)
+    event.unregister(tes3.event.keyDown, hotkey)
+  end)
 end
 -------------------
 ---createClose
@@ -516,6 +558,7 @@ function bs.notify(params)
   notify.absolutePosAlignY = nil
   notify.positionX = tes3.getCursorPosition().x - (notify.width / 2)
   notify.positionY = tes3.getCursorPosition().y + 30
+  notify.children[2].contentPath = nil
   notify.alpha = 0
   local message = notify:createLabel({ id = "msg", text = params.text })
   message.color = params.success and params.successColor or params.failureColor

@@ -62,21 +62,29 @@ function travel.creation(e)
         list:getContentElement():destroyChildren()
         for i, v in ipairs(actor.object.aiConfig.travelDestinations) do
             local dist = tes3.mobilePlayer.position:distance(v.marker.position)
-            local cost = bs.barterOffer(actor, math.floor(dist / bs.GMST(tes3.gmst.fTravelMult)), true)
+            local basePrice = math.floor(dist / bs.GMST(tes3.gmst.fTravelMult))
+            local guide = tes3.findClass("Guild Guide")
+            if actor.object.class == guide then basePrice = bs.GMST(tes3.gmst.fMagesGuildTravel) end
+            local cost = bs.barterOffer(actor, basePrice, true)
             local time = math.floor(dist / bs.GMST(tes3.gmst.fTravelTimeMult))
+            local keyCode = i < 10 and tes3.scanCode[""..i]
 
             local dest = list:createBlock { id = uid.travel_destinationPre .. i }
             dest:bs_autoSize(true)
             dest.childAlignX = -1
             dest.widthProportional = 1
 
-            local key = dest:createLabel({ id = uid.travel_keyPre .. i, text = i .. ":" })
-            key.color = bs.rgb.headerColor
-            key.borderRight = 5
+            if cfg.keybind and cfg.embed_travel.keybind then
+                local key = dest:createLabel({ id = uid.travel_keyPre .. i, text = i .. ":" })
+                key.color = bs.rgb.headerColor
+                key.borderRight = 5
+            end
 
             local button = dest:createTextSelect { id = uid.button, text = v.cell.name..":" }
+            if cfg.keybind and cfg.embed_travel.keybind then button:bs_hotkey({keyCode = keyCode}) end
             button:register(tes3.uiEvent.mouseClick, function(e)
                 tes3.fadeOut({ duration = 0.2 })
+                tes3.playSound({sound = bs.sound.mysticism_cast})
                 tes3.payMerchant({ merchant = actor, cost = cost })
                 tes3.closeDialogueMenu({})
                 tes3.positionCell({

@@ -14,7 +14,7 @@ local property = {
         trainNext = "Train_NextLevel",
         trainCost = "Train_Cost",
         trainAttribute = "Train_AttributeBase",
-        trainHours = "Train_Hours",
+        trainHours = "BS_Embed_Train_Hours",
     }
 }
 

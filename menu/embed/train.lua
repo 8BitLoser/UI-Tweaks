@@ -120,7 +120,7 @@ function train.creation(e)
             block:setPropertyInt(prop.trainNext, tes3.mobilePlayer:getSkillStatistic(skillId).base + 1)
             block:setPropertyInt(prop.trainCost, tes3.calculatePrice({ merchant = actor, training = true, skill = skillId }))
             ---Update for Improved Vanilla Levelling
-            embed:get():setPropertyInt(prop.trainHours, embed:get():getPropertyInt(prop.trainHours) + 1)
+            Dialog:get():setPropertyInt(prop.trainHours, Dialog:get():getPropertyInt(prop.trainHours) + 1)
             block:setPropertyInt(prop.trainAttribute, tes3.mobilePlayer.attributes[skillObj.attribute + 1].base)
 
             -- menu:updateLayout()
@@ -216,7 +216,7 @@ function train.getTopSkills(actor)
     end)
 
     ---Get just the top3
-    ---@type skillArray[]
+    ---@type BStrain_skillArray[]
     local top3 = {}
     for i = 1, 3 do
         table.insert(top3, skillArray[i])

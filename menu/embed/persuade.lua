@@ -6,19 +6,41 @@ local embed = Dialog.embed
 local prop = require("BeefStranger.UI Tweaks.property").embed
 local uid = id.embed
 
-
-
-
 ---@class bs_EmbededServices.persuade
 local persuade = {}
 
+persuade.type = {
+    admire = 0,
+    intimidate = 1,
+    taunt = 2,
+    bribe_10 = 3,
+    bribe_100 = 4,
+    bribe_1000 = 5
+}
+persuade.name = {
+    admire = 0,
+    intimidate = 1,
+    taunt = 2,
+    bribe_10 = 3,
+    bribe_100 = 4,
+    bribe_1000 = 5
+}
+
+persuade.response = {
+    [0] = { [true] = tes3.dialoguePage.service.admireSuccess, [false] = tes3.dialoguePage.service.admireFail },
+    [1] = { [true] = tes3.dialoguePage.service.intimidateSuccess, [false] = tes3.dialoguePage.service.intimidateFail },
+    [2] = { [true] = tes3.dialoguePage.service.tauntSuccess, [false] = tes3.dialoguePage.service.tauntFail },
+    [3] = { [true] = tes3.dialoguePage.service.bribeSuccess, [false] = tes3.dialoguePage.service.bribeFail },
+    [4] = { [true] = tes3.dialoguePage.service.bribeSuccess, [false] = tes3.dialoguePage.service.bribeFail },
+    [5] = { [true] = tes3.dialoguePage.service.bribeSuccess, [false] = tes3.dialoguePage.service.bribeFail },
+}
 
 persuade.costIndex = {
     [4] = 10,
     [5] = 100,
     [6] = 1000,
 }
-
+-- persuade.response
 
 function persuade:get() return embed:child((uid.persuade)) end
 
@@ -81,11 +103,11 @@ function persuade.creation(e)
     local bribe_100 = list:createTextSelect({ id = uid.persuade_Bribe_100, text = persuade.TXT.BRIBE100 })
     local bribe_1000 = list:createTextSelect({ id = uid.persuade_Bribe_1000, text = persuade.TXT.BRIBE1000 })
 
-    if cfg.persuade.hold then
+    if cfg.embed_persuade.hold then
         admire:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
         intimidate:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
         taunt:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
-        if cfg.persuade.holdBribe then
+        if cfg.embed_persuade.holdBribe then
             bribe_10:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
             bribe_100:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
             bribe_1000:bs_holdClick({ triggerClick = true, playSound = true, acceleration = 0.8, skipFirstClick = true })
@@ -100,15 +122,19 @@ function persuade.creation(e)
             end
 
             local success = tes3.persuade({actor = actor, index = index - 1})
+            local dialogue = tes3.findDialogue({ type = tes3.dialogueType.service, page = persuade.response[index - 1][success] })
+            local dialogIndex = math.random(#dialogue.info)
+            tes3ui.showDialogueMessage({ text = dialogue.id, style = 1})
+            tes3ui.showDialogueMessage({ text = dialogue.info[dialogIndex].text, style = 0})
+            
+            -- tes3ui.showDialogueMessage({ text = notifyMsg, style = 4})
+            
             local notifyMsg = ("%s %s"):format(button.text, success and "succeeded" or "failed")
-            tes3ui.showDialogueMessage({ text = ("%s %s"):format(button.text, success and "succeeded" or "failed"), style = 4})
-
             if cfg.embed.notify then
-                bs.notify({success = success, text = notifyMsg})
+                bs.notify({success = success, text = dialogue.id})
             end
 
             dialog:updateLayout()
-            -- embed:get():updateLayout()
             if actor.fight >= 80 then
                 if not cfg.embed_persuade.instantFight then
                     tes3.messageBox({
@@ -138,10 +164,8 @@ function persuade.creation(e)
     end)
 
     menu:registerAfter(tes3.uiEvent.preUpdate, persuade.update)
-    -- embed:get():updateLayout()
 
     dialog:updateLayout()
-
 end
 
 ---@param e tes3uiEventData

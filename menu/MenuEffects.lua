@@ -70,6 +70,15 @@ function this.update(e)
     this.activeUpdate(e)
 end
 
+---comments
+---@param effect tes3activeMagicEffect
+function this.validType(effect)
+    if effect.instance.source.isActiveCast or effect.instance.sourceType == tes3.magicSourceType.alchemy or effect.instance.sourceType == tes3.magicSourceType.enchantment then
+        return true
+    else
+        return false
+    end
+end
 ---Check if an active effect serial is not already tied to a child
 function this.createMissing()
     local current = {}
@@ -78,7 +87,7 @@ function this.createMissing()
     end
 
     for _, effect in ipairs(tes3.mobilePlayer.activeMagicEffectList) do
-        if effect.instance.source.isActiveCast or effect.instance.sourceType == tes3.magicSourceType.alchemy then
+        if this.validType(effect) then
             local isReg = table.find(current, effect.serial)
             -- debug.log(reg)
             if not isReg then
@@ -122,17 +131,17 @@ end
 function this.createSpellBlock()
     local menu = Menu:get()
     for _, spells in ipairs(tes3.mobilePlayer.activeMagicEffectList) do
-        local spell = spells.instance.source
-        if spell.isActiveCast or spells.instance.sourceType == tes3.magicSourceType.alchemy then
+        local source = spells.instance.source
+        if this.validType(spells) then
             if spells.duration >= cfg.effects.durationThreshold then
-                local block = menu:findChild(spell.id)
+                local block = menu:findChild(source.id)
                 if not block then
                     if cfg.effects.borderMode == 1 then
-                        block = menu:createThinBorder { id = spell.id }
+                        block = menu:createThinBorder { id = source.id }
                     elseif cfg.effects.borderMode == 2 then
-                        block = menu:createRect { id = spell.id, color = { 0, 0, 0 } }
+                        block = menu:createRect { id = source.id, color = { 0, 0, 0 } }
                     elseif cfg.effects.borderMode == 3 then
-                        block = menu:createBlock { id = spell.id }
+                        block = menu:createBlock { id = source.id }
                     end
                     block:bs_autoSize(true)--DEBUG
                     block.alpha = 0.75
@@ -237,7 +246,7 @@ end
 
 --- @param e menuEnterEventData
 local function menuEnter(e)
-    if Magic:get().visible and cfg.effects.enable and tes3.isCharGenFinished() then
+    if Magic:visible() and cfg.effects.enable and tes3.isCharGenFinished() then
         local ae = Menu:get()
         if ae then
             if Menu:isPinned() then

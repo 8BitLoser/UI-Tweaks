@@ -22,7 +22,6 @@ function spells.creation(e)
         OPEN = "Open",
     }
 
-
     Services.Spells:get().visible = false
     Services.Spells:get().disabled = true
     Dialog:get().visible = true
@@ -97,6 +96,10 @@ function spells.creation(e)
                 Dialog:get():updateLayout()
             end)
 
+            button:register(tes3.uiEvent.help, function (e)
+                tes3ui.createTooltipMenu({spell = spell})
+            end)
+
             local price = block:createLabel({ id = uid.price, text = cost .. "gp" })
             price.borderLeft = 15
             list:getContentElement():sortChildren(function(a, b)
@@ -144,24 +147,6 @@ function spells.creation(e)
             service = tes3.merchantService.spells,
             propPrefix = "spell"
         })
-        -- local willTrade = tes3.checkMerchantOffersService({reference = actor, service = tes3.merchantService.spells})
-        -- for index, child in ipairs(list:getContentElement().children) do
-        --     local spellObj = child:bs_getObj(prop.spell_obj)
-        --     local cost = tes3.calculatePrice({ merchant = actor, object = spellObj })
-        --     child:setPropertyInt(prop.spell_cost, cost)
-            
-        --     child:findChild(uid.spells_price).text = cost .. "gp"
-        --     local button = child:findChild(uid.spells_button)
-        --     if not willTrade or cost > tes3.getPlayerGold() then
-        --         title.color = bs.rgb.bsNiceRed
-        --         button.widget.state = tes3.uiState.disabled
-        --         button.disabled = true
-        --     else
-        --         title.color = bs.rgb.headerColor
-        --         button.widget.state = tes3.uiState.active
-        --         button.disabled = false
-        --     end
-        -- end
     end)
 
     embed:get():updateLayout()

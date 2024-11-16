@@ -20,6 +20,16 @@ local function keyDown(keybind) return tes3.worldController.inputController:isKe
 
 local time = os.clock()
 
+local this = {}
+this.button = {
+    embed_admire = function () Dialog.embed:child(id.embed.persuade_Admire):bs_click() end,
+    embed_intimidate = function () Dialog.embed:child(id.embed.persuade_Intimidate):bs_click() end,
+    embed_taunt = function () Dialog.embed:child(id.embed.persuade_Taunt):bs_click() end,
+    embed_bribe10 = function () Dialog.embed:child(id.embed.persuade_Bribe_10):bs_click() end,
+    embed_bribe100 = function () Dialog.embed:child(id.embed.persuade_Bribe_100):bs_click() end,
+    embed_bribe1000 = function () Dialog.embed:child(id.embed.persuade_Bribe_1000):bs_click() end,
+}
+
 
 local function RestWaitHold()
     if cfg.wait.enable and RestWait:get() then
@@ -98,6 +108,12 @@ local function PersuasionKeyDown(e)
             if key(e, keybind.bribe1000) then Persuasion:trigger("Bribe1000") end
         end
     end
+
+    -- if cfg.embed_persuade.enable and Dialog.embed:get() then
+    --     if key(e, keybind.admire) then this.button.embed_admire() end
+    --     if key(e, keybind.intimidate) then this.button.embed_intimidate() end
+    --     if key(e, keybind.taunt) then this.button.embed_taunt() end
+    -- end
 end
 
 local function RestWaitKeyDown(e)
@@ -140,3 +156,21 @@ local function Keybinds(e)
     end
 end
 event.register(tes3.event.keyDown, Keybinds, {priority = -10000})
+
+
+---@param e uiActivatedEventData
+local function dialogKeybind(e)
+    -- if e.element == Dialog:get() then
+    --     Dialog:Barter():bs_hotkey(cfg.keybind.barter)
+    --     Dialog:Companion():bs_hotkey(cfg.keybind.companion)
+    --     Dialog:Enchanting():bs_hotkey(cfg.keybind.enchanting)
+    --     Dialog:Persuasion():bs_hotkey(cfg.keybind.persuasion)
+    --     Dialog:Repair():bs_hotkey(cfg.keybind.repair)
+    --     Dialog:Spells():bs_hotkey(cfg.keybind.spells)
+    --     Dialog:Spellmaking():bs_hotkey(cfg.keybind.spellmaking)
+    --     Dialog:Training():bs_hotkey(cfg.keybind.training)
+    --     Dialog:Travel():bs_hotkey(cfg.keybind.travel)
+    -- end
+    
+end
+event.register(tes3.event.uiActivated, dialogKeybind)

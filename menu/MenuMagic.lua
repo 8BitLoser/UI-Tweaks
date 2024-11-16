@@ -19,6 +19,7 @@ function Magic:getObject(index) return self:EnchantNames().children[index]:getPr
 function Magic:getObjectData(index) return self:EnchantNames().children[index]:getPropertyObject("MagicMenu_extra", "tes3itemData") end
 function Magic:Spells() return self:child("MagicMenu_spell_names") end
 function Magic:EnchantTitle() return self:child("MagicMenu_item_title").parent end
+function Magic:visible() return self:get() and self:get().visible or false end
 
 
 
@@ -62,7 +63,7 @@ event.register(tes3.event.uiSpellTooltip, markSpells)
 --- @param e uiObjectTooltipEventData
 local function markEnchants(e)
     if not cfg.magic.enable then return end
-    if e.object.enchantment and Magic:get().visible then
+    if e.object.enchantment and Magic:visible() then
         bs.initData().lookedAt[e.object.id] = true
     end
 end

@@ -35,7 +35,7 @@ Enchant.UID = {
     ScrollLabel = tes3ui.registerID("Scrolls Label"),
     ScrollNames = tes3ui.registerID("Scroll Names"),
     Divider = tes3ui.registerID("Divider"),
-    MinMax = tes3ui.registerID("Show Gear Menu")
+    HideButton = tes3ui.registerID("Show Gear Menu")
 }
 
 local TEXT = {}
@@ -59,7 +59,7 @@ function Enchant:ScrollIcons() return self:child(self.UID.ScrollIcons) end
 function Enchant:ScrollNames() return self:child(self.UID.ScrollNames) end
 function Enchant:ScrollLabel() return self:child(self.UID.ScrollLabel) end
 function Enchant:ScrollBlock() return self:child(self.UID.ScrollsBlock) end
-
+function Enchant:HideButton() return Magic:child(self.UID.HideButton) end
 
 local UID = Enchant.UID
 
@@ -106,8 +106,6 @@ local function createMenuEnchanted()
     gearIcons.paddingRight = 4
     gearIcons.flowDirection = tes3.flowDirection.topToBottom
     gearIcons:bs_autoSize(true)
-    -- gearIcons.autoHeight = true
-    -- gearIcons.autoWidth = true
 
     local gearNames = gearBlock:createBlock({ id = UID.GearNames })
     gearNames.flowDirection = tes3.flowDirection.topToBottom
@@ -119,15 +117,11 @@ local function createMenuEnchanted()
     cost.flowDirection = tes3.flowDirection.topToBottom
     cost.borderLeft = 4
     cost:bs_autoSize(true)
-    -- cost.autoHeight = true
-    -- cost.autoWidth = true
     cost.childAlignX = 1
 
     local charge = gearBlock:createBlock({ id = UID.ChargeBlock })
     charge.flowDirection = tes3.flowDirection.topToBottom
     charge:bs_autoSize(true)
-    -- charge.autoHeight = true
-    -- charge.autoWidth = true
     charge.borderRight = 4
 
 ---=============================================
@@ -184,7 +178,8 @@ local function createMenuEnchanted()
 
         local icon = iconType:createImage({ id = stack.object.id, path = "Icons\\" .. effectIcon })
         icon.borderTop = 2
-        local item = nameType:createTextSelect({ id = stack.object.id, text = stack.object.name })
+        local COUNT = ((isScroll and stack.count > 1) and (": (%s)"):format(stack.count)) or ""
+        local item = nameType:createTextSelect({ id = stack.object.id, text = ("%s %s"):format(stack.object.name, COUNT) })
 
         if isScroll then
             item.widget.idle = bs.rgb.disabledColor
@@ -253,6 +248,10 @@ local function menuEnterCallback(e)
         createMenuEnchanted()
     end
 
+    if Enchant:HideButton() then
+        Enchant:HideButton().visible = cfg.enchantedGear.enable
+    end
+
     if Enchant:get() and Magic:get().visible then
         Enchant:get().visible = not this.getHidden()
         Enchant:get():updateLayout()
@@ -276,7 +275,8 @@ event.register(tes3.event.menuExit, menuExitCallback)
 local function uiActivatedCallback(e)
     if not e.newlyCreated then return end
     -- if Magic:child(UID.MinMax) then return end
-    local hide = e.element:createButton({id = UID.MinMax, text = TEXT.MINIMIZE })
+    local hide = e.element:createButton({id = UID.HideButton, text = TEXT.MINIMIZE })
+    hide.visible = cfg.enchantedGear.enable
     hide:register(tes3.uiEvent.mouseClick, this.hideButtonClick)
 end
 event.register(tes3.event.uiActivated, uiActivatedCallback, {filter = id.Magic})
@@ -339,7 +339,9 @@ function this.hideScrolls()
 end
 
 ---Update Enchanted Gear layout everytime Vanilla Magic Menu Updates
-function this.MagicPre()
+---@param e tes3uiEventData
+function this.MagicPre(e)
+    local minMax = Magic:child(UID.HideButton)
     local enchant = Magic:Enchants()
     local title = Magic:EnchantTitle()
     local div = enchant.parent.children[6]
@@ -353,9 +355,8 @@ function this.MagicPre()
         title.visible = true
         div.visible = true
     end
-    if Enchant:get() then
-        Enchant:get():updateLayout()
-    end
+    if minMax then minMax.visible = cfg.enchantedGear.enable end
+    if Enchant:get() then Enchant:get():updateLayout() end
 end
 
 ---When an Item/Scroll is Clicked
