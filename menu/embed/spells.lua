@@ -84,8 +84,9 @@ function spells.creation(e)
             button.widget.state = tes3.uiState.active
 
             button:register(tes3.uiEvent.mouseClick, function(e)
-                debug.log(block:getPropertyInt(prop.spell_cost))
-                debug.log(block:bs_getObj(prop.spell_obj))
+                -- debug.log(block:getPropertyInt(prop.spell_cost))
+                -- debug.log(cost)
+                -- debug.log(block:bs_getObj(prop.spell_obj))
                 tes3.addSpell { spell = block:bs_getObj(prop.spell_obj), mobile = tes3.mobilePlayer }
                 tes3.payMerchant({ merchant = actor, cost = block:getPropertyInt(prop.spell_cost) })
                 tes3.playSound { sound = bs.sound.Item_Gold_Down }

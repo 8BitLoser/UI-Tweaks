@@ -29,10 +29,10 @@ function embed.creation(e)
     menu.flowDirection = tes3.flowDirection.topToBottom
     menu.heightProportional = 1
     menu.visible = false
-
+    
     local gold = menu:createLabel({id = uid.embed_gold, text = embed.goldLabel()})
-
-    Dialog:get():registerAfter(tes3.uiEvent.preUpdate, embed.preUpdate, 100)
+    
+    Dialog:get():registerBefore(tes3.uiEvent.preUpdate, embed.preUpdate)
     Dialog:get():registerBefore(tes3.uiEvent.destroy, embed.destroy)
     Dialog:MainBlock():reorderChildren(1, menu, -1)
 end
@@ -111,12 +111,11 @@ local function onDialog(e)
             if e.element == Service.Spells:get() then
                 -- e.element:destroy()
                 spells.creation(e)
+                -- Dialog:get():updateLayout()
             end
         end
-
-        Dialog:get():updateLayout()
     end
 end
-event.register(tes3.event.uiActivated, onDialog)
+event.register(tes3.event.uiActivated, onDialog, {priority = 1000000})
 
 return embed

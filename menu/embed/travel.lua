@@ -84,7 +84,7 @@ function travel.creation(e)
             if cfg.keybind and cfg.embed_travel.keybind then button:bs_hotkey({keyCode = keyCode}) end
             button:register(tes3.uiEvent.mouseClick, function(e)
                 tes3.fadeOut({ duration = 0.2 })
-                tes3.playSound({sound = bs.sound.mysticism_cast})
+                if actor.object.class == guide then tes3.playSound({sound = bs.sound.mysticism_cast}) end
                 tes3.payMerchant({ merchant = actor, cost = cost })
                 tes3.closeDialogueMenu({})
                 tes3.positionCell({
@@ -94,7 +94,7 @@ function travel.creation(e)
                     orientation = v.marker.orientation,
                     suppressFader = true
                 })
-                tes3.advanceTime({ resting = true, hours = time })
+                tes3.advanceTime({ resting = false, hours = time })
                 tes3.fadeIn({ duration = 1.5 })
             end)
 
