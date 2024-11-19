@@ -20,7 +20,7 @@ function Magic:getObjectData(index) return self:EnchantNames().children[index]:g
 function Magic:Spells() return self:child("MagicMenu_spell_names") end
 function Magic:EnchantTitle() return self:child("MagicMenu_item_title").parent end
 function Magic:visible() return self:get() and self:get().visible or false end
-
+function Magic:focus() return self:get() and self:get():triggerEvent(tes3.uiEvent.focus) end
 
 
 --- @param e menuEnterEventData

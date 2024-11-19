@@ -102,7 +102,7 @@ function this.showToolSelect()
                     local itemData = tes3.addItemData({ item = s.item, to = tes3.mobilePlayer })
                     s.itemData = itemData
                 end
-                Repair:get():bs_setData({ data = s.itemData })
+                Repair:get():bs_setItemData({ data = s.itemData })
                 Repair:RepairIcon().contentPath = "Icons\\" .. s.item.icon
                 Repair:RepairUses().text = "Uses " .. s.itemData.condition
                 Repair:RepairQuality().text = ("Quality %.2f"):format(s.item.quality)

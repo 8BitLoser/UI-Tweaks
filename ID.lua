@@ -107,7 +107,8 @@ local MenuID = {
         travel_keyPre = "TravelKey ",
         travel_list = reg("Travel List"),
         travel_placePre = "Place ",
-    }
+    },
+
 }
 
 return MenuID
