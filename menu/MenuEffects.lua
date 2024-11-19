@@ -1,7 +1,10 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 local bs = require("BeefStranger.UI Tweaks.common")
 local id = require("BeefStranger.UI Tweaks.ID")
+local Inventory = require("BeefStranger.UI Tweaks.menu.MenuInventory")
 local Magic = require("BeefStranger.UI Tweaks.menu.MenuMagic")
+local Map = require("BeefStranger.UI Tweaks.menu.MenuMap")
+local Stat = require("BeefStranger.UI Tweaks.menu.MenuStat")
 local startTime = os.clock()
 
 
@@ -98,6 +101,8 @@ function this.createMissing()
     end
 end
 
+local nameUpdate = os.clock()
+
 ---@param e uiEventEventData
 function this.activeUpdate(e)
     for _, child in ipairs(e.source:getContentElement().children) do
@@ -109,6 +114,11 @@ function this.activeUpdate(e)
                 local remaining = active.duration - active.effectInstance.timeActive
                 for index, effectBlock in ipairs(child.children) do
                     if effectBlock.name == tes3.getMagicEffectName({ effect = active.effectId }) then
+                        if os.clock() - nameUpdate >= 1 then
+                            nameUpdate = os.clock()
+                            local effectName = tes3.getMagicEffectName({ effect = active.effectId, attribute = active.attributeId, skill = active.skillId })
+                            effectBlock:findChild("Name").text = ("%s: (%s pts)"):format(effectName, active.magnitude)
+                        end
                         effectBlock:findChild("Fillbar").widget.current = math.round(remaining)
                         if math.round(remaining, 2) <= 0.5 then
                             if effectBlock then
@@ -244,11 +254,29 @@ function this:getEffectBlock(spells)
     return block:findChild(tes3.getMagicEffectName({ effect = spells.effectId }))
 end
 
+local function focusAll()
+    if Magic:get() then
+        tes3ui.moveMenuToFront(Magic:get())
+    end
+    if Stat:get() then
+        tes3ui.moveMenuToFront(Stat:get())
+    end
+    if Map:get() then
+        tes3ui.moveMenuToFront(Map:get())
+    end
+    if Inventory:get() then
+        tes3ui.moveMenuToFront(Inventory:get())
+    end
+end
+
 --- @param e menuEnterEventData
 local function menuEnter(e)
     if Magic:visible() and cfg.effects.enable and tes3.isCharGenFinished() then
         local ae = Menu:get()
         if ae then
+            if ae == tes3.getTopMenu() then
+                focusAll()
+            end
             if Menu:isPinned() then
                 ae.alpha = cfg.effects.menuModeAlpha
             else

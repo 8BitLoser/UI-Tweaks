@@ -33,6 +33,7 @@ function Inventory:ItemTileColumns() return self:ItemScrollPane().children end
 ---@param row number The row index of the item
 ---@return tes3uiElement item
 function Inventory:Item(column, row) return self:ItemScrollPane().children[column].children[row] end
+function Inventory:focus() return self:get() and self:get():triggerEvent(tes3.uiEvent.focus) end
 
 ---@class bsMenuInventorySelect
 Inventory.Select = {}
