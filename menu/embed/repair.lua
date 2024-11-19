@@ -72,7 +72,7 @@ function repair.creation(e)
                         block.childAlignX = -1
                         block.childAlignY = 0.5
                         block:bs_setObj({ id = prop.repair_obj, object = stack.object })
-                        block:bs_setData({ id = prop.repair_data, data = stack.variables[1] })
+                        block:bs_setItemData({ id = prop.repair_data, data = stack.variables[1] })
                         block:setPropertyInt(prop.repair_cost, cost)
 
                         local button = block:createTextSelect({ id = uid.button, text = stack.object.name .. ":" })

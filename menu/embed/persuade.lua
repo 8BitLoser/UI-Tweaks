@@ -118,6 +118,7 @@ function persuade.creation(e)
         button:register(tes3.uiEvent.mouseClick, function (e)
             local cost = persuade.costIndex[index]
             if cost then
+                tes3.playSound{sound = bs.sound.Item_Gold_Down}
                 tes3.payMerchant({merchant = actor, cost = cost})
             end
 

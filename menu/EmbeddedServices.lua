@@ -86,7 +86,6 @@ local function onDialog(e)
         if cfg.embed_repair.enable then
             if e.element == Service.Repair:get() then
                 Dialog:get().visible = true
-                -- e.element:destroy()
                 e.element.visible = false ---Dont destroy, causes crashing
                 repair.creation(e)
             end
@@ -109,9 +108,7 @@ local function onDialog(e)
 
         if cfg.embed_spells.enable then
             if e.element == Service.Spells:get() then
-                -- e.element:destroy()
                 spells.creation(e)
-                -- Dialog:get():updateLayout()
             end
         end
     end

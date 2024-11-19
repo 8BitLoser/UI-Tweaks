@@ -83,6 +83,17 @@ function spells.creation(e)
             button.borderLeft = 5
             button.widget.state = tes3.uiState.active
 
+            for _, pcSpell in pairs(tes3.player.object.spells) do
+                for i = 1, pcSpell:getActiveEffectCount() do
+                    for j = 1, spell:getActiveEffectCount() do
+                        if spell.effects[j] == pcSpell.effects[i] then
+                            button.widget.state = tes3.uiState.normal
+                            break
+                        end
+                    end
+                end
+            end
+
             button:register(tes3.uiEvent.mouseClick, function(e)
                 -- debug.log(block:getPropertyInt(prop.spell_cost))
                 -- debug.log(cost)
@@ -106,6 +117,8 @@ function spells.creation(e)
             list:getContentElement():sortChildren(function(a, b)
                 return a.name < b.name
             end)
+
+     
         end
     end
 
@@ -148,6 +161,18 @@ function spells.creation(e)
             service = tes3.merchantService.spells,
             propPrefix = "spell"
         })
+        for _, v in ipairs(list:getContentElement().children) do
+            local spell = v:getPropertyObject("BS_Spells_Spell")
+            for k, pcSpell in pairs(tes3.player.object.spells) do ---Check every player spell
+                for i = 1, pcSpell:getActiveEffectCount() do ---check every playerspell effect
+                    for j = 1, spell:getActiveEffectCount() do
+                        if spell.effects[j].id == pcSpell.effects[i].id then
+                            v:findChild("Service Button").widget.state = tes3.uiState.normal
+                        end
+                    end
+                end
+            end
+        end
     end)
 
     embed:get():updateLayout()
