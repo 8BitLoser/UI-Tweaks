@@ -23,7 +23,7 @@ local defaults = {
     enchantedGear = {enable = true, highlightNew = true, hideVanilla = true, showVanillaOnHide = true},
 
     ---@class bsUITweaks.cfg.embed<K, V>: { [K]: V }
-    embed = { enable = true, notify = true, }, 
+    embed = { enable = false, notify = true, }, 
     ---@class bsUITweaks.cfg.embed.persuade<K, V>: { [K]: V }
     embed_persuade = { enable = true, instantFight = false, hold = true, holdBribe = false },
     ---@class bsUITweaks.cfg.embed.repair<K, V>: { [K]: V }
@@ -37,6 +37,14 @@ local defaults = {
 
     escape = {
         enable = true,
+        keybind = tes3.keybind.menuMode,
+        blacklist = {
+            MenuName = false,
+            MenuRaceSex = false,
+            MenuCreateClass = false,
+            MenuBirthSign = false,
+            MenuStatReview = false,
+        },
         menus = {
             bsItemSelect = true,
             bsTransferEnchant = true, MenuAlchemy = true,
@@ -291,26 +299,123 @@ local tooltip = templates.tooltips:createPage { label = "Tooltips", config = con
     tooltip:createYesNoButton { label = "Show Stacks Total Weight", configKey = "totalWeight" }
     tooltip:createSlider { label = "Digits in Seconds remaining", configKey = "durationDigits", min = 0, max = 5, step = 1, jump = 1 }
 ---==========================================================Dialogue=============================================================================
-    -- local dialogue = mwse.mcm.createTemplate({ name = configPath .. ": Dialogue", defaultConfig = defaults, config = config })
-    templates.dialogue = mwse.mcm.createTemplate({ name = configPath .. ": Dialogue", defaultConfig = defaults, config = config })
-    templates.dialogue:saveOnClose(configPath, config)
+-- local dialogue = mwse.mcm.createTemplate({ name = configPath .. ": Dialogue", defaultConfig = defaults, config = config })
+templates.dialogue = mwse.mcm.createTemplate({ name = configPath .. ": Dialogue", defaultConfig = defaults, config = config })
+templates.dialogue:saveOnClose(configPath, config)
 
-    local dialog = templates.dialogue:createPage{ label = "Dialogue", config = config.dialog, showReset = true, defaultConfig = defaults.dialog }
-        dialog:createYesNoButton({label = "Show NPC Class", configKey = "showClass"})
-        dialog:createYesNoButton({label = "Show Dialogue Shortcuts", configKey = "showKey"})
+local dialog = templates.dialogue:createPage{ label = "Dialogue", config = config.dialog, showReset = true, defaultConfig = defaults.dialog }
+    dialog:createYesNoButton({label = "Show NPC Class", configKey = "showClass"})
+    dialog:createYesNoButton({label = "Show Dialogue Shortcuts", configKey = "showKey"})
 
-    local persuade = templates.dialogue:createPage{ label = "Persuasion", config = config.persuade, showReset = true, defaultConfig = defaults.persuade }
-        persuade:createYesNoButton({label = "Show Keybinds", configKey = "showKey"})
-        persuade:createYesNoButton({label = "Hold Key to Quickly Persuade", configKey = "hold"})
-        persuade:createYesNoButton({label = "Hold Key to Quickly Bribe", configKey = "holdBribe"})
-        persuade:createSlider { label = "Hold Persuade Delay", configKey = "delay",
-        min = 0.01, max = 1, step = 0.01, jump = 0.01, decimalPlaces = 2 }
+local persuade = templates.dialogue:createPage{ label = "Persuasion", config = config.persuade, showReset = true, defaultConfig = defaults.persuade }
+    persuade:createYesNoButton({label = "Show Keybinds", configKey = "showKey"})
+    persuade:createYesNoButton({label = "Hold Key to Quickly Persuade", configKey = "hold"})
+    persuade:createYesNoButton({label = "Hold Key to Quickly Bribe", configKey = "holdBribe"})
+    persuade:createSlider { label = "Hold Persuade Delay", configKey = "delay",
+    min = 0.01, max = 1, step = 0.01, jump = 0.01, decimalPlaces = 2 }
 ---==========================================================Misc=============================================================================
-    templates.misc = mwse.mcm.createTemplate({ name = configPath .. ": Miscellaneous", defaultConfig = defaults, config = config })
-    templates.misc:saveOnClose(configPath, config)
+templates.misc = mwse.mcm.createTemplate({ name = configPath .. ": Miscellaneous", defaultConfig = defaults, config = config })
+templates.misc:saveOnClose(configPath, config)
 
-    local waitRest = templates.misc:createPage{ label = "Wait/Rest", config = config.wait }
-        waitRest:createYesNoButton({ label = "Enable 24 Hour Wait/Rest", configKey = "fullRest", })
+local waitRest = templates.misc:createPage{ label = "Wait/Rest", config = config.wait }
+    waitRest:createYesNoButton({ label = "Enable 24 Hour Wait/Rest", configKey = "fullRest", })
+
+
+
+local escape = templates.misc:createPage{label = "Quick Escape", config = config.escape}
+    escape:createDropdown({
+        label = "Escape Keybind",
+        configKey = "keybind",
+        options = {
+            {label = "MenuMode: Right-Click", value = tes3.keybind.menuMode},
+            {label = "Escape: Escape", value = tes3.keybind.escape}
+        }
+    })
+    -- templates.misc:createExclusionsPage({
+    --     label = "Quick Escape Blacklist",
+    --     config = config.escape,
+    --     configKey = "blacklist",
+    --     filters = {
+    --         label = "Menus",
+    --         callback = { "MenuMap", "MenuServiceSpells", "MenuBirthSign", "MenuBook", "MenuTopic", "MenuAttributesList", "MenuServiceRepair", "MenuSkillsList", "MenuQuantity", "MenuBarter", "MenuEnchantment", "MenuVideo", "MenuLoad", "MenuStat", "MenuSpellmaking", "MenuLevelUp", "MenuMagicSelect", "MenuName", "MenuDialog", "MenuMulti", "MenuSwimFillBar", "MenuJournal", "MenuNotify1", "MenuQuick", "MenuAttributes", "MenuInventory", "MenuSetValues", "MenuSpecialization", "MenuAlchemy", "MenuSkills", "MenuOptions", "MenuStatReview", "MenuInputSave", "MenuInput", "MenuNotify3", "MenuServiceTravel", "MenuServiceTraining", "MenuScroll", "MenuMapNoteEdit", "MenuContents", "MenuLoading", "MenuSave", "MenuRestWait", "MenuPersuasion", "MenuNotify2", "MenuCreateClass", "MenuClassMessage", "MenuPrefs", "MenuRaceSex", "MenuMessage", "MenuInventorySelect", "MenuTimePass", "MenuAudio", "MenuChooseClass", "MenuClassChoice", "MenuRepair", "MenuConsole", "MenuMagic", "MenuCtrls" }}
+    -- })
+    -- templates.misc:createExclusionsPage({
+    --     label = "Quick Escape Blacklist2",
+    --     config = config.escape,
+    --     configKey = "blacklist",
+    --     filters = {
+    --         label = "Menus",
+    --         callback = function ()
+    --             return { "MenuMap",
+    --                 "MenuServiceSpells",
+    --                 "MenuBirthSign", "MenuBook", "MenuTopic", "MenuAttributesList", "MenuServiceRepair", "MenuSkillsList",
+    --                 "MenuQuantity", "MenuBarter", "MenuEnchantment", "MenuVideo", "MenuLoad", "MenuStat",
+    --                 "MenuSpellmaking", "MenuLevelUp", "MenuMagicSelect", "MenuName", "MenuDialog", "MenuMulti",
+    --                 "MenuSwimFillBar", "MenuJournal", "MenuNotify1", "MenuQuick", "MenuAttributes", "MenuInventory",
+    --                 "MenuSetValues", "MenuSpecialization", "MenuAlchemy", "MenuSkills", "MenuOptions", "MenuStatReview",
+    --                 "MenuInputSave", "MenuInput", "MenuNotify3", "MenuServiceTravel", "MenuServiceTraining", "MenuScroll",
+    --                 "MenuMapNoteEdit", "MenuContents", "MenuLoading", "MenuSave", "MenuRestWait", "MenuPersuasion",
+    --                 "MenuNotify2", "MenuCreateClass", "MenuClassMessage", "MenuPrefs", "MenuRaceSex", "MenuMessage",
+    --                 "MenuInventorySelect", "MenuTimePass", "MenuAudio", "MenuChooseClass", "MenuClassChoice",
+    --                 "MenuRepair", "MenuConsole", "MenuMagic", "MenuCtrls" 
+    --             }
+    --         end
+    --     }
+    -- })
+    local function test()
+        local menus = {}
+        for _, name in pairs(bs.menus) do
+            if type(name) == "string" then
+                table.insert(menus, name)
+            end
+        end
+        table.sort(menus)
+        return menus
+    end
+    templates.misc:createExclusionsPage({
+        label = "Quick Escape Blacklist3",
+        leftListLabel = "Non-Edible Ingredients",
+        rightListLabel = "Ingredients",
+        config = config.escape,
+        configKey = "blacklist",
+        filters = {
+            {
+                label = "Ingredients",
+                callback = function()
+                    local ingreds = {}
+                    --- @param ingred tes3ingredient
+                    for ingred in tes3.iterateObjects(tes3.objectType.ingredient) do
+                        if ingred.value >= 100 then
+                            table.insert(ingreds, ingred.name)
+                        end
+                    end
+                    table.sort(ingreds)
+                    return ingreds
+                end
+            },
+        },
+    })
+    templates.misc:createExclusionsPage({
+        label = "Quick Escape Blacklist4",
+        leftListLabel = "Disabled Menus",
+        rightListLabel = "Enabled Menus",
+        config = config.escape,
+        configKey = "blacklist",
+        filters = { {
+            label = "Ingredients",
+            callback = function()
+                local menu = {}
+                for index, value in pairs(bs.menus) do
+                    if type(value) == "string" then
+                        table.insert(menu, value)
+                    end
+                end
+                table.sort(menu)
+                return menu
+            end
+        }, },
+    })
+
 ---==========================================================Multi=============================================================================
     -- templates.multi = mwse.mcm.createTemplate({ name = configPath .. ": HUD", defaultConfig = defaults, config = config })
     -- templates.multi:saveOnClose(configPath, config)

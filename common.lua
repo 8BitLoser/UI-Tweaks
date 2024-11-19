@@ -472,9 +472,9 @@ function tes3uiElement:bs_scrollChanged() self:triggerEvent(tes3.uiEvent.partScr
 
 ---Trigger mouseStillPressed
 function tes3uiElement:bs_triggerHold() self:triggerEvent(tes3.uiEvent.mouseStillPressed) end
-
-
-
+-------------------
+---setObj
+-------------------
 
 ---@class bs_tes3ui.setObj.params
 ---@field id string|number? *Optional* `Default: 'topLevelMenu.name'_Object`
@@ -486,17 +486,23 @@ function tes3uiElement:bs_setObj(params)
   params.id = params.id or self:getTopLevelMenu().name.."_Object"
   self:setPropertyObject(params.id, params.object)
 end
+-------------------
+---setItemData
+-------------------
 
 ---@class bs_tes3ui.setData.params
 ---@field id string|number? *Optional* `Default: 'topLevelMenu.name'_extra`
 ---@field data tes3itemData
 
 ---@param params bs_tes3ui.setData.params
-function tes3uiElement:bs_setData(params)
+function tes3uiElement:bs_setItemData(params)
   params = params or {}
   params.id = params.id or self:getTopLevelMenu().name.."_extra"
   self:setPropertyObject(params.id, params.data)
 end
+-------------------
+---getObj
+-------------------
 
 ---Returns Object of supplied propertyId. `Default ID: "'Menu.name'_Object"
 ---@param id string|number?
@@ -505,6 +511,9 @@ function tes3uiElement:bs_getObj(id)
   id = id or self:getTopLevelMenu().name.."_Object"
   return self:getPropertyObject(id)
 end
+-------------------
+---getItemData
+-------------------
 
 ---Returns itemData of supplied propertyId. `Default ID: "'Menu.name'_extra"
 ---@param id string|number?
@@ -512,6 +521,36 @@ end
 function tes3uiElement:bs_getItemData(id)
   id = id or self:getTopLevelMenu().name.."_extra"
   return self:getPropertyObject(id, "tes3itemData")
+end
+
+-------------------
+---Rename
+-------------------
+
+---Renames this element. The Elements ID changes as a result.
+---@param name string The new name for this element.
+function tes3uiElement:bs_Rename(name)
+  self:setPropertyProperty("name", name)
+end
+-------------------
+---findLastChild
+-------------------
+
+---Finds a child element matching the id argument. Searches children recursively. Returns the LAST child element with a matching id, or nil if no match found.
+---@param id string|number The Name/ID of the child
+---@return tes3uiElement|nil result The last found child or nil if none found
+function tes3uiElement:bs_findLastChild(id)
+  local regId = id
+  local found = nil
+  if type(id) == "string" then
+      regId = tes3ui.registerID(id)
+  end
+  for child in table.traverse(self.children) do ---@param child tes3uiElement
+      if regId == child.id then
+          found = child
+      end
+  end
+  return found
 end
 
 ---===================================
@@ -691,6 +730,69 @@ function bs.keybind(keybind) return tes3.worldController.inputController:isKeyDo
 
 ---@param scanCode tes3.scanCode
 function bs.isKeyDown(scanCode) return tes3.worldController.inputController:isKeyDown(scanCode) end
+
+bs.menus = {
+  Alchemy = "MenuAlchemy",
+  Attributes = "MenuAttributes",
+  AttributesList = "MenuAttributesList",
+  Audio = "MenuAudio",
+  Barter = "MenuBarter",
+  BirthSign = "MenuBirthSign",
+  Book = "MenuBook",
+  ChooseClass = "MenuChooseClass",
+  ClassChoice = "MenuClassChoice",
+  ClassMessage = "MenuClassMessage",
+  Console = "MenuConsole",
+  Contents = "MenuContents",
+  CreateClass = "MenuCreateClass",
+  Ctrls = "MenuCtrls",
+  Dialog = "MenuDialog",
+  Enchantment = "MenuEnchantment",
+  Input = "MenuInput",
+  InputSave = "MenuInputSave",
+  Inventory = "MenuInventory",
+  InventorySelect = "MenuInventorySelect",
+  Journal = "MenuJournal",
+  LevelUp = "MenuLevelUp",
+  Load = "MenuLoad",
+  Loading = "MenuLoading",
+  Magic = "MenuMagic",
+  MagicSelect = "MenuMagicSelect",
+  Map = "MenuMap",
+  MapNoteEdit = "MenuMapNoteEdit",
+  Message = "MenuMessage",
+  Multi = "MenuMulti",
+  Name = "MenuName",
+  Notify1 = "MenuNotify1",
+  Notify2 = "MenuNotify2",
+  Notify3 = "MenuNotify3",
+  Options = "MenuOptions",
+  Persuasion = "MenuPersuasion",
+  Prefs = "MenuPrefs",
+  Quantity = "MenuQuantity",
+  Quick = "MenuQuick",
+  RaceSex = "MenuRaceSex",
+  Repair = "MenuRepair",
+  RestWait = "MenuRestWait",
+  Save = "MenuSave",
+  Scroll = "MenuScroll",
+  ServiceRepair = "MenuServiceRepair",
+  ServiceSpells = "MenuServiceSpells",
+  ServiceTraining = "MenuServiceTraining",
+  ServiceTravel = "MenuServiceTravel",
+  SetValues = "MenuSetValues",
+  Skills = "MenuSkills",
+  SkillsList = "MenuSkillsList",
+  Specialization = "MenuSpecialization",
+  Spellmaking = "MenuSpellmaking",
+  Stat = "MenuStat",
+  StatReview = "MenuStatReview",
+  SwimFillBar = "MenuSwimFillBar",
+  TimePass = "MenuTimePass",
+  Topic = "MenuTopic",
+  Video = "MenuVideo",
+}
+
 
 bs.rgb = {
   bsPrettyBlue = { 0.235, 0.616, 0.949 },
