@@ -121,10 +121,12 @@ local function RestWaitKeyDown(e)
         -- if key(e, keybind.waitDown) then RestWait:waitDown(1) end
         -- if key(e, keybind.waitUp) then RestWait:waitUp(1) end
         if key(e, keybind.wait) then RestWait:trigger_wait_rest() end
-        if key(e, keybind.heal) then RestWait:HealedButton():bs_click() end
+        if key(e, keybind.heal) and RestWait:HealedButton().visible then
+            RestWait:HealedButton():bs_click()
+        end
         if key(e, keybind.day) and cfg.wait.fullRest then RestWait:FullRest():bs_click() end
     end
-end
+end   
 
 local function TravelKeyDown(e)
     if cfg.travel.enable and Service.Travel:get() then
