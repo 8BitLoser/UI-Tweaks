@@ -31,6 +31,7 @@ local function initializedCallback(e)
         [id.Options] = "MenuOptions_Return_container",
         [id.Book] = "MenuBook_button_close",
         [id.Scroll] = "MenuScroll_Close",
+        [id.Journal] = "MenuBook_button_close",
     }
 
     closeText = {
