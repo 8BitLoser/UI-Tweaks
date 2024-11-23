@@ -223,7 +223,7 @@ local inv = templates.inventory:createPage{label = "Inventory", config = config.
 
 local magic = templates.inventory:createPage{label = "Magic", config = config.magic, showReset = true, defaultConfig = defaults.magic}
     magic:createYesNoButton({label = "Highlight New Spells/Enchants", configKey = "highlightNew"})
-    magic:createColorPicker({label = "New Spell/Enchant Hightlight Color", configKey = "highlightColor", alpha = true})
+    -- magic:createColorPicker({label = "New Spell/Enchant Hightlight Color", configKey = "highlightColor", alpha = true})
     magic:createButton({label = "Reset New Magic List", inGameOnly = true, buttonText = "Reset", callback =
         function (self)
             bs.initData().lookedAt = {}
@@ -289,8 +289,8 @@ hitChance:createYesNoButton({label = "Show Hit Chance", configKey = "enable"})
     hitChance:createSlider({ label = "Position X", configKey = "posX", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
     hitChance:createSlider({ label = "Position Y", configKey = "posY", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
 
-local color = hitChance:createColorPicker({ label = "Background Color", configKey = "color", alpha = true })
-    color.indent = 0
+-- local color = hitChance:createColorPicker({ label = "Background Color", configKey = "color", alpha = true })
+--     color.indent = 0
 
 local tooltip = templates.tooltips:createPage { label = "Tooltips", config = config.tooltip, showReset = true, defaultConfig = defaults.tooltip }
     tooltip:createYesNoButton({ label = "Show Charge Cost of Enchantments", configKey = "charge" })
