@@ -50,7 +50,7 @@ local function keybindTestedCallback(e)
                 end
             end
 
-            ---Most Menus can be closed by findind the cancel button
+            ---Most Menus can be closed by finding the cancel button
             for button in table.traverse(menu.children) do
                 ---@cast button tes3uiElement
                 if button.type == tes3.uiElementType.button then

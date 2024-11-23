@@ -44,6 +44,7 @@ local defaults = {
             MenuCreateClass = true,
             MenuBirthSign = true,
             MenuStatReview = true,
+            MenuSetValues = true,
         },
         menus = {
             bsItemSelect = true,

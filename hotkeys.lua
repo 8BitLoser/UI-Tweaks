@@ -12,9 +12,8 @@ local Service = require("BeefStranger.UI Tweaks.menu.MenuServices")
 local id = require("BeefStranger.UI Tweaks.ID")
 local ts = tostring
 
--- local sf = string.format
 local function key(e, cfgKey) return tes3.isKeyEqual({actual = e, expected = cfgKey}) end
--- local function keyCode(e, setting) return e.keyCode == setting.keyCode end
+
 ---@param keybind mwseKeyCombo
 local function keyDown(keybind) return tes3.worldController.inputController:isKeyDown(keybind.keyCode) end
 
