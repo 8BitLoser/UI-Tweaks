@@ -75,12 +75,14 @@ function this.onRestMenu(e)
     timeUp:registerAfter(tes3.uiEvent.mouseClick, function (e) Rest:change_Time(1) end)
     timeDown:registerAfter(tes3.uiEvent.mouseClick, function (e) Rest:change_Time(-1) end)
 
-    local fullRest = e.element:createButton{id = "Full Rest", text = "24 Hours"}
-    fullRest.borderAllSides = 0
-    fullRest.absolutePosAlignX = 0.04
-    fullRest.absolutePosAlignY = 0.88
-    fullRest:register(tes3.uiEvent.mouseClick, this.trigger24hr)
-    e.element:updateLayout()
+    if cfg.wait.fullRest then
+        Rest:ButtonBlock().autoWidth = true
+        local fullRest = Rest:ButtonBlock():createButton{id = "Full Rest", text = "24 Hours"}
+        fullRest.borderAllSides = 0
+        fullRest.absolutePosAlignX = 0
+        fullRest:register(tes3.uiEvent.mouseClick, this.trigger24hr)
+        e.element:updateLayout()
+    end
 end
 event.register(tes3.event.uiActivated, this.onRestMenu, { filter = "MenuRestWait" })
 
