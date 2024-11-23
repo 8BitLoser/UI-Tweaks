@@ -33,11 +33,11 @@ local function enchantActivated(e)
             Enchant:Cost().parent:bs_autoSize(true)
 
             -- Enchant:PriceLabel().borderRight = 10
-            local gold = Enchant:Price():createLabel { id = "bsPlayerGold", text = "Gold" }
+            local gold = Enchant:Price():createLabel { id = "BS_PlayerGold", text = "Gold" }
             gold.borderLeft = 20
             gold.color = tes3ui.getPalette(tes3.palette.positiveColor)
 
-            local amount = Enchant:Price():createLabel { id = "bsValue", text = ts(playerGold) }
+            local amount = Enchant:Price():createLabel { id = "BS_Value", text = ts(playerGold) }
             amount.borderLeft = 10
             Enchant:get():updateLayout()
         end
