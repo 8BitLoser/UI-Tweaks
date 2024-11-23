@@ -791,6 +791,7 @@ bs.menus = {
   TimePass = "MenuTimePass",
   Topic = "MenuTopic",
   Video = "MenuVideo",
+  MCM = "MWSE:ModConfigMenu",
 }
 
 
