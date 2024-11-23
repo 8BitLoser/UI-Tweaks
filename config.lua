@@ -39,11 +39,11 @@ local defaults = {
         enable = true,
         keybind = tes3.keybind.menuMode,
         blacklist = {
-            MenuName = false,
-            MenuRaceSex = false,
-            MenuCreateClass = false,
-            MenuBirthSign = false,
-            MenuStatReview = false,
+            MenuName = true,
+            MenuRaceSex = true,
+            MenuCreateClass = true,
+            MenuBirthSign = true,
+            MenuStatReview = true,
         },
         menus = {
             bsItemSelect = true,
@@ -336,6 +336,8 @@ local escape = templates.misc:createPage{label = "Quick Escape", config = config
         leftListLabel = "Disabled Menus",
         rightListLabel = "Enabled Menus",
         config = config.escape,
+        defaultConfig = defaults.escape,
+        showReset = true,
         configKey = "blacklist",
         filters = { {
             label = "Ingredients",
