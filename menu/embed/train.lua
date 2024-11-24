@@ -55,14 +55,16 @@ function train.creation(e)
     local border = menu:createThinBorder({ id = uid.border })
     border.flowDirection = tes3.flowDirection.topToBottom
     border:bs_autoSize(true)
+    border.widthProportional = 1
 
     local list = border:createBlock({ id = uid.train_list})
     list.flowDirection = tes3.flowDirection.topToBottom
+    list:bs_autoSize(true)
     list.borderBottom = 2
     list.borderTop = 6
     list.borderLeft = 7
     list.borderRight = 7
-    list:bs_autoSize(true)
+    list.widthProportional = 1
 
     for _, npcSkill in ipairs(train.getTopSkills(actor)) do
         local skillId = npcSkill.id
@@ -119,8 +121,8 @@ function train.creation(e)
 
             block:setPropertyInt(prop.trainNext, tes3.mobilePlayer:getSkillStatistic(skillId).base + 1)
             block:setPropertyInt(prop.trainCost, tes3.calculatePrice({ merchant = actor, training = true, skill = skillId }))
-            ---Update for Improved Vanilla Levelling
             Dialog:get():setPropertyInt(prop.trainHours, Dialog:get():getPropertyInt(prop.trainHours) + 1)
+            ---Update for Improved Vanilla Levelling
             block:setPropertyInt(prop.trainAttribute, tes3.mobilePlayer.attributes[skillObj.attribute + 1].base)
 
             -- menu:updateLayout()
@@ -166,7 +168,7 @@ function train.trainUpdate(e)
             local title = e.source:findChild(uid.title)
 
             npcElement.text = "" .. npcLevel
-            levelElement.text = "" .. nextLevel
+            levelElement.text = "" .. currentLevel + 1
             costElement.text = ": " .. cost .. "gp"
 
             if (attribute < currentLevel) or (npcLevel <= currentLevel + 1) or cost > tes3.getPlayerGold() then

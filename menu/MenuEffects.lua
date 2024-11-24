@@ -274,7 +274,7 @@ local function menuEnter(e)
     if Magic:visible() and cfg.effects.enable and tes3.isCharGenFinished() then
         local ae = Menu:get()
         if ae then
-            if ae == tes3.getTopMenu() then
+            if ae.visible then
                 focusAll()
             end
             if Menu:isPinned() then

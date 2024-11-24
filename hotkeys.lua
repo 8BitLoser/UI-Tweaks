@@ -12,9 +12,8 @@ local Service = require("BeefStranger.UI Tweaks.menu.MenuServices")
 local id = require("BeefStranger.UI Tweaks.ID")
 local ts = tostring
 
--- local sf = string.format
 local function key(e, cfgKey) return tes3.isKeyEqual({actual = e, expected = cfgKey}) end
--- local function keyCode(e, setting) return e.keyCode == setting.keyCode end
+
 ---@param keybind mwseKeyCombo
 local function keyDown(keybind) return tes3.worldController.inputController:isKeyDown(keybind.keyCode) end
 
@@ -121,10 +120,12 @@ local function RestWaitKeyDown(e)
         -- if key(e, keybind.waitDown) then RestWait:waitDown(1) end
         -- if key(e, keybind.waitUp) then RestWait:waitUp(1) end
         if key(e, keybind.wait) then RestWait:trigger_wait_rest() end
-        if key(e, keybind.heal) then RestWait:HealedButton():bs_click() end
+        if key(e, keybind.heal) and RestWait:HealedButton().visible then
+            RestWait:HealedButton():bs_click()
+        end
         if key(e, keybind.day) and cfg.wait.fullRest then RestWait:FullRest():bs_click() end
     end
-end
+end   
 
 local function TravelKeyDown(e)
     if cfg.travel.enable and Service.Travel:get() then

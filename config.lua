@@ -39,11 +39,12 @@ local defaults = {
         enable = true,
         keybind = tes3.keybind.menuMode,
         blacklist = {
-            MenuName = false,
-            MenuRaceSex = false,
-            MenuCreateClass = false,
-            MenuBirthSign = false,
-            MenuStatReview = false,
+            MenuName = true,
+            MenuRaceSex = true,
+            MenuCreateClass = true,
+            MenuBirthSign = true,
+            MenuStatReview = true,
+            MenuSetValues = true,
         },
         menus = {
             bsItemSelect = true,
@@ -223,7 +224,7 @@ local inv = templates.inventory:createPage{label = "Inventory", config = config.
 
 local magic = templates.inventory:createPage{label = "Magic", config = config.magic, showReset = true, defaultConfig = defaults.magic}
     magic:createYesNoButton({label = "Highlight New Spells/Enchants", configKey = "highlightNew"})
-    magic:createColorPicker({label = "New Spell/Enchant Hightlight Color", configKey = "highlightColor", alpha = true})
+    -- magic:createColorPicker({label = "New Spell/Enchant Hightlight Color", configKey = "highlightColor", alpha = true})
     magic:createButton({label = "Reset New Magic List", inGameOnly = true, buttonText = "Reset", callback =
         function (self)
             bs.initData().lookedAt = {}
@@ -240,7 +241,7 @@ enchant:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
 local repair = templates.service:createPage{label = "Repair", config = config.repair, showReset = true, defaultConfig = defaults.repair}
     repair:createYesNoButton({label = "Repair Tool Selection", configKey = "select"})
     repair:createYesNoButton({label = "Hold to Repair", configKey = "hold"})
-    repair:createSlider { label = "Hold to Repair Interval", configKey = "duration", min = 0.01, max = 1, step = 0.01, jump = 0.1, decimalPlaces = 2 }
+    repair:createSlider { label = "Hold to Repair Interval", configKey = "interval", min = 0.01, max = 1, step = 0.01, jump = 0.1, decimalPlaces = 2 }
 
 local spellBarter = templates.service:createPage{ label = "Spell Bartering", config = config.spellBarter, showReset = true, defaultConfig = defaults.spellmaking }
     spellBarter:createYesNoButton({label = "Highlight Uncastable Spells", configKey = "showCantCast"})
@@ -289,8 +290,8 @@ hitChance:createYesNoButton({label = "Show Hit Chance", configKey = "enable"})
     hitChance:createSlider({ label = "Position X", configKey = "posX", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
     hitChance:createSlider({ label = "Position Y", configKey = "posY", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
 
-local color = hitChance:createColorPicker({ label = "Background Color", configKey = "color", alpha = true })
-    color.indent = 0
+-- local color = hitChance:createColorPicker({ label = "Background Color", configKey = "color", alpha = true })
+--     color.indent = 0
 
 local tooltip = templates.tooltips:createPage { label = "Tooltips", config = config.tooltip, showReset = true, defaultConfig = defaults.tooltip }
     tooltip:createYesNoButton({ label = "Show Charge Cost of Enchantments", configKey = "charge" })
@@ -321,7 +322,6 @@ local waitRest = templates.misc:createPage{ label = "Wait/Rest", config = config
     waitRest:createYesNoButton({ label = "Enable 24 Hour Wait/Rest", configKey = "fullRest", })
 
 
-
 local escape = templates.misc:createPage{label = "Quick Escape", config = config.escape}
     escape:createDropdown({
         label = "Escape Keybind",
@@ -331,75 +331,14 @@ local escape = templates.misc:createPage{label = "Quick Escape", config = config
             {label = "Escape: Escape", value = tes3.keybind.escape}
         }
     })
-    -- templates.misc:createExclusionsPage({
-    --     label = "Quick Escape Blacklist",
-    --     config = config.escape,
-    --     configKey = "blacklist",
-    --     filters = {
-    --         label = "Menus",
-    --         callback = { "MenuMap", "MenuServiceSpells", "MenuBirthSign", "MenuBook", "MenuTopic", "MenuAttributesList", "MenuServiceRepair", "MenuSkillsList", "MenuQuantity", "MenuBarter", "MenuEnchantment", "MenuVideo", "MenuLoad", "MenuStat", "MenuSpellmaking", "MenuLevelUp", "MenuMagicSelect", "MenuName", "MenuDialog", "MenuMulti", "MenuSwimFillBar", "MenuJournal", "MenuNotify1", "MenuQuick", "MenuAttributes", "MenuInventory", "MenuSetValues", "MenuSpecialization", "MenuAlchemy", "MenuSkills", "MenuOptions", "MenuStatReview", "MenuInputSave", "MenuInput", "MenuNotify3", "MenuServiceTravel", "MenuServiceTraining", "MenuScroll", "MenuMapNoteEdit", "MenuContents", "MenuLoading", "MenuSave", "MenuRestWait", "MenuPersuasion", "MenuNotify2", "MenuCreateClass", "MenuClassMessage", "MenuPrefs", "MenuRaceSex", "MenuMessage", "MenuInventorySelect", "MenuTimePass", "MenuAudio", "MenuChooseClass", "MenuClassChoice", "MenuRepair", "MenuConsole", "MenuMagic", "MenuCtrls" }}
-    -- })
-    -- templates.misc:createExclusionsPage({
-    --     label = "Quick Escape Blacklist2",
-    --     config = config.escape,
-    --     configKey = "blacklist",
-    --     filters = {
-    --         label = "Menus",
-    --         callback = function ()
-    --             return { "MenuMap",
-    --                 "MenuServiceSpells",
-    --                 "MenuBirthSign", "MenuBook", "MenuTopic", "MenuAttributesList", "MenuServiceRepair", "MenuSkillsList",
-    --                 "MenuQuantity", "MenuBarter", "MenuEnchantment", "MenuVideo", "MenuLoad", "MenuStat",
-    --                 "MenuSpellmaking", "MenuLevelUp", "MenuMagicSelect", "MenuName", "MenuDialog", "MenuMulti",
-    --                 "MenuSwimFillBar", "MenuJournal", "MenuNotify1", "MenuQuick", "MenuAttributes", "MenuInventory",
-    --                 "MenuSetValues", "MenuSpecialization", "MenuAlchemy", "MenuSkills", "MenuOptions", "MenuStatReview",
-    --                 "MenuInputSave", "MenuInput", "MenuNotify3", "MenuServiceTravel", "MenuServiceTraining", "MenuScroll",
-    --                 "MenuMapNoteEdit", "MenuContents", "MenuLoading", "MenuSave", "MenuRestWait", "MenuPersuasion",
-    --                 "MenuNotify2", "MenuCreateClass", "MenuClassMessage", "MenuPrefs", "MenuRaceSex", "MenuMessage",
-    --                 "MenuInventorySelect", "MenuTimePass", "MenuAudio", "MenuChooseClass", "MenuClassChoice",
-    --                 "MenuRepair", "MenuConsole", "MenuMagic", "MenuCtrls" 
-    --             }
-    --         end
-    --     }
-    -- })
-    local function test()
-        local menus = {}
-        for _, name in pairs(bs.menus) do
-            if type(name) == "string" then
-                table.insert(menus, name)
-            end
-        end
-        table.sort(menus)
-        return menus
-    end
+
     templates.misc:createExclusionsPage({
-        label = "Quick Escape Blacklist3",
-        leftListLabel = "Non-Edible Ingredients",
-        rightListLabel = "Ingredients",
-        config = config.escape,
-        configKey = "blacklist",
-        filters = {
-            {
-                label = "Ingredients",
-                callback = function()
-                    local ingreds = {}
-                    --- @param ingred tes3ingredient
-                    for ingred in tes3.iterateObjects(tes3.objectType.ingredient) do
-                        if ingred.value >= 100 then
-                            table.insert(ingreds, ingred.name)
-                        end
-                    end
-                    table.sort(ingreds)
-                    return ingreds
-                end
-            },
-        },
-    })
-    templates.misc:createExclusionsPage({
-        label = "Quick Escape Blacklist4",
+        label = "Quick Escape Blacklist",
         leftListLabel = "Disabled Menus",
         rightListLabel = "Enabled Menus",
         config = config.escape,
+        defaultConfig = defaults.escape,
+        showReset = true,
         configKey = "blacklist",
         filters = { {
             label = "Ingredients",

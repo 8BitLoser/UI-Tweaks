@@ -24,13 +24,15 @@ local function showGold()
             playerGold = stack.count
         end
     end
-    local gold = Spellmaking:Price():createLabel { id = "bsPlayerGold", text = "Gold" }
+    Spellmaking:Price():bs_autoSize(true)
+    local gold = Spellmaking:Price():createLabel { id = "BS_PlayerGold", text = "Gold" }
     gold.borderLeft = 20
     gold.borderRight = 10
     gold.color = { 0.875, 0.788, 0.624 }
 
-    local amount = Spellmaking:Price():createLabel { id = "bsValue", text = ts(playerGold) }
+    local amount = Spellmaking:Price():createLabel { id = "BS_Value", text = ts(playerGold) }
     amount.color = { 1.000, 0.647, 0.376 }
+    Spellmaking:get():updateLayout()
 end
 
 ---@param e uiActivatedEventData

@@ -42,11 +42,6 @@ local function magicHighlight(e)
                 end
             end
         end)
-        -- timer.delayOneFrame(function ()
-        --     Magic:get():updateLayout()
-        -- end)
-        -- Magic:get():updateLayout()
-        -- -- Magic:get():updateLayout()
     end
 end
 event.register(tes3.event.menuEnter, magicHighlight)

@@ -40,6 +40,7 @@ function spells.creation(e)
     end
 
     local actor = tes3ui.getServiceActor()
+    ---The Embedded Spells Menu
     local menu = embed:get():createBlock({id = uid.spells})
     -- menu:bs_autoSize(true)
     menu.autoWidth = true
@@ -117,8 +118,6 @@ function spells.creation(e)
             list:getContentElement():sortChildren(function(a, b)
                 return a.name < b.name
             end)
-
-     
         end
     end
 

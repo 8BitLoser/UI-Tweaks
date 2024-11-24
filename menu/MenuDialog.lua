@@ -45,24 +45,15 @@ end
 
 local function showHotkey()
     if cfg.dialog.showKey and cfg.keybind.enable then
-        if Dialog:child("Hotkeys") then return end
-        local hotkeys = Dialog:Persuasion().parent.parent:createBlock({ id = "Hotkeys" })
-        hotkeys.absolutePosAlignX = 1
-        -- hotkeys.autoWidth = true
-        hotkeys.height = 200
-        hotkeys.width = 30
-
-        hotkeys.flowDirection = tes3.flowDirection.topToBottom
         for _, button in pairs(Dialog:GetService().children) do
             if button.visible then
                 for setting, keybind in pairs(cfg.keybind) do
                     if string.find(button.name, setting, 1, true) then
                         local text = sf("(%s)", keyName(keybind.keyCode))
-                        hotkeys:createLabel({ id = keyName(keybind.keyCode), text = text })
-
-                        local size = tes3ui.textLayout.getTextExtent({text = sf("(%s)", keyName(keybind.keyCode))})
-                        if hotkeys.width < size then
-                            hotkeys.width = size
+                        button.widthProportional = 1
+                        if not button:findChild(keyName(keybind.keyCode)) then
+                            local hotkey = button:createLabel({ id = keyName(keybind.keyCode), text = text })
+                            hotkey.absolutePosAlignX = 1
                         end
                     end
                 end
@@ -86,7 +77,7 @@ local function onDialog(e)
     if not cfg.dialog.enable then return end
     if cfg.dialog.showKey and cfg.keybind.enable then
         if e.newlyCreated then
-            e.element:registerAfter(tes3.uiEvent.update, showHotkey)
+            e.element:registerAfter(tes3.uiEvent.preUpdate, showHotkey)
         end
     end
 
