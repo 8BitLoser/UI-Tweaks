@@ -355,6 +355,14 @@ function this.MagicPre(e)
         title.visible = true
         div.visible = true
     end
+
+    ---Match Visibility with MenuMagic
+    if cfg.enchantedGear.matchMagicVis then
+        if Enchant:get() and not this.getHidden() then
+            Enchant:get().visible = e.source.visible
+        end
+    end
+
     if minMax then minMax.visible = cfg.enchantedGear.enable end
     if Enchant:get() then Enchant:get():updateLayout() end
 end

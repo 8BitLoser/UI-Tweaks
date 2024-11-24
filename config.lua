@@ -20,7 +20,9 @@ local defaults = {
     dialog = { enable = true, showKey = false, showClass = false },
     effects = { enable = false, menuModeAlpha = 0.5, updateRate = 0.2, borderMode = 3, durationThreshold = 2, pinnedAlpha = 0 },
     enchant = { enable = true, showGold = true },
-    enchantedGear = {enable = true, highlightNew = true, hideVanilla = true, showVanillaOnHide = true},
+
+    ---@class bsUITweaks.cfg.gear
+    enchantedGear = {enable = true, highlightNew = true, hideVanilla = true, showVanillaOnHide = true, matchMagicVis = true},
 
     ---@class bsUITweaks.cfg.embed<K, V>: { [K]: V }
     embed = { enable = false, notify = true, }, 
@@ -218,6 +220,7 @@ local gear = templates.inventory:createPage{label = "Enchanted Gear", config = c
     gear:createYesNoButton({label = "Highlight New Enchants/Scrolls", configKey = "highlightNew"})
     gear:createYesNoButton({label = "Hide Vanilla Enchantments/Scrolls", configKey = "hideVanilla"})
     gear:createYesNoButton({label = "Show Vanilla Enchantments/Scrolls When Enchanted Gear Window Hidden", configKey = "showVanillaOnHide"})
+    gear:createYesNoButton({label = "Match Enchanted Gear Visibility with Vanilla Magic Menu", configKey = "matchMagicVis"})
 
 local inv = templates.inventory:createPage{label = "Inventory", config = config.inv, showReset = true, defaultConfig = defaults.inv}
     inv:createYesNoButton({label = "Hightlight Potions by Type", configKey = "potionHighlight"})
