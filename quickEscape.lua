@@ -30,7 +30,7 @@ event.register(tes3.event.initialized, initializedCallback)
 
 ---Auto find close button and click it
 ---@param menu tes3uiElement
----@return boolean blockKeybind
+---@return boolean success
 function this.autoClose(menu)
     if menu then
         for button in table.traverse(menu.children) do
