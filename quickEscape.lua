@@ -1,23 +1,23 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 local bs = require("BeefStranger.UI Tweaks.common")
 local id = require("BeefStranger.UI Tweaks.ID")
+local Menu = require("BeefStranger.UI Tweaks.menu")
 local find = tes3ui.findMenu
+local this = {}
+local closeButtons = {
+    [id.Ctrls] = "MenuCtrls_Okbutton",
+    [id.Video] = "MenuVideo_Okbutton",
+    [id.Prefs] = "MenuPrefs_Okbutton",
+    [id.Audio] = "MenuAudio_Okbutton",
+    [id.Options] = "MenuOptions_Return_container",
+    [id.Book] = "MenuBook_button_close",
+    [id.Scroll] = "MenuScroll_Close",
+    [id.Journal] = "MenuBook_button_close",
+}
 
-local closeButtons
 local closeText
 --- @param e initializedEventData
 local function initializedCallback(e)
-    closeButtons = {
-        [id.Ctrls] = "MenuCtrls_Okbutton",
-        [id.Video] = "MenuVideo_Okbutton",
-        [id.Prefs] = "MenuPrefs_Okbutton",
-        [id.Audio] = "MenuAudio_Okbutton",
-        [id.Options] = "MenuOptions_Return_container",
-        [id.Book] = "MenuBook_button_close",
-        [id.Scroll] = "MenuScroll_Close",
-        [id.Journal] = "MenuBook_button_close",
-    }
-
     closeText = {
         [bs.GMST(tes3.gmst.sGoodbye)] = true,
         [bs.GMST(tes3.gmst.sCancel)] = true,
@@ -27,6 +27,27 @@ local function initializedCallback(e)
     }
 end
 event.register(tes3.event.initialized, initializedCallback)
+
+---Auto find close button and click it
+---@param menu tes3uiElement
+---@return boolean blockKeybind
+function this.autoClose(menu)
+    if menu then
+        for button in table.traverse(menu.children) do
+            ---@cast button tes3uiElement
+            if button.type == tes3.uiElementType.button then
+                if button.visible then
+                    if closeText[button.text] then
+                        button:bs_click()
+                        return true
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+
 
 --- Close menus on Right click
 --- @param e keybindTestedEventData
@@ -50,18 +71,16 @@ local function keybindTestedCallback(e)
                 end
             end
 
-            ---Most Menus can be closed by finding the cancel button
-            for button in table.traverse(menu.children) do
-                ---@cast button tes3uiElement
-                if button.type == tes3.uiElementType.button then
-                    if button.visible then
-                        if closeText[button.text] then
-                            button:bs_click()
-                            return false
-                        end
-                    end
-                end
+            local closed = this.autoClose(menu)
+
+            if Menu.Barter:get() then
+                closed = this.autoClose(Menu.Barter:get())
             end
+
+            if closed then
+                return false
+            end
+
             tes3ui.leaveMenuMode()
             return false
         end
