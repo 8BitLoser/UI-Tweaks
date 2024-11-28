@@ -108,6 +108,17 @@ local MenuID = {
         travel_list = reg("Travel List"),
         travel_placePre = "Place ",
     },
+    enemyStats = { ---@class bsMenuMulti.EnemyStats.uid
+        top = reg("BS:EnemyStatsMulti"),
+        name = reg("BS:EnemyName"),
+        health = reg("BS:EnemyHealth"),
+        magicka = reg("BS:EnemyMagicka"),
+        fatigue = reg("BS:EnemyFatigue"),
+
+        header = reg("BS:EnemyHeader"),
+        border = reg("BS:EnemyBorder"),
+        bg = reg("BS:EnemyBackground"),
+    }
 
 }
 

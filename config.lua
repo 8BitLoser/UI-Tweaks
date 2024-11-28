@@ -37,6 +37,9 @@ local defaults = {
     ---@class bsUITweaks.cfg.embed.travel<K, V>: { [K]: V }
     embed_travel = { enable = true, keybind = true },
 
+    ---@class bsUITweaks.cfg.enemyBars<K, V>: { [K]: V }
+    enemyBars = {enable = false, health = true, magicka = true, fatigue = true, showLevel = true, showText = true, updateRate = 0.01},
+
     escape = {
         enable = true,
         keybind = tes3.keybind.menuMode,
@@ -134,6 +137,7 @@ settings:createYesNoButton { label = "Enable Active Effects", configKey = "enabl
 settings:createYesNoButton { label = "Enable Enchantment", configKey = "enable", config = config.enchant }
 settings:createYesNoButton { label = "Enable Enchanted Gear", configKey = "enable", config = config.enchantedGear }
 settings:createYesNoButton { label = "Enable Embedded Services", configKey = "enable", config = config.embed }
+settings:createYesNoButton { label = "Enable Enemy Stat Bars", configKey = "enable", config = config.enemyBars }
 settings:createYesNoButton { label = "Enable Hit Chance", configKey = "enable", config = config.hitChance }
 settings:createYesNoButton { label = "Enable Hotkeys", configKey = "enable", config = config.keybind }
 settings:createYesNoButton { label = "Enable Persuasion", configKey = "enable", config = config.persuade }
