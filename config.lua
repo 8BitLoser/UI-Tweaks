@@ -189,7 +189,6 @@ local fullRestKey = cfg:newCat(hotkeys, "Wait/Rest")
     cfg:keybind(fullRestKey, "Until Healed", "heal")
     cfg:keybind(fullRestKey, "Rest/Wait 24hr", "day")
 ---==========================================================Inventory=============================================================================
--- local inventory = mwse.mcm.createTemplate({ name = configPath..": Inventory", defaultConfig = defaults, config = config })
 templates.inventory = mwse.mcm.createTemplate({ name = configPath..": Inventory", defaultConfig = defaults, config = config })
 templates.inventory:saveOnClose(configPath, config)
 
@@ -290,15 +289,10 @@ local embedPersuade = templates.embed:createPage{label = "Persuasion", config = 
 templates.tooltips = mwse.mcm.createTemplate({ name = configPath .. ": Tooltips", defaultConfig = defaults, config = config })
 templates.tooltips:saveOnClose(configPath, config)
 
-local hitChance = templates.tooltips:createPage { label = "Hit Chance", config = config.hitChance, showReset = true, defaultConfig = defaults.hitChance }
-hitChance:createYesNoButton({label = "Show Hit Chance", configKey = "enable"})
-    hitChance:createSlider({ label = "Update Rate", min = 0.01, max = 5, configKey = "updateRate", decimalPlaces = 2, step = 0.01, jump = 0.1 })
-    hitChance:createCategory({ label = "Position: X: 0 is Left Edge, Y: 0 is Top Edge" })
-    hitChance:createSlider({ label = "Position X", configKey = "posX", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
-    hitChance:createSlider({ label = "Position Y", configKey = "posY", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
-
 -- local color = hitChance:createColorPicker({ label = "Background Color", configKey = "color", alpha = true })
 --     color.indent = 0
+
+
 
 local tooltip = templates.tooltips:createPage { label = "Tooltips", config = config.tooltip, showReset = true, defaultConfig = defaults.tooltip }
     tooltip:createYesNoButton({ label = "Show Charge Cost of Enchantments", configKey = "charge" })
@@ -321,6 +315,34 @@ local persuade = templates.dialogue:createPage{ label = "Persuasion", config = c
     persuade:createYesNoButton({label = "Hold Key to Quickly Bribe", configKey = "holdBribe"})
     persuade:createSlider { label = "Hold Persuade Delay", configKey = "delay",
     min = 0.01, max = 1, step = 0.01, jump = 0.01, decimalPlaces = 2 }
+---==========================================================HUD=============================================================================
+templates.hud = mwse.mcm.createTemplate({ name = configPath .. ": HUD", defaultConfig = defaults, config = config })
+templates.hud:saveOnClose(configPath, config)
+
+local enemyBars = templates.hud:createPage({ label = "Enemy Stat Bars", config = config.enemyBars })
+    enemyBars:createYesNoButton({label = "Show Health Bar", configKey = "health"})
+    enemyBars:createYesNoButton({label = "Show Magicka Bar", configKey = "magicka"})
+    enemyBars:createYesNoButton({label = "Show Fatigue Bar", configKey = "fatigue"})
+    enemyBars:createYesNoButton({label = "Show Level", configKey = "showLevel"})
+    enemyBars:createYesNoButton({label = "Show Values", configKey = "showText"})
+
+local hitChance = templates.hud:createPage { label = "Hit Chance", config = config.hitChance, showReset = true, defaultConfig = defaults.hitChance }
+    hitChance:createYesNoButton({ label = "Show Hit Chance", configKey = "enable" })
+    hitChance:createSlider({ label = "Update Rate", min = 0.01, max = 5, configKey = "updateRate", decimalPlaces = 2, step = 0.01, jump = 0.1 })
+    hitChance:createCategory({ label = "Position: X: 0 is Left Edge, Y: 0 is Top Edge" })
+    hitChance:createSlider({ label = "Position X", configKey = "posX", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
+    hitChance:createSlider({ label = "Position Y", configKey = "posY", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
+
+--- @param e keyDownEventData
+local function keyDownCallback(e)
+    if e.keyCode == tes3.scanCode.v then
+        -- bs.inspect(config)
+        bs.inspect(config.enemyBars)
+    end
+end
+event.register(tes3.event.keyDown, keyDownCallback)
+
+
 ---==========================================================Misc=============================================================================
 templates.misc = mwse.mcm.createTemplate({ name = configPath .. ": Miscellaneous", defaultConfig = defaults, config = config })
 templates.misc:saveOnClose(configPath, config)
@@ -362,23 +384,10 @@ local escape = templates.misc:createPage{label = "Quick Escape", config = config
         }, },
     })
 
----==========================================================Multi=============================================================================
-    -- templates.multi = mwse.mcm.createTemplate({ name = configPath .. ": HUD", defaultConfig = defaults, config = config })
-    -- templates.multi:saveOnClose(configPath, config)
----========================================================== =============================================================================
-
     for k, v in pairs(templates) do
         v:register()
     end
 
-
-    -- templates.dialogue:register()
-    -- templates.inventory:register()
-    -- templates.main:register()
-    -- templates.misc:register()
-    -- templates.embed:register()
-    -- templates.service:register()
-    -- templates.tooltips:register()
 end
 event.register(tes3.event.modConfigReady, registerModConfig)
 
