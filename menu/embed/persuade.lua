@@ -130,7 +130,7 @@ function persuade.creation(e)
             
             -- tes3ui.showDialogueMessage({ text = notifyMsg, style = 4})
             
-            local notifyMsg = ("%s %s"):format(button.text, success and "succeeded" or "failed")
+            local notifyMsg = ("%s %s"):format(button.text, success and bs.tl("notify.success") or bs.tl("notify.fail"))
             if cfg.embed.notify then
                 bs.notify({success = success, text = dialogue.id})
             end

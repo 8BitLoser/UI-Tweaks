@@ -77,7 +77,8 @@ function Menu:onUpdate(e)
     if getHitChance() then
         local main = e.source:getTopLevelMenu()
         Menu:show()
-        e.source.text = "Hit Chance: ".. tostring(getHitChance()) .. "%"
+        
+        e.source.text = ("%s: %s%"):format(bs.tl("hitChance.chance"), getHitChance())
         ---Update Pos/RGBA
         local color, alpha = bs.color(cfg.hitChance.color)
         main.color = color
@@ -98,7 +99,7 @@ local function createHitChance() --- onLoadEvent
     help.visible = false
     help.absolutePosAlignX = cfg.hitChance.posX
     help.absolutePosAlignY = cfg.hitChance.posY
-    local chance = help:createLabel({ id = "Chance", text = "Hit Chance: " .. tostring(getHitChance()) .. "%" })
+    local chance = help:createLabel({ id = "Chance", text = ("%s: %s%%"):format(bs.tl("hitChance.chance"), getHitChance()) })
     chance:register(tes3.uiEvent.update, function (e) Menu:onUpdate(e) end)
     help:updateLayout()
 end

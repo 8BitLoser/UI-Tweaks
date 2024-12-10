@@ -77,7 +77,7 @@ function repair.creation(e)
 
                         local button = block:createTextSelect({ id = uid.button, text = stack.object.name .. ":" })
 
-                        local price = block:createLabel({ id = uid.price, text = cost .. "gp" })
+                        local price = block:createLabel({ id = uid.price, text = cost .. bs.tl("CONST.GP") })
                         price.borderLeft = 15
 
                         if tes3.getPlayerGold() < cost then
@@ -88,7 +88,7 @@ function repair.creation(e)
                     
                         button:register(tes3.uiEvent.mouseClick, function(e)
                             if cfg.embed.notify then
-                                bs.notify({success = false, text = ("-%sgp"):format(block:getPropertyInt(prop.repair_cost))})
+                                bs.notify({success = false, text = ("-%s%s"):format(block:getPropertyInt(prop.repair_cost), bs.tl("CONST.GP"))})
                             end
                             tes3.playSound({ sound = bs.sound.Repair })
                             tes3.payMerchant({ cost = cost, merchant = actor })

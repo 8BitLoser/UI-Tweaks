@@ -38,7 +38,7 @@ function this.create()
     active.height = 100
     active.minWidth = 200
     active.minHeight = 100
-    active.text = "Active Effects"
+    active.text = bs.tl("effects.title")
     active.alpha = tes3.worldController.menuAlpha
 
     local drag_frame = active:findChild("PartDragMenu_drag_frame")

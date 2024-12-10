@@ -1,5 +1,6 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 local id = require("BeefStranger.UI Tweaks.ID")
+local bs = require("BeefStranger.UI Tweaks.common")
 local ts = tostring
 
 ---@class bsMenuSpellMaking
@@ -20,12 +21,12 @@ local function showGold()
     Spellmaking:BottomSpacer().width = 175
     local playerGold = 0
     for _, stack in pairs(tes3.mobilePlayer.inventory) do
-        if stack.object.name == "Gold" then
+        if stack.object.isGold then
             playerGold = stack.count
         end
     end
     Spellmaking:Price():bs_autoSize(true)
-    local gold = Spellmaking:Price():createLabel { id = "BS_PlayerGold", text = "Gold" }
+    local gold = Spellmaking:Price():createLabel { id = "BS_PlayerGold", text = bs.GMST(tes3.gmst.sGold) }
     gold.borderLeft = 20
     gold.borderRight = 10
     gold.color = { 0.875, 0.788, 0.624 }

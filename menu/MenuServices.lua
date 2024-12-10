@@ -32,6 +32,7 @@ Services.Spells.UID = {
     cost_header = reg("Cost Header"),
     data = reg("Purchase Data"),
     vert_divider = reg("Divider"),
+    cast_cost = reg("Cast Cost"),
     gold_cost = reg("Gold Cost")
 }
 
@@ -57,14 +58,14 @@ spells.skillIcons = {
     [tes3.skill.restoration] = "Icons\\s\\b_tx_s_rem_curse.tga",
 }
 
-spells.TEXT = {
-    HEADER_COST = "Magicka Cost | Gold Cost",
-    CAST_COST = "Cast Cost",
-}
+-- spells.TEXT = {
+--     HEADER_COST = "Magicka Cost | Gold Cost",
+--     CAST_COST = "Cast Cost",
+-- }
 
 function spells.createAdditions()
     local UID = Services.Spells.UID
-    local TEXT = spells.TEXT
+    -- local TEXT = spells.TEXT
     local topLevel = Spells:get()
 
     local filter = topLevel:createBlock({id = UID.filter})
@@ -78,14 +79,14 @@ function spells.createAdditions()
     local title = header:createLabel({id = UID.title, text = bs.GMST(tes3.gmst.sSpellServiceTitle)})
     title:register(tes3.uiEvent.help, function (e)
         local tip = tes3ui.createTooltipMenu()
-        tip:createLabel({text = "Sort by Name"})
+        tip:createLabel({text = bs.tl("spells.sortName")})
     end)
 
-    local headerCost = header:createLabel({id = UID.cost_header, text = TEXT.HEADER_COST})
+    local headerCost = header:createLabel({id = UID.cost_header, text = bs.tl("spells.header")})
     headerCost.absolutePosAlignX = 1
     headerCost:register(tes3.uiEvent.help, function (e)
         local tip = tes3ui.createTooltipMenu()
-        tip:createLabel({text = "Sort by Cost"})
+        tip:createLabel({text = bs.tl("spells.sortCost")})
     end)
 
     local data = Spells:ServiceList():createBlock({id = UID.data})
@@ -93,7 +94,7 @@ function spells.createAdditions()
     data.heightProportional = 1
     data.childAlignX = 1
 
-    local castCost = data:createBlock({id = TEXT.CAST_COST})
+    local castCost = data:createBlock({id = UID.cast_cost})
     castCost:bs_autoSize(true)
     castCost.flowDirection = tes3.flowDirection.topToBottom
     castCost.heightProportional = 1
@@ -141,13 +142,13 @@ function spells.createAdditions()
                     magicka.color = bs.rgb.bsNiceRed
                     magicka:register(tes3.uiEvent.help, function (e)
                         local tip = tes3ui.createTooltipMenu()
-                        local label = tip:createLabel({text = "You do not have enough Base Magicka to cast this Spell."})
+                        local label = tip:createLabel({text = bs.tl("spells.cantCast")})
                         label.color = bs.rgb.bsNiceRed
                     end)
                 end
                 local gold = tes3.calculatePrice({merchant = tes3ui.getServiceActor(), buying = true, object = spell})
 
-                local goldLabel = cost:createLabel { id = tostring(childIndex), text = tostring(gold) .. "gp" }
+                local goldLabel = cost:createLabel { id = tostring(childIndex), text = tostring(gold) .. bs.tl("CONST.GP") }
 
                 local schools = spells.getSchools(spell)
 

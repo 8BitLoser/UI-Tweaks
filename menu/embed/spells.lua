@@ -103,7 +103,7 @@ function spells.creation(e)
                 tes3.payMerchant({ merchant = actor, cost = block:getPropertyInt(prop.spell_cost) })
                 tes3.playSound { sound = bs.sound.Item_Gold_Down }
                 if cfg.embed.notify then
-                    bs.notify({success = false, text = "-" .. "" .. block:getPropertyInt(prop.spell_cost) .. "gp"})
+                    bs.notify({success = false, text = "-" .. "" .. block:getPropertyInt(prop.spell_cost) .. bs.tl("CONST.GP")})
                 end
                 block:destroy()
                 Dialog:get():updateLayout()
@@ -113,7 +113,7 @@ function spells.creation(e)
                 tes3ui.createTooltipMenu({spell = spell})
             end)
 
-            local price = block:createLabel({ id = uid.price, text = cost .. "gp" })
+            local price = block:createLabel({ id = uid.price, text = cost .. bs.tl("CONST.GP") })
             price.borderLeft = 15
             list:getContentElement():sortChildren(function(a, b)
                 return a.name < b.name

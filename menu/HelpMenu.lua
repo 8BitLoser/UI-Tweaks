@@ -36,7 +36,7 @@ function this.chargeCost(e)
         local baseCost = enchant.chargeCost
         local actualCost =  baseCost - (baseCost / 100) * (tes3.mobilePlayer.enchant.current - 10)
         local displayCost = math.max(1, math.floor(actualCost))
-        local new = e.tooltip:createLabel({id = "ChargeCost", text = "Charge Cost: ".. displayCost})
+        local new = e.tooltip:createLabel({id = "ChargeCost", text = bs.tl("tooltip.chargeCost")..displayCost})
         e.tooltip.children[1]:reorderChildren(Help:Enchant(), new, 1)
     end
 end
@@ -78,7 +78,7 @@ function this.labelText(active)
     local magnitude = active.magnitude
     local remainingTime = math.round(duration - active.effectInstance.timeActive, cfg.tooltip.durationDigits)
 
-    return string.format("%s: %s%% | Duration: %s sec", name, magnitude, remainingTime)
+    return string.format("%s: %s%% | %s: %s %s", name, magnitude, bs.GMST(tes3.gmst.sDuration), remainingTime, bs.GMST(tes3.gmst.ssecond))
 end
 
 function this.hideNullLabels()

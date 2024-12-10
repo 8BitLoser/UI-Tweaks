@@ -139,7 +139,7 @@ function this.displayInfo(mobile)
         fatigue.widget.showText = cfg.enemyBars.showText
     end
     if cfg.enemyBars.showLevel then
-        name.text = ("%s - Level: %s"):format(mobile.object.name, mobile.object.level)
+        name.text = ("%s - %s: %s"):format(mobile.object.name, bs.GMST(tes3.gmst.sLevel), mobile.object.level)
     else
         name.text = mobile.object.name
     end

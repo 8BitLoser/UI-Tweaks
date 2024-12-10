@@ -77,7 +77,7 @@ function this.onRestMenu(e)
 
     if cfg.wait.fullRest then
         Rest:ButtonBlock().autoWidth = true
-        local fullRest = Rest:ButtonBlock():createButton{id = "Full Rest", text = "24 Hours"}
+        local fullRest = Rest:ButtonBlock():createButton{id = "Full Rest", text = bs.tl("restWait.fullRest")}
         fullRest.borderAllSides = 0
         fullRest.absolutePosAlignX = 0
         fullRest:register(tes3.uiEvent.mouseClick, this.trigger24hr)

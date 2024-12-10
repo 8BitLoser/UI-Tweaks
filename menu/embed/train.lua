@@ -111,13 +111,13 @@ function train.creation(e)
 
         local nextLevel = infoBlock:createLabel({ id = uid.train_level, text = "" .. levelUp })
 
-        local cost = infoBlock:createLabel({ id = uid.train_cost, text = ": " .. calcCost .. "gp" })
+        local cost = infoBlock:createLabel({ id = uid.train_cost, text = ": " .. calcCost .. bs.tl("CONST.GP") })
 
         button:register(tes3.uiEvent.mouseClick, function(e)
             tes3.payMerchant({merchant = actor, cost = calcCost})
             tes3.playSound({ sound = bs.sound.Item_Gold_Down })
             tes3.mobilePlayer:progressSkillToNextLevel(skillId)
-            bs.notify({success = false, text = "-" .. "" .. block:getPropertyInt(prop.trainCost) .. "gp"})
+            bs.notify({success = false, text = "-" .. "" .. block:getPropertyInt(prop.trainCost) .. bs.tl("CONST.GP")})
 
             block:setPropertyInt(prop.trainNext, tes3.mobilePlayer:getSkillStatistic(skillId).base + 1)
             block:setPropertyInt(prop.trainCost, tes3.calculatePrice({ merchant = actor, training = true, skill = skillId }))
@@ -169,7 +169,7 @@ function train.trainUpdate(e)
 
             npcElement.text = "" .. npcLevel
             levelElement.text = "" .. currentLevel + 1
-            costElement.text = ": " .. cost .. "gp"
+            costElement.text = ": " .. cost .. bs.tl("CONST.GP")
 
             if (attribute < currentLevel) or (npcLevel <= currentLevel + 1) or cost > tes3.getPlayerGold() then
                 button.disabled = true

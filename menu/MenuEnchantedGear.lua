@@ -38,13 +38,13 @@ Enchant.UID = {
     HideButton = tes3ui.registerID("Show Gear Menu")
 }
 
-local TEXT = {}
-TEXT.GEAR = "Enchanted Gear"
-TEXT.COST_CHARGE = "Cost/Charge"
-TEXT.SCROLL = "Scrolls"
-TEXT.HIDE = " . . . "
-TEXT.MAXIMIZE = "Show Enchanted Gear"
-TEXT.MINIMIZE = "Hide Enchanted Gear"
+-- local TEXT = {}
+-- TEXT.GEAR = "Enchanted Gear"
+-- TEXT.COST_CHARGE = "Cost/Charge"
+-- TEXT.SCROLL = "Scrolls"
+-- TEXT.HIDE = " . . . "
+-- TEXT.MAXIMIZE = "Show Enchanted Gear"
+-- TEXT.MINIMIZE = "Hide Enchanted Gear"
 
 function Enchant:get() return tes3ui.findMenu(self.UID.Top) end
 function Enchant:child(child) return self:get() and self:get():findChild(child) end
@@ -85,11 +85,11 @@ local function createMenuEnchanted()
     gearheader.childAlignX = -1
     gearheader.autoHeight = true
 
-    local gearTitle = gearheader:createLabel({ id = UID.GearHeader, text = TEXT.GEAR })
+    local gearTitle = gearheader:createLabel({ id = UID.GearHeader, text = bs.tl("enchantedGear.title") })
     gearTitle.color = bs.rgb.headerColor
     gearTitle:register(tes3.uiEvent.mouseClick, this.hideGear)
 
-    local gearCost = gearheader:createLabel({ id = UID.GearCost, text = TEXT.COST_CHARGE })
+    local gearCost = gearheader:createLabel({ id = UID.GearCost, text = bs.GMST(tes3.gmst.sCostCharge) })
     gearCost.color = bs.rgb.headerColor
 
     local enchants = mainBlock:createBlock({ id = UID.Enchantments })
@@ -133,7 +133,7 @@ local function createMenuEnchanted()
     scrollHeader.widthProportional = 1
     scrollHeader.borderBottom = 5
 
-    local scrollLabel = scrollHeader:createLabel({id = UID.ScrollLabel, text = TEXT.SCROLL})
+    local scrollLabel = scrollHeader:createLabel({id = UID.ScrollLabel, text = bs.tl("enchantedGear.scrolls")})
     scrollLabel.color = bs.rgb.headerColor
 
     scrollLabel:register(tes3.uiEvent.mouseClick, this.hideScrolls)
@@ -191,7 +191,7 @@ local function createMenuEnchanted()
     local function createEnchantList()
         local top = Enchant:get()
         this.clearLabels()
-        top.text = TEXT.GEAR
+        top.text = bs.tl("enchantedGear.title")
 
         for _, stack in pairs(tes3.mobilePlayer.inventory) do
             local enchant = stack.object.enchantment
@@ -275,7 +275,7 @@ event.register(tes3.event.menuExit, menuExitCallback)
 local function uiActivatedCallback(e)
     if not e.newlyCreated then return end
     -- if Magic:child(UID.MinMax) then return end
-    local hide = e.element:createButton({id = UID.HideButton, text = TEXT.MINIMIZE })
+    local hide = e.element:createButton({id = UID.HideButton, text = bs.tl("enchantedGear.hideGear") }) 
     hide.visible = cfg.enchantedGear.enable
     hide:register(tes3.uiEvent.mouseClick, this.hideButtonClick)
 end
@@ -300,7 +300,7 @@ function this.hideButtonClick(e)
     if not tes3.isCharGenFinished() then return end
     this.setHidden(not this.getHidden())
     Enchant:get().visible = not this.getHidden()
-    e.source.text = this.getHidden() and TEXT.MAXIMIZE or TEXT.MINIMIZE
+    e.source.text = this.getHidden() and bs.tl("enchantedGear.showGear") or bs.tl("enchantedGear.hideGear")
     if cfg.enchantedGear.showVanillaOnHide then
         Magic:Enchants().visible = true
         Magic:EnchantTitle().visible = true
@@ -327,7 +327,7 @@ function this.hideGear()
     local gearBlock = Enchant:GearBlock()
     local title = Enchant:GearHeader()
     gearBlock.visible = not gearBlock.visible
-    title.text = not gearBlock.visible and TEXT.GEAR .. TEXT.HIDE or TEXT.GEAR
+    title.text = not gearBlock.visible and bs.tl("enchantedGear.title") .. bs.tl("enchantedGear.hide") or bs.tl("enchantedGear.title")
 end
 
 ---Hide the Scrolls Category
@@ -335,7 +335,7 @@ function this.hideScrolls()
     local scrollBlock = Enchant:ScrollBlock()
     local title = Enchant:ScrollLabel()
     scrollBlock.visible = not scrollBlock.visible
-    title.text = not scrollBlock.visible and TEXT.SCROLL .. TEXT.HIDE or TEXT.SCROLL
+    title.text = not scrollBlock.visible and bs.tl("enchantedGear.scrolls") .. bs.tl("enchantedGear.hide") or bs.tl("enchantedGear.scrolls")
 end
 
 ---Update Enchanted Gear layout everytime Vanilla Magic Menu Updates

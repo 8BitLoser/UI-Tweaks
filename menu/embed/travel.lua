@@ -101,7 +101,7 @@ function travel.creation(e)
                 tes3.fadeIn({ duration = 1.5 })
             end)
 
-            local price = dest:createLabel({ id = uid.price, text = cost .. "gb" })
+            local price = dest:createLabel({ id = uid.price, text = cost .. bs.tl("CONST.GP") })
             price.borderLeft = 20
         end
     end

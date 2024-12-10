@@ -110,7 +110,7 @@ end
 function totalValue.valueUpdate(e)
     local element = e.source:findChild("Total Value")
     if element and cfg.contents.totalValue then
-        element.text = "Total Value: " .. tostring(totalValue.getValue())
+        element.text = ("%s: %s"):format(bs.tl("contents.totalValue"),totalValue.getValue())
     end
 end
 
@@ -130,7 +130,7 @@ local function uiActivatedCallback(e)
     if cfg.contents.enable then
         if e.element == MenuContents:get() then
             if cfg.contents.totalValue then
-                local value = MenuContents:ButtonBlock():createLabel { id = "Total Value", text = "Total Value: " .. tostring(totalValue.getValue()) }
+                local value = MenuContents:ButtonBlock():createLabel { id = "Total Value", text = ("%s: %s"):format(bs.tl("contents.totalValue"),totalValue.getValue()) }
                 value.borderAllSides = 4
                 value.color = bs.rgb.normalColor
                 MenuContents:ButtonBlock():reorderChildren(MenuContents:Dispose(), value, -1)
@@ -144,7 +144,7 @@ local function uiActivatedCallback(e)
                     MenuContents:TitleText().text = MenuContents:TitleText().text .. ": " .. MenuContents:Owner().name
                     MenuContents:TitleText().color = MenuContents:HasAccess() and bs.rgb.bsPrettyGreen or bs.rgb.bsNiceRed
                 elseif MenuContents:isPickpocket() then
-                    MenuContents:TitleText().text = MenuContents:TitleText().text .. ": " .. "Pickpocketing"
+                    MenuContents:TitleText().text = MenuContents:TitleText().text .. ": " .. bs.tl("contents.pickpocket")
                     MenuContents:TitleText().color = bs.rgb.bsNiceRed
                 end
             end

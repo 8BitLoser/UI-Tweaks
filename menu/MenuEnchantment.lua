@@ -1,5 +1,6 @@
 local cfg = require("BeefStranger.UI Tweaks.config")
 local id = require("BeefStranger.UI Tweaks.ID")
+local bs = require("BeefStranger.UI Tweaks.common")
 local ts = tostring
 
 ---@class bsMenuEnchantment
@@ -23,7 +24,7 @@ local function enchantActivated(e)
         if tes3ui.getServiceActor() then
             local playerGold = 0
             for _, stack in pairs(tes3.mobilePlayer.inventory) do
-                if stack.object.name == "Gold" then
+                if stack.object.isGold then
                     playerGold = stack.count
                 end
             end
@@ -33,7 +34,7 @@ local function enchantActivated(e)
             Enchant:Cost().parent:bs_autoSize(true)
 
             -- Enchant:PriceLabel().borderRight = 10
-            local gold = Enchant:Price():createLabel { id = "BS_PlayerGold", text = "Gold" }
+            local gold = Enchant:Price():createLabel { id = "BS_PlayerGold", text = bs.GMST(tes3.gmst.sGold) }
             gold.borderLeft = 20
             gold.color = tes3ui.getPalette(tes3.palette.positiveColor)
 

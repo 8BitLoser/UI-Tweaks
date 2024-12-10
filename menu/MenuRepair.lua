@@ -105,7 +105,7 @@ function this.showToolSelect()
                 Repair:get():bs_setItemData({ data = s.itemData })
                 Repair:RepairIcon().contentPath = "Icons\\" .. s.item.icon
                 Repair:RepairUses().text = "Uses " .. s.itemData.condition
-                Repair:RepairQuality().text = ("Quality %.2f"):format(s.item.quality)
+                Repair:RepairQuality().text = ("%s %.2f"):format(bs.GMST(tes3.gmst.sQuality), s.item.quality)
 
                 Repair:update()
             end
@@ -123,7 +123,7 @@ function this.onLastTool()
         objectCopy.children[1]:register(tes3.uiEvent.help, this.tooltip)
         objectCopy:registerBefore(tes3.uiEvent.destroy, this.onLastTool)
 
-        titleCopy:findChild("MenuRepair_uses").text = "Select a Repair Item..."
+        titleCopy:findChild("MenuRepair_uses").text = bs.tl("repair.select")
         titleCopy:findChild("MenuRepair_quality").text = ""
     end
 end

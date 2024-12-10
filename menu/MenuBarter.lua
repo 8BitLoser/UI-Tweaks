@@ -5,7 +5,7 @@ local Inventory = require("BeefStranger.UI Tweaks.menu.MenuInventory")
 local sf = string.format
 local data
 
-local CREATURE_TEXT = "Creatures Don't Haggle."
+local CREATURE_TEXT = bs.tl("barter.creatureHaggle")
 
 ---@param gmst tes3.gmst
 local function GMST(gmst) return tes3.findGMST(gmst).value end
@@ -75,11 +75,11 @@ local function barterChance()
     if not isBuying then x = x + math.abs(math.floor(npcTerm - pcTerm)) end
 
     if not isBuying and Barter:isBuying() then ---If selling, but offering Gold
-        Barter.ChanceText.text = "Gifting"
+        Barter.ChanceText.text = bs.tl("barter.gift")
         Barter.ChanceValue.text = ""
         if cfg.barter.chanceColor then Barter.ChanceText.color = bs.rgb.bsPrettyBlue end
     else
-        Barter.ChanceText.text = "Chance:"
+        Barter.ChanceText.text = GMST(tes3.gmst.sEnchantmentMenu6)..":"
         Barter.ChanceValue.text = tostring(math.floor(x).."%")
         local factor = math.min(math.max(x / 100, 0), 1) ---ChatGPT did math/interpolation for me
         local interpolatedColor = bs.interpolateRGB(bs.rgb.bsNiceRed, bs.rgb.bsPrettyGreen, factor)
@@ -125,11 +125,11 @@ function Barter.showStats()
             NpcStat.autoHeight = true
             NpcStat.childAlignX = 0.5
             NpcStat.widthProportional = 1
-            NpcStat:createLabel({ id = "bsNPC_Mercantile", text = sf("Mercantile: %s", trader.mercantile.current) })
+            NpcStat:createLabel({ id = "bsNPC_Mercantile", text = sf("%s: %s", GMST(tes3.gmst.sSkillMercantile), trader.mercantile.current) })
             local divider = NpcStat:createImage({ id = "bsNPC_Divider", path = "Textures\\menu_head_block_left.dds" })
             divider.borderRight = 10
             divider.borderLeft = 10
-            NpcStat:createLabel({ id = "bsNPC_Personality", text = sf("Personality: %s", trader.personality.current) })
+            NpcStat:createLabel({ id = "bsNPC_Personality", text = sf("%s: %s",GMST(tes3.gmst.sAttributePersonality), trader.personality.current) })
             Barter:Main():reorderChildren(0, NpcStat, -1)
             Barter:Update()
         end
@@ -142,11 +142,11 @@ function Barter.showStats()
             PlayerStat.absolutePosAlignX = 0.5
             PlayerStat.absolutePosAlignY = 0.5
 
-            PlayerStat:createLabel { id = "bsPlayer_Mercantile", text = "Mercantile: " .. player.mercantile.current }
+            PlayerStat:createLabel { id = "bsPlayer_Mercantile", text = sf("%s: %s", GMST(tes3.gmst.sSkillMercantile), player.mercantile.current) }
             local divider = PlayerStat:createImage({ id = "bsPlayer_Divider", path = "Textures\\menu_head_block_left.dds" })
             divider.borderRight = 10
             divider.borderLeft = 10
-            PlayerStat:createLabel({ id = "bsPlayer_Personality", text = sf("Personality: %s", player.personality.current) })
+            PlayerStat:createLabel({ id = "bsPlayer_Personality", text = sf("%s: %s",GMST(tes3.gmst.sAttributePersonality), player.personality.current) })
             Barter:Buttons():reorderChildren(1, PlayerStat, -1)
             Barter:Update()
         end
@@ -164,7 +164,7 @@ function Barter.showBarterChance()
         Barter.ChanceBlock.autoHeight = true
         Barter.ChanceBlock.autoWidth = true
 
-        Barter.ChanceText = Barter.ChanceBlock:createLabel{id = "Chance", text = "Chance:"}
+        Barter.ChanceText = Barter.ChanceBlock:createLabel{id = "Chance", text = GMST(tes3.gmst.sEnchantmentMenu6)..":"}
 
         Barter.ChanceValue = Barter.ChanceBlock:createLabel{id = "ChanceValue", text = ""}
         Barter.ChanceValue.borderLeft = 5
@@ -189,7 +189,7 @@ end
 
 function Barter.sellJunk()
     if not cfg.barter.enableJunk then return end
-    Barter.SellJunk = Barter:Buttons():createButton{id = "bsJunkButton", text = "Sell Junk"}
+    Barter.SellJunk = Barter:Buttons():createButton{id = "bsJunkButton", text = bs.tl("barter.junkButton")}
 
     ---ChatGPT assisted optimized, Does seem better Lag spike is far better
     ---Notes: Remember Reverse Order for loop
@@ -261,7 +261,7 @@ local function junkTooltip(e)
         local junk = e.tooltip:createBlock{id = "bsJunk"}
         junk.autoHeight = true
         junk.autoWidth = true
-        local label = junk:createLabel{id = "JunkLabel", text = "Junk"}
+        local label = junk:createLabel{id = "JunkLabel", text = bs.tl("barter.junk")}
         label.color = bs.rgb.bsRoyalPurple
     end
 end
