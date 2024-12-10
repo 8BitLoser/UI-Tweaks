@@ -1,0 +1,187 @@
+---AutoGen i18n alias'
+---@alias bs_UITweaks_i18n_Translation
+---| '"CONST.GP"' gp
+---| '"barter.creatureHaggle"' Creatures Don't Haggle.
+---| '"barter.gift"' Gifting
+---| '"barter.junk"' Junk
+---| '"barter.junkButton"' Sell Junk
+---| '"contents.pickpocket"' Pickpocketing
+---| '"contents.totalValue"' Total Value
+---| '"effects.title"' Active Effects
+---| '"enchantedGear.hide"'  . . . 
+---| '"enchantedGear.hideGear"' Hide Enchanted Gear
+---| '"enchantedGear.scrolls"' Scrolls
+---| '"enchantedGear.showGear"' Show Enchanted Gear
+---| '"enchantedGear.title"' Enchanted Gear
+---| '"hitChance.chance"' Hit Chance
+---| '"mcm.barter.catJunk"' Junk
+---| '"mcm.barter.catStats"' Stats
+---| '"mcm.barter.chanceColor"' Show Chance Color
+---| '"mcm.barter.enable"' Enable Barter
+---| '"mcm.barter.enableJunk"' Enable Junk
+---| '"mcm.barter.hold"' Enable Hold
+---| '"mcm.barter.maxSell"' Max Sell Count
+---| '"mcm.barter.name"' Barter
+---| '"mcm.barter.showChance"' Show Barter Chance
+---| '"mcm.barter.showDisposition"' Show Disposition
+---| '"mcm.barter.showNpcStats"' Show NPC Stats
+---| '"mcm.barter.showPlayerStats"' Show Player Stats
+---| '"mcm.contents.enable"' Enable Contents
+---| '"mcm.contents.name"' Contents
+---| '"mcm.contents.showOwner"' Show Owner
+---| '"mcm.contents.totalValue"' Show Total Value
+---| '"mcm.dialog.enable"' Enable Dialog
+---| '"mcm.dialog.name"' Dialog
+---| '"mcm.dialog.showClass"' Show NPC Class
+---| '"mcm.dialog.showKey"' Show Key in Dialog
+---| '"mcm.effects.borderBG"' Background
+---| '"mcm.effects.borderMode"' Pinned Active Effects Border Type
+---| '"mcm.effects.borderNone"' None
+---| '"mcm.effects.borderThin"' Thin Border
+---| '"mcm.effects.durationThreshold"' Effect Duration Threshold
+---| '"mcm.effects.enable"' Enable Active Effects
+---| '"mcm.effects.menuModeAlpha"' Menu Alpha in MenuMode
+---| '"mcm.effects.name"' Active Effects
+---| '"mcm.effects.pinnedAlpha"' Menu Alpha when Pinned
+---| '"mcm.effects.updateRate"' Update Rate
+---| '"mcm.embed.enable"' Enable Embedded Services
+---| '"mcm.embed.name"' Embedded Services
+---| '"mcm.embed.notify"' Enable Service Button Notify
+---| '"mcm.embed_persuade.enable"' Enable Embedded Persuasion
+---| '"mcm.embed_persuade.hold"' Hold to Persuade
+---| '"mcm.embed_persuade.holdBribe"' Hold to Bribe
+---| '"mcm.embed_persuade.instantFight"' Instantly Start Combat on Successful Taunting
+---| '"mcm.embed_persuade.name"' Persuade Embed
+---| '"mcm.embed_repair.enable"' Enable Embedded Repair
+---| '"mcm.embed_repair.name"' Repair Embed
+---| '"mcm.embed_spells.enable"' Enable Embedded Spells
+---| '"mcm.embed_spells.name"' Spells Embed
+---| '"mcm.embed_train.enable"' Enable Embedded Training
+---| '"mcm.embed_train.name"' Train Embed
+---| '"mcm.embed_travel.enable"' Enable Embedded Travel
+---| '"mcm.embed_travel.keybind"' Enable Keybind
+---| '"mcm.embed_travel.name"' Travel Embed
+---| '"mcm.enchant.enable"' Enable Enchantment
+---| '"mcm.enchant.name"' Enchantment
+---| '"mcm.enchant.showGold"' Show Player Gold
+---| '"mcm.enchantedGear.enable"' Enable Enchanted Gear
+---| '"mcm.enchantedGear.hideVanilla"' Hide Vanilla Enchanted Items
+---| '"mcm.enchantedGear.highlightNew"' Highlight New Items
+---| '"mcm.enchantedGear.matchMagicVis"' Match Magic Visibility
+---| '"mcm.enchantedGear.name"' Enchanted Gear
+---| '"mcm.enchantedGear.showVanillaOnHide"' Show Vanilla On Hide
+---| '"mcm.enemyBars.enable"' Enable Enemy Bars
+---| '"mcm.enemyBars.fatigue"' Show Fatigue Bar
+---| '"mcm.enemyBars.health"' Show Health Bar
+---| '"mcm.enemyBars.magicka"' Show Magicka Bar
+---| '"mcm.enemyBars.name"' Enemy Bars
+---| '"mcm.enemyBars.showLevel"' Show Level
+---| '"mcm.enemyBars.showText"' Show Values
+---| '"mcm.enemyBars.updateRate"' Update Rate
+---| '"mcm.escape.blacklist"' Quick Escape Blacklist
+---| '"mcm.escape.disabledMenus"' Disabled Menus
+---| '"mcm.escape.enable"' Enable Quick Escape
+---| '"mcm.escape.enabledMenus"' Enabled Menus
+---| '"mcm.escape.esc"' Escape: Escape
+---| '"mcm.escape.keybind"' Escape Keybind
+---| '"mcm.escape.menus"' Enabled Menus
+---| '"mcm.escape.name"' Escape
+---| '"mcm.escape.rightClick"' MenuMode: Right-Click
+---| '"mcm.hitChance.catPos"' Position: X: 0 is Left Edge, Y: 0 is Top Edge
+---| '"mcm.hitChance.color"' Background Color
+---| '"mcm.hitChance.enable"' Show Hit Chance
+---| '"mcm.hitChance.name"' Hit Chance
+---| '"mcm.hitChance.posX"' Position X
+---| '"mcm.hitChance.posY"' Position Y
+---| '"mcm.hitChance.updateRate"' Update Rate
+---| '"mcm.inv.enable"' Enable Inventory
+---| '"mcm.inv.name"' Inventory
+---| '"mcm.inv.potionHighlight"' Highlight Potions
+---| '"mcm.keybind.admire"' Admire
+---| '"mcm.keybind.barter"' Barter
+---| '"mcm.keybind.barterDown"' Barter -
+---| '"mcm.keybind.barterDown100"' Barter -100
+---| '"mcm.keybind.barterUp"' Barter +
+---| '"mcm.keybind.barterUp100"' Barter +100
+---| '"mcm.keybind.bribe10"' Bribe 10 Gold
+---| '"mcm.keybind.bribe100"' Bribe 100 Gold
+---| '"mcm.keybind.bribe1000"' Bribe 1000 Gold
+---| '"mcm.keybind.companion"' Companion
+---| '"mcm.keybind.day"' Rest Until Day
+---| '"mcm.keybind.enable"' Enable Keybinds
+---| '"mcm.keybind.enchanting"' Enchanting
+---| '"mcm.keybind.heal"' Heal
+---| '"mcm.keybind.intimidate"' Intimidate
+---| '"mcm.keybind.markJunk"' Mark as Junk
+---| '"mcm.keybind.name"' Keybind
+---| '"mcm.keybind.offer"' Confirm Offer
+---| '"mcm.keybind.persuasion"' Persuasion
+---| '"mcm.keybind.repair"' Repair
+---| '"mcm.keybind.spellmaking"' Spellmaking
+---| '"mcm.keybind.spells"' Spells
+---| '"mcm.keybind.take"' Take
+---| '"mcm.keybind.taunt"' Taunt
+---| '"mcm.keybind.training"' Training
+---| '"mcm.keybind.travel"' Travel
+---| '"mcm.keybind.wait"' Wait
+---| '"mcm.keybind.waitDown"' Decrease Wait Time
+---| '"mcm.keybind.waitUp"' Increase Wait Time
+---| '"mcm.magic.enable"' Enable Magic
+---| '"mcm.magic.highlightColor"' Highlight Color
+---| '"mcm.magic.highlightNew"' Highlight New Spells
+---| '"mcm.magic.name"' Magic
+---| '"mcm.magic.reset"' Reset Highlighted Spells
+---| '"mcm.magic.resetButton"' Reset
+---| '"mcm.magic.resetMessage"' Highlighted spells have been reset.
+---| '"mcm.multi.enable"' Enable HUD
+---| '"mcm.multi.name"' HUD
+---| '"mcm.persuade.delay"' Hold Persuade Delay
+---| '"mcm.persuade.enable"' Enable Persuade
+---| '"mcm.persuade.hold"' Hold Key to Quickly Persuade
+---| '"mcm.persuade.holdBribe"' Hold Key to Quickly Bribe
+---| '"mcm.persuade.name"' Persuade
+---| '"mcm.persuade.showKey"' Show Keybinds
+---| '"mcm.quickLoot.enable"' Enable Quick Loot
+---| '"mcm.quickLoot.name"' Quick Loot
+---| '"mcm.quickLoot.posX"' Adjust Position of Menu
+---| '"mcm.quickLoot.showCount"' Maximum Number of Items to Show
+---| '"mcm.repair.enable"' Enable Repair
+---| '"mcm.repair.hold"' Hold to Repair
+---| '"mcm.repair.interval"' Hold to Repair Interval
+---| '"mcm.repair.name"' Repair
+---| '"mcm.repair.select"' Repair Tool Selection
+---| '"mcm.spellBarter.enable"' Enable Spell Bartering
+---| '"mcm.spellBarter.name"' Spell Barter
+---| '"mcm.spellBarter.showCantCast"' Highlight Uncastable Spells
+---| '"mcm.spellmaking.enable"' Enable Spellmaking
+---| '"mcm.spellmaking.name"' Spellmaking
+---| '"mcm.spellmaking.serviceOnly"' Show Gold in NPC Spellmaking only
+---| '"mcm.spellmaking.showGold"' Show Player Gold
+---| '"mcm.take.enable"' Enable Quick Take
+---| '"mcm.take.name"' Quick Take
+---| '"mcm.tooltip.charge"' Show Charge Cost of Enchantments
+---| '"mcm.tooltip.durationDigits"' Digits in Seconds remaining
+---| '"mcm.tooltip.enable"' Enable Tooltips
+---| '"mcm.tooltip.junk"' Show Junk Tooltip
+---| '"mcm.tooltip.name"' Tooltip
+---| '"mcm.tooltip.showDur"' Show Duration on Active Effect Icons
+---| '"mcm.tooltip.totalValue"' Show Total Value
+---| '"mcm.tooltip.totalWeight"' Show Stacks Total Weight
+---| '"mcm.travel.enable"' Enable Travel
+---| '"mcm.travel.name"' Travel
+---| '"mcm.travel.showKey"' Show Hotkeys
+---| '"mcm.wait.enable"' Enable Wait/Rest
+---| '"mcm.wait.fullRest"' Enable 24 Hour Wait/Rest
+---| '"mcm.wait.name"' Wait/Rest
+---| '"notify.fail"' failed
+---| '"notify.success"' success
+---| '"quickLoot.scripted"' Scripted
+---| '"quickLoot.steal"' Steal
+---| '"quickLoot.stealAll"' Steal All
+---| '"repair.select"' Select a Repair Item...
+---| '"restWait.fullRest"' 24 Hours
+---| '"spells.cantCast"' You do not have enough Base Magicka to cast this Spell.
+---| '"spells.header"' Magicka Cost | Gold Cost
+---| '"spells.sortCost"' Sort by Cost
+---| '"spells.sortName"' Sort by Name
+---| '"tooltip.chargeCost"' Charge Cost: 
