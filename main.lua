@@ -1,10 +1,13 @@
+local bs = require("BeefStranger.UI Tweaks.common")
+local cfg = require("BeefStranger.UI Tweaks.config")
 local modules = {
-    "BeefStranger.UI Tweaks.common",
-    "BeefStranger.UI Tweaks.config",
+    -- "BeefStranger.UI Tweaks.common",
+    -- "BeefStranger.UI Tweaks.config",
     "BeefStranger.UI Tweaks.hotkeys",
     "BeefStranger.UI Tweaks.ID",
     "BeefStranger.UI Tweaks.quickEscape",
 
+    "BeefStranger.UI Tweaks.menu.BS_MenuQuickLoot",
     "BeefStranger.UI Tweaks.menu.HelpMenu",
     "BeefStranger.UI Tweaks.menu.MenuBarter",
     "BeefStranger.UI Tweaks.menu.MenuBook",
@@ -32,8 +35,12 @@ local function requireFiles()
         require(modname)
     end
 end
-
 requireFiles()
+
+local log = bs.log()
+log:setLogLevel(cfg.debug.logLevel)
+log:debug("BOOONK")
+
 
 event.register("initialized", function()
     print("[MWSE:UI Tweaks] initialized")

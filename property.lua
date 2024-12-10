@@ -15,7 +15,14 @@ local property = {
         trainCost = "Train_Cost",
         trainAttribute = "Train_AttributeBase",
         trainHours = "BS_Embed_Train_Hours",
-    }
+    },
+    quickLoot = {
+        hasLoot = "BS_QuickLoot_HasLoot",
+        container = "BS_QuickLoot_Container",
+        count = "BS_QuickLoot_Count",
+        sel = "BS_QuickLoot_Selection",
+        total = "BS_QuickLoot_TotalItems",
+    },
 }
 
 return property
