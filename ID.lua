@@ -17,6 +17,7 @@ local MenuID = {
     Ctrls = "MenuCtrls",
     Dialog = "MenuDialog",
     Enchantment = "MenuEnchantment",
+    Help = "HelpMenu",
     Input = "MenuInput",
     InputSave = "MenuInputSave",
     Inventory = "MenuInventory",
@@ -118,6 +119,22 @@ local MenuID = {
         header = reg("BS:EnemyHeader"),
         border = reg("BS:EnemyBorder"),
         bg = reg("BS:EnemyBackground"),
+    },
+    quickLoot = { ---@class bs_MenuQuickLoot.uid
+        menu = reg("BS_QuickLoot"),
+        item_name = reg("Item Name"),
+        count = reg("Item Count"),
+        items_list = reg("Items"),
+        value = reg("Item Value"),
+        header = reg("Header"),
+        header_title = reg("Title"),
+        header_value = reg("Header"),
+        footer = reg("Footer"),
+        gold_icon = reg("Gold"),
+        weight_icon = reg("Weight"),
+        header_icons = reg("Header Icons"),
+        take_button = reg("Take"),
+        take_all_button = reg("Take All"),
     }
 
 }
