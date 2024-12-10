@@ -65,7 +65,6 @@ local defaults = {
     hitChance = {enable = true, updateRate = 0.25, posX = 0.35, posY = 0.65, color = bs.colorTable(bs.rgb.blackColor, 0.8)},
     inv = {enable = true, potionHighlight = true},
     -- junk = {enable = true, maxSell = 20},
-    manualAdd = "",
     magic = {enable = true, highlightNew = true, highlightColor = bs.colorTable(bs.rgb.bsPrettyGreen, 1)},
     multi = { enable = true, },
     persuade = { enable = true, hold = false, holdBribe = false, delay = 0.5, showKey = false },
@@ -111,8 +110,11 @@ local defaults = {
 
         take = { keyCode = tes3.scanCode.e, isShiftDown = false, isAltDown = false, isControlDown = false, configPath = configPath},
     },
+    ---@class bsUITweaks.cfg.quickLoot<K, V>: { [K]: V }
+    quickLoot = {enable = false, posX = 155, showCount = 8 },
     take = { enable = true },
-    DEBUG = false
+
+    debug = {logLevel = "NONE"}
 }
 local function updateBarter() event.trigger(bs.UpdateBarter) end
 
@@ -126,156 +128,184 @@ local function registerModConfig()
 templates.main = mwse.mcm.createTemplate({ name = configPath, defaultConfig = defaults, config = config })
 templates.main:saveOnClose(configPath, config)
 
+local text = require("BeefStranger.UI Tweaks.i18n.eng")
+
 local settings = templates.main:createPage({ label = "UI Tweaks Features"})
 -- local DEBUG = settings:createButton{buttonText = "Reload", label ="[DEBUG]Reload Files BEE"}
 -- DEBUG.callback = function (self) event.trigger("UITweaksReloadFile") end
 -- cfg.settings:createYesNoButton { label = "Enable HUD Tweaks", configKey = "enable", config = config.multi}
-settings:createYesNoButton { label = "Enable Barter", configKey = "enable", callback = updateBarter, config = config.barter }
-settings:createYesNoButton { label = "Enable Contents", configKey = "enable", config = config.contents }
-settings:createYesNoButton { label = "Enable Dialogue", configKey = "enable", config = config.dialog }
-settings:createYesNoButton { label = "Enable Active Effects", configKey = "enable", config = config.effects }
-settings:createYesNoButton { label = "Enable Enchantment", configKey = "enable", config = config.enchant }
-settings:createYesNoButton { label = "Enable Enchanted Gear", configKey = "enable", config = config.enchantedGear }
-settings:createYesNoButton { label = "Enable Embedded Services", configKey = "enable", config = config.embed }
-settings:createYesNoButton { label = "Enable Enemy Stat Bars", configKey = "enable", config = config.enemyBars }
-settings:createYesNoButton { label = "Enable Hit Chance", configKey = "enable", config = config.hitChance }
-settings:createYesNoButton { label = "Enable Hotkeys", configKey = "enable", config = config.keybind }
-settings:createYesNoButton { label = "Enable Persuasion", configKey = "enable", config = config.persuade }
-settings:createYesNoButton { label = "Enable Magic", configKey = "enable", config = config.magic }
-settings:createYesNoButton { label = "Enable QuickEsc", configKey = "enable", config = config.escape }
-settings:createYesNoButton { label = "Enable QuickTake", configKey = "enable", config = config.take }
-settings:createYesNoButton { label = "Enable Repair", configKey = "enable", config = config.repair }
-settings:createYesNoButton { label = "Enable Spell Barter", configKey = "enable", config = config.spellBarter }
-settings:createYesNoButton { label = "Enable Spellmaking", configKey = "enable", config = config.spellmaking }
-settings:createYesNoButton { label = "Enable Tooltip", configKey = "enable", config = config.tooltip }
-settings:createYesNoButton { label = "Enable Travel", configKey = "enable", config = config.travel }
-settings:createYesNoButton { label = "Enable Wait/Rest", configKey = "enable", config = config.wait }
+
+-- for key, value in pairs(defaults) do
+--     if value.enable or value.enable == false then
+--         debug.log(key)
+--         debug.log(bs.i18n("mcm."..key..".enable"))
+--     end
+-- end
+
+settings:createYesNoButton { label = bs.tl("mcm.barter.enable"), configKey = "enable", callback = updateBarter, config = config.barter }
+settings:createYesNoButton { label = bs.tl("mcm.contents.enable"), configKey = "enable", config = config.contents }
+settings:createYesNoButton { label = bs.tl("mcm.dialog.enable"), configKey = "enable", config = config.dialog }
+settings:createYesNoButton { label = bs.tl("mcm.effects.enable"), configKey = "enable", config = config.effects }
+settings:createYesNoButton { label = bs.tl("mcm.enchant.enable"), configKey = "enable", config = config.enchant }
+settings:createYesNoButton { label = bs.tl("mcm.enchantedGear.enable"), configKey = "enable", config = config.enchantedGear }
+settings:createYesNoButton { label = bs.tl("mcm.embed.enable"), configKey = "enable", config = config.embed }
+settings:createYesNoButton { label = bs.tl("mcm.enemyBars.enable"), configKey = "enable", config = config.enemyBars }
+settings:createYesNoButton { label = bs.tl("mcm.hitChance.enable"), configKey = "enable", config = config.hitChance }
+settings:createYesNoButton { label = bs.tl("mcm.keybind.enable"), configKey = "enable", config = config.keybind }
+settings:createYesNoButton { label = bs.tl("mcm.persuade.enable"), configKey = "enable", config = config.persuade }
+settings:createYesNoButton { label = bs.tl("mcm.magic.enable"), configKey = "enable", config = config.magic }
+settings:createYesNoButton { label = bs.tl("mcm.escape.enable"), configKey = "enable", config = config.escape }
+settings:createYesNoButton { label = bs.tl("mcm.take.enable"), configKey = "enable", config = config.take }
+settings:createYesNoButton { label = bs.tl("mcm.repair.enable"), configKey = "enable", config = config.repair }
+settings:createYesNoButton { label = bs.tl("mcm.spellBarter.enable"), configKey = "enable", config = config.spellBarter }
+settings:createYesNoButton { label = bs.tl("mcm.spellmaking.enable"), configKey = "enable", config = config.spellmaking }
+settings:createYesNoButton { label = bs.tl("mcm.tooltip.enable"), configKey = "enable", config = config.tooltip }
+settings:createYesNoButton { label = bs.tl("mcm.travel.enable"), configKey = "enable", config = config.travel }
+settings:createYesNoButton { label = bs.tl("mcm.wait.enable"), configKey = "enable", config = config.wait }
+
 
 local hotkeys = templates.main:createPage({label = "Hotkeys", showReset = true, config = config.keybind, defaultConfig = defaults.keybind})
 local barterKey = cfg:newCat(hotkeys, "Barter")
-    cfg:keybind(barterKey, "Barter -", "barterDown")
-    cfg:keybind(barterKey, "Barter +", "barterUp")
-    cfg:keybind(barterKey, "Barter -100", "barterDown100")
-    cfg:keybind(barterKey, "Barter +100", "barterUp100")
-    cfg:keybind(barterKey, "Confirm Offer", "offer")
-    cfg:keybind(barterKey, "Mark Junk", "markJunk")
+    cfg:keybind(barterKey, bs.tl("mcm.keybind.barterUp"), "barterUp")
+    cfg:keybind(barterKey, bs.tl("mcm.keybind.barterDown"), "barterDown")
+    cfg:keybind(barterKey, bs.tl("mcm.keybind.barterUp100"), "barterUp100")
+    cfg:keybind(barterKey, bs.tl("mcm.keybind.barterDown100"), "barterDown100")
+    cfg:keybind(barterKey, bs.tl("mcm.keybind.offer"), "offer")
+    cfg:keybind(barterKey, bs.tl("mcm.keybind.markJunk"), "markJunk")
 
 local dialogKey = cfg:newCat(hotkeys, "Dialogue")
-    cfg:keybind(dialogKey, "Open Barter", "barter")
-    cfg:keybind(dialogKey, "Open Companion", "companion")
-    cfg:keybind(dialogKey, "Open Enchanting", "enchanting")
-    cfg:keybind(dialogKey, "Open Persuasion", "persuasion")
-    cfg:keybind(dialogKey, "Open Repair", "repair")
-    cfg:keybind(dialogKey, "Open Spellmaking", "spellmaking")
-    cfg:keybind(dialogKey, "Open Spells", "spells")
-    cfg:keybind(dialogKey, "Open Training", "training")
-    cfg:keybind(dialogKey, "Open Travel", "travel")
+    cfg:keybind(dialogKey, bs.tl("mcm.keybind.barter"), "barter")
+    cfg:keybind(dialogKey, bs.tl("mcm.keybind.companion"), "companion")
+    cfg:keybind(dialogKey, bs.tl("mcm.keybind.enchanting"), "enchanting")
+    cfg:keybind(dialogKey, bs.tl("mcm.keybind.persuasion"), "persuasion")
+    cfg:keybind(dialogKey, bs.tl("mcm.keybind.repair"), "repair")
+    cfg:keybind(dialogKey, bs.tl("mcm.keybind.spellmaking"), "spellmaking")
+    cfg:keybind(dialogKey, bs.tl("mcm.keybind.spells"), "spells")
+    cfg:keybind(dialogKey, bs.tl("mcm.keybind.training"), "training")
+    cfg:keybind(dialogKey, bs.tl("mcm.keybind.travel"), "travel")
 
 local persuadeKey = cfg:newCat(hotkeys, "Persuasion")
-    cfg:keybind(persuadeKey, "Admire", "admire")
-    cfg:keybind(persuadeKey, "Intimidate", "intimidate")
-    cfg:keybind(persuadeKey, "Taunt", "taunt")
-    cfg:keybind(persuadeKey, "Bribe 10", "bribe10")
-    cfg:keybind(persuadeKey, "Bribe 100", "bribe100")
-    cfg:keybind(persuadeKey, "Bribe 1000", "bribe1000")
+    cfg:keybind(persuadeKey, bs.tl("mcm.keybind.admire"), "admire")
+    cfg:keybind(persuadeKey, bs.tl("mcm.keybind.intimidate"), "intimidate")
+    cfg:keybind(persuadeKey, bs.tl("mcm.keybind.taunt"), "taunt")
+    cfg:keybind(persuadeKey, bs.tl("mcm.keybind.bribe10"), "bribe10") 
+    cfg:keybind(persuadeKey, bs.tl("mcm.keybind.bribe100"), "bribe100")
+    cfg:keybind(persuadeKey, bs.tl("mcm.keybind.bribe1000"), "bribe1000")
 
 local takeKey = cfg:newCat(hotkeys, "Take Book/Scroll")
-    cfg:keybind(takeKey, "Take", "take")
+    cfg:keybind(takeKey, bs.tl("mcm.keybind.take"), "take")
 
 local fullRestKey = cfg:newCat(hotkeys, "Wait/Rest")
-    cfg:keybind(fullRestKey, "Wait/Rest", "wait")
-    cfg:keybind(fullRestKey, "Wait/Rest - 1hr", "waitDown")
-    cfg:keybind(fullRestKey, "Wait/Rest + 1hr", "waitUp")
-    cfg:keybind(fullRestKey, "Until Healed", "heal")
-    cfg:keybind(fullRestKey, "Rest/Wait 24hr", "day")
+    cfg:keybind(fullRestKey, bs.tl("mcm.keybind.wait"), "wait")
+    cfg:keybind(fullRestKey, bs.tl("mcm.keybind.waitDown"), "waitDown")
+    cfg:keybind(fullRestKey, bs.tl("mcm.keybind.waitUp"), "waitUp")
+    cfg:keybind(fullRestKey, bs.tl("mcm.keybind.heal"), "heal")
+    cfg:keybind(fullRestKey, bs.tl("mcm.keybind.day"), "day")
+
+local debug = templates.main:createPage({label = "Debug", showReset = true, config = config.debug, defaultConfig = defaults.debug})
+    debug:createDropdown{
+        label = "Logging Level",
+        description = "Set the log level.",
+        options = {
+            { label = "TRACE", value = "TRACE"},
+            { label = "DEBUG", value = "DEBUG"},
+            { label = "INFO", value = "INFO"},
+            { label = "WARN", value = "WARN"},
+            { label = "ERROR", value = "ERROR"},
+            { label = "NONE", value = "NONE"},
+        },
+        configKey = "logLevel",
+        callback = function(self)
+            bs.log():setLogLevel(self.variable.value)
+        end
+    }
 ---==========================================================Inventory=============================================================================
 templates.inventory = mwse.mcm.createTemplate({ name = configPath..": Inventory", defaultConfig = defaults, config = config })
 templates.inventory:saveOnClose(configPath, config)
 
-local active = templates.inventory:createPage({label = "Active Effects", config = config.effects, showReset = true, defaultConfig = defaults.effects})
-    active:createDropdown({
-        label = "Pinned Active Effects Border Type", configKey = "borderMode",
-        options = { {label = "Thin Border", value = 1}, {label = "Background", value = 2}, {label = "None", value = 3}, },
+local effects = templates.inventory:createPage({label = bs.tl("mcm.effects.name"), config = config.effects, showReset = true, defaultConfig = defaults.effects})
+    effects:createDropdown({
+        label = bs.tl("mcm.effects.borderMode"), configKey = "borderMode",
+        options = { {label = bs.tl("mcm.effects.borderThin"), value = 1}, {label = bs.tl("mcm.effects.borderBG"), value = 2}, {label = bs.tl("mcm.effects.borderNone"), value = 3}, },
         callback = function (self) event.trigger("bs_MenuEffects_Update") end,
     })
 
-    active:createSlider{label = "Menu Alpha in MenuMode", min = 0, max = 1, configKey = "menuModeAlpha", step = 0.05, jump = 0.1, decimalPlaces = 2}
-    active:createSlider{label = "Menu Alpha when Pinned", min = 0, max = 1, configKey = "pinnedAlpha", step = 0.05, jump = 0.1, decimalPlaces = 2}
-    active:createSlider{label = "Effect Duration Threshold", min = 0, max = 30, configKey = "durationThreshold"}
-    active:createSlider{label = "Update Rate", min = 0.05, max = 1, configKey = "updateRate", step = 0.1, jump = 0.1, decimalPlaces = 2}
+    effects:createSlider{label = bs.tl("mcm.effects.menuModeAlpha"), min = 0, max = 1, configKey = "menuModeAlpha", step = 0.05, jump = 0.1, decimalPlaces = 2}
+    effects:createSlider{label = bs.tl("mcm.effects.pinnedAlpha"), min = 0, max = 1, configKey = "pinnedAlpha", step = 0.05, jump = 0.1, decimalPlaces = 2} 
+    effects:createSlider{label = bs.tl("mcm.effects.durationThreshold"), min = 0, max = 30, configKey = "durationThreshold"}
+    effects:createSlider{label = bs.tl("mcm.effects.updateRate"), min = 0.05, max = 1, configKey = "updateRate", step = 0.1, jump = 0.1, decimalPlaces = 2}
 
-local barter = templates.inventory:createPage{ label = "Barter", config = config.barter, showReset = true, defaultConfig = defaults.barter }
-    local barter_stats = barter:createCategory({label = "Stats"})
-        barter_stats:createYesNoButton { label = "Show Barter Chance", configKey = "showChance"}
-        barter_stats:createYesNoButton { label = "Change Chance Color Based on Success Chance", configKey = "chanceColor"}
-        barter_stats:createYesNoButton { label = "Show Disposition", configKey = "showDisposition", callback = updateBarter }
-        barter_stats:createYesNoButton { label = "Show NPC Stats", configKey = "showNpcStats", callback = updateBarter }
-        barter_stats:createYesNoButton { label = "Show Player Stats", configKey = "showPlayerStats", callback = updateBarter }
-    local barter_junk = barter:createCategory({label = "Junk"})
-        barter_junk:createYesNoButton { label = "Enable Sell Junk Button", configKey = "enableJunk"}
-        barter_junk:createSlider { label = "Max Amount of Junk to Barter", configKey = "maxSell", min = 1, max = 100, step = 1, jump = 1 }
+local barter = templates.inventory:createPage{ label = bs.tl("mcm.barter.name"), config = config.barter, showReset = true, defaultConfig = defaults.barter }
+    local barter_stats = barter:createCategory({label = bs.tl("mcm.barter.catStats")})
+        barter_stats:createYesNoButton { label = bs.tl("mcm.barter.showChance"), configKey = "showChance"}
+        barter_stats:createYesNoButton { label = bs.tl("mcm.barter.chanceColor"), configKey = "chanceColor"}
+        barter_stats:createYesNoButton { label = bs.tl("mcm.barter.showDisposition"), configKey = "showDisposition", callback = updateBarter }
+        barter_stats:createYesNoButton { label = bs.tl("mcm.barter.showNpcStats"), configKey = "showNpcStats", callback = updateBarter }
+        barter_stats:createYesNoButton { label = bs.tl("mcm.barter.showPlayerStats"), configKey = "showPlayerStats", callback = updateBarter }
+    local barter_junk = barter:createCategory({label = bs.tl("mcm.barter.catJunk")})
+        barter_junk:createYesNoButton { label = bs.tl("mcm.barter.enableJunk"), configKey = "enableJunk"}
+        barter_junk:createSlider { label = bs.tl("mcm.barter.maxSell"), configKey = "maxSell", min = 1, max = 100, step = 1, jump = 1 }
 
-local contents = templates.inventory:createPage({label = "Contents", config = config.contents, showReset = true, defaultConfig = defaults.contents})
-    contents:createYesNoButton({label = "Show Total Value of Containers Contents", configKey = "totalValue"})
-    contents:createYesNoButton({label = "Show Owner and Ownership Access in Title Bar", configKey = "showOwner"})
+local contents = templates.inventory:createPage({label = bs.tl("mcm.contents.name"), config = config.contents, showReset = true, defaultConfig = defaults.contents})
+    contents:createYesNoButton({label = bs.tl("mcm.contents.totalValue"), configKey = "totalValue"})
+    contents:createYesNoButton({label = bs.tl("mcm.contents.showOwner"), configKey = "showOwner"})
 
-local gear = templates.inventory:createPage{label = "Enchanted Gear", config = config.enchantedGear, showReset = true, defaultConfig = defaults.enchantedGear}
-    gear:createYesNoButton({label = "Highlight New Enchants/Scrolls", configKey = "highlightNew"})
-    gear:createYesNoButton({label = "Hide Vanilla Enchantments/Scrolls", configKey = "hideVanilla"})
-    gear:createYesNoButton({label = "Show Vanilla Enchantments/Scrolls When Enchanted Gear Window Hidden", configKey = "showVanillaOnHide"})
-    gear:createYesNoButton({label = "Match Enchanted Gear Visibility with Vanilla Magic Menu", configKey = "matchMagicVis"})
+local gear = templates.inventory:createPage{label = bs.tl("mcm.enchantedGear.name"), config = config.enchantedGear, showReset = true, defaultConfig = defaults.enchantedGear}
+    gear:createYesNoButton({label = bs.tl("mcm.enchantedGear.highlightNew"), configKey = "highlightNew"})
+    gear:createYesNoButton({label = bs.tl("mcm.enchantedGear.hideVanilla"), configKey = "hideVanilla"})
+    gear:createYesNoButton({label = bs.tl("mcm.enchantedGear.showVanillaOnHide"), configKey = "showVanillaOnHide"})
+    gear:createYesNoButton({label = bs.tl("mcm.enchantedGear.matchMagicVis"), configKey = "matchMagicVis"})
 
-local inv = templates.inventory:createPage{label = "Inventory", config = config.inv, showReset = true, defaultConfig = defaults.inv}
-    inv:createYesNoButton({label = "Hightlight Potions by Type", configKey = "potionHighlight"})
+local inv = templates.inventory:createPage{label = bs.tl("mcm.inv.name"), config = config.inv, showReset = true, defaultConfig = defaults.inv}
+    inv:createYesNoButton({label = bs.tl("mcm.inv.potionHighlight"), configKey = "potionHighlight"})
 
-local magic = templates.inventory:createPage{label = "Magic", config = config.magic, showReset = true, defaultConfig = defaults.magic}
-    magic:createYesNoButton({label = "Highlight New Spells/Enchants", configKey = "highlightNew"})
-    -- magic:createColorPicker({label = "New Spell/Enchant Hightlight Color", configKey = "highlightColor", alpha = true})
-    magic:createButton({label = "Reset New Magic List", inGameOnly = true, buttonText = "Reset", callback =
+local magic = templates.inventory:createPage{label = bs.tl("mcm.magic.name"), config = config.magic, showReset = true, defaultConfig = defaults.magic}
+    magic:createYesNoButton({label = bs.tl("mcm.magic.highlightNew"), configKey = "highlightNew"})
+    -- magic:createColorPicker({label = bs.tl("mcm.magic.highlightColor"), configKey = "highlightColor", alpha = true})
+    magic:createButton({label = bs.tl("mcm.magic.reset"), inGameOnly = true, buttonText = bs.tl("mcm.magic.resetButton"), callback =
         function (self)
             bs.initData().lookedAt = {}
-            tes3.messageBox("New Spell/Enchant List Reset")
+            tes3.messageBox(bs.tl("mcm.magic.resetMessage"))
         end})
 ---==========================================================Service=============================================================================
 -- local service = mwse.mcm.createTemplate({ name = configPath .. ": Services", defaultConfig = defaults, config = config })
 templates.service = mwse.mcm.createTemplate({ name = configPath .. ": Services", defaultConfig = defaults, config = config })
 templates.service:saveOnClose(configPath, config)
 
-local enchant = templates.service:createPage{ label = "Enchantment", config = config.enchant, showReset = true, defaultConfig = defaults.enchant }
-enchant:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
+local enchant = templates.service:createPage{ label = bs.tl("mcm.enchant.name"), config = config.enchant, showReset = true, defaultConfig = defaults.enchant }
+enchant:createYesNoButton({label = bs.tl("mcm.enchant.showGold"), configKey = "showGold"})
 
-local repair = templates.service:createPage{label = "Repair", config = config.repair, showReset = true, defaultConfig = defaults.repair}
-    repair:createYesNoButton({label = "Repair Tool Selection", configKey = "select"})
-    repair:createYesNoButton({label = "Hold to Repair", configKey = "hold"})
-    repair:createSlider { label = "Hold to Repair Interval", configKey = "interval", min = 0.01, max = 1, step = 0.01, jump = 0.1, decimalPlaces = 2 }
+local repair = templates.service:createPage{label = bs.tl("mcm.repair.name"), config = config.repair, showReset = true, defaultConfig = defaults.repair}
+    repair:createYesNoButton({label = bs.tl("mcm.repair.select"), configKey = "select"})
+    repair:createYesNoButton({label = bs.tl("mcm.repair.hold"), configKey = "hold"})
+    repair:createSlider { label = bs.tl("mcm.repair.interval"), configKey = "interval", min = 0.01, max = 1, step = 0.01, jump = 0.1, decimalPlaces = 2 }
 
-local spellBarter = templates.service:createPage{ label = "Spell Bartering", config = config.spellBarter, showReset = true, defaultConfig = defaults.spellmaking }
-    spellBarter:createYesNoButton({label = "Highlight Uncastable Spells", configKey = "showCantCast"})
+local spellBarter = templates.service:createPage{ label = bs.tl("mcm.spellBarter.name"), config = config.spellBarter, showReset = true, defaultConfig = defaults.spellmaking }
+    spellBarter:createYesNoButton({label = bs.tl("mcm.spellBarter.showCantCast"), configKey = "showCantCast"})
 
-local spellmaking = templates.service:createPage{ label = "Spellmaking", config = config.spellmaking, showReset = true, defaultConfig = defaults.spellmaking }
-    spellmaking:createYesNoButton({label = "Show Gold in NPC Spellmaking only", configKey = "serviceOnly"})
-    spellmaking:createYesNoButton({label = "Show Player Gold", configKey = "showGold"})
+local spellmaking = templates.service:createPage{ label = bs.tl("mcm.spellmaking.name"), config = config.spellmaking, showReset = true, defaultConfig = defaults.spellmaking }
+    spellmaking:createYesNoButton({label = bs.tl("mcm.spellmaking.serviceOnly"), configKey = "serviceOnly"})
+    spellmaking:createYesNoButton({label = bs.tl("mcm.spellmaking.showGold"), configKey = "showGold"})
 
-local travel = templates.service:createPage{ label = "Travel", config = config.travel, showReset = true, defaultConfig = defaults.travel }
-    travel:createYesNoButton{label = "Show Hotkeys", configKey = "showKey"}
+local travel = templates.service:createPage{ label = bs.tl("mcm.travel.name"), config = config.travel, showReset = true, defaultConfig = defaults.travel }
+    travel:createYesNoButton{label = bs.tl("mcm.travel.showKey"), configKey = "showKey"}
 ---==========================================================EmbeddedService=============================================================================
     -- local embed = mwse.mcm.createTemplate({ name = configPath .. ": Embedded", defaultConfig = defaults, config = config })
 templates.embed = mwse.mcm.createTemplate({ name = configPath .. ": Embedded", defaultConfig = defaults, config = config })
 templates.embed:saveOnClose(configPath, config)
 
-local embedMain = templates.embed:createPage { label = "Embedded Services", config = config.embed, showReset = true, defaultConfig = defaults.embed }
-    embedMain:createYesNoButton({ label = "Enable Service Button Notify", configKey = "notify" })
-    embedMain:createYesNoButton({ label = "Enable Embedded Persuasion", config = config.embed_persuade, configKey = "enable" })
-    embedMain:createYesNoButton({ label = "Enable Embedded Repair", config = config.embed_repair, configKey = "enable" })
-    embedMain:createYesNoButton({ label = "Enable Embedded Spells", config = config.embed_spells, configKey = "enable" })
-    embedMain:createYesNoButton({ label = "Enable Embedded Training", config = config.embed_train, configKey = "enable" })
-    embedMain:createYesNoButton({ label = "Enable Embedded Travel", config = config.embed_travel, configKey = "enable" })
+local embedMain = templates.embed:createPage { label = bs.tl("mcm.embed.name"), config = config.embed, showReset = true, defaultConfig = defaults.embed }
+    embedMain:createYesNoButton({ label = bs.tl("mcm.embed.notify"), configKey = "notify" })
+    embedMain:createYesNoButton({ label = bs.tl("mcm.embed_persuade.enable"), config = config.embed_persuade, configKey = "enable" })
+    embedMain:createYesNoButton({ label = bs.tl("mcm.embed_repair.enable"), config = config.embed_repair, configKey = "enable" })
+    embedMain:createYesNoButton({ label = bs.tl("mcm.embed_spells.enable"), config = config.embed_spells, configKey = "enable" })
+    embedMain:createYesNoButton({ label = bs.tl("mcm.embed_train.enable"), config = config.embed_train, configKey = "enable" })
+    embedMain:createYesNoButton({ label = bs.tl("mcm.embed_travel.enable"), config = config.embed_travel, configKey = "enable" })
 
-local embedPersuade = templates.embed:createPage{label = "Persuasion", config = config.embed_persuade, showReset = true, defaultConfig = defaults.embed_persuade}
-    -- embedPersuade:createYesNoButton({label = "Enable Embedded Persuadion", configKey = "enable"})
-    embedPersuade:createYesNoButton({label = "Instantly Start Combat on Successful Taunting", configKey = "instantFight"})
-    embedPersuade:createYesNoButton({label = "Hold to Persuade", configKey = "hold"})
-    embedPersuade:createYesNoButton({label = "Hold to Bribe", configKey = "holdBribe"})
+local embedPersuade = templates.embed:createPage{label = bs.tl("mcm.embed_persuade.name"), config = config.embed_persuade, showReset = true, defaultConfig = defaults.embed_persuade}
+    embedPersuade:createYesNoButton({label = bs.tl("mcm.embed_persuade.instantFight"), configKey = "instantFight"})
+    embedPersuade:createYesNoButton({label = bs.tl("mcm.embed_persuade.hold"), configKey = "hold"})
+    embedPersuade:createYesNoButton({label = bs.tl("mcm.embed_persuade.holdBribe"), configKey = "holdBribe"})
 
     -- local embedRepair = embed:createPage{label = "Repair", config = config.embed_repair, showReset = true, defaultConfig = defaults.embed_repair}
 
@@ -294,83 +324,94 @@ templates.tooltips:saveOnClose(configPath, config)
 
 
 
-local tooltip = templates.tooltips:createPage { label = "Tooltips", config = config.tooltip, showReset = true, defaultConfig = defaults.tooltip }
-    tooltip:createYesNoButton({ label = "Show Charge Cost of Enchantments", configKey = "charge" })
-    tooltip:createYesNoButton({ label = "Show Duration on Active Effect Icons", configKey = "showDur" })
-    tooltip:createYesNoButton { label = "Show Junk Tooltip", configKey = "junk" }
-    tooltip:createYesNoButton { label = "Show Stacks Total Weight", configKey = "totalWeight" }
-    tooltip:createSlider { label = "Digits in Seconds remaining", configKey = "durationDigits", min = 0, max = 5, step = 1, jump = 1 }
+local tooltip = templates.tooltips:createPage { label = bs.tl("mcm.tooltip.name"), config = config.tooltip, showReset = true, defaultConfig = defaults.tooltip }
+    tooltip:createYesNoButton({ label = bs.tl("mcm.tooltip.charge"), configKey = "charge" })
+    tooltip:createYesNoButton({ label = bs.tl("mcm.tooltip.showDur"), configKey = "showDur" })
+    tooltip:createYesNoButton { label = bs.tl("mcm.tooltip.junk"), configKey = "junk" }
+    tooltip:createYesNoButton { label = bs.tl("mcm.tooltip.totalWeight"), configKey = "totalWeight" }
+    tooltip:createSlider { label = bs.tl("mcm.tooltip.durationDigits"), configKey = "durationDigits", min = 0, max = 5, step = 1, jump = 1 }
 ---==========================================================Dialogue=============================================================================
--- local dialogue = mwse.mcm.createTemplate({ name = configPath .. ": Dialogue", defaultConfig = defaults, config = config })
 templates.dialogue = mwse.mcm.createTemplate({ name = configPath .. ": Dialogue", defaultConfig = defaults, config = config })
 templates.dialogue:saveOnClose(configPath, config)
 
-local dialog = templates.dialogue:createPage{ label = "Dialogue", config = config.dialog, showReset = true, defaultConfig = defaults.dialog }
-    dialog:createYesNoButton({label = "Show NPC Class", configKey = "showClass"})
-    dialog:createYesNoButton({label = "Show Dialogue Shortcuts", configKey = "showKey"})
+local dialog = templates.dialogue:createPage{ label = bs.tl("mcm.dialog.name"), config = config.dialog, showReset = true, defaultConfig = defaults.dialog }
+    dialog:createYesNoButton({label = bs.tl("mcm.dialog.showClass"), configKey = "showClass"})
+    dialog:createYesNoButton({label = bs.tl("mcm.dialog.showKey"), configKey = "showKey"})
 
-local persuade = templates.dialogue:createPage{ label = "Persuasion", config = config.persuade, showReset = true, defaultConfig = defaults.persuade }
-    persuade:createYesNoButton({label = "Show Keybinds", configKey = "showKey"})
-    persuade:createYesNoButton({label = "Hold Key to Quickly Persuade", configKey = "hold"})
-    persuade:createYesNoButton({label = "Hold Key to Quickly Bribe", configKey = "holdBribe"})
-    persuade:createSlider { label = "Hold Persuade Delay", configKey = "delay",
+local persuade = templates.dialogue:createPage{ label = bs.tl("mcm.persuade.name"), config = config.persuade, showReset = true, defaultConfig = defaults.persuade }
+    persuade:createYesNoButton({label = bs.tl("mcm.persuade.showKey"), configKey = "showKey"})
+    persuade:createYesNoButton({label = bs.tl("mcm.persuade.hold"), configKey = "hold"})
+    persuade:createYesNoButton({label = bs.tl("mcm.persuade.holdBribe"), configKey = "holdBribe"})
+    persuade:createSlider { label = bs.tl("mcm.persuade.delay"), configKey = "delay",
     min = 0.01, max = 1, step = 0.01, jump = 0.01, decimalPlaces = 2 }
 ---==========================================================HUD=============================================================================
 templates.hud = mwse.mcm.createTemplate({ name = configPath .. ": HUD", defaultConfig = defaults, config = config })
 templates.hud:saveOnClose(configPath, config)
 
 local enemyBars = templates.hud:createPage({ label = "Enemy Stat Bars", config = config.enemyBars })
-    enemyBars:createYesNoButton({label = "Show Health Bar", configKey = "health"})
-    enemyBars:createYesNoButton({label = "Show Magicka Bar", configKey = "magicka"})
-    enemyBars:createYesNoButton({label = "Show Fatigue Bar", configKey = "fatigue"})
-    enemyBars:createYesNoButton({label = "Show Level", configKey = "showLevel"})
-    enemyBars:createYesNoButton({label = "Show Values", configKey = "showText"})
+    -- cfg.YN(enemyBars, "mcm.enemyBars.health", "health")
+    enemyBars:createYesNoButton({label = bs.tl("mcm.enemyBars.health"), configKey = "health"})
+    enemyBars:createYesNoButton({label = bs.tl("mcm.enemyBars.magicka"), configKey = "magicka"})
+    enemyBars:createYesNoButton({label = bs.tl("mcm.enemyBars.fatigue"), configKey = "fatigue"})
+    enemyBars:createYesNoButton({label = bs.tl("mcm.enemyBars.showLevel"), configKey = "showLevel"})
+    enemyBars:createYesNoButton({label = bs.tl("mcm.enemyBars.showText"), configKey = "showText"})
 
-local hitChance = templates.hud:createPage { label = "Hit Chance", config = config.hitChance, showReset = true, defaultConfig = defaults.hitChance }
-    hitChance:createYesNoButton({ label = "Show Hit Chance", configKey = "enable" })
-    hitChance:createSlider({ label = "Update Rate", min = 0.01, max = 5, configKey = "updateRate", decimalPlaces = 2, step = 0.01, jump = 0.1 })
-    hitChance:createCategory({ label = "Position: X: 0 is Left Edge, Y: 0 is Top Edge" })
-    hitChance:createSlider({ label = "Position X", configKey = "posX", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
-    hitChance:createSlider({ label = "Position Y", configKey = "posY", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
+local hitChance = templates.hud:createPage { label = bs.tl("mcm.hitChance.name"), config = config.hitChance, showReset = true, defaultConfig = defaults.hitChance }
+    hitChance:createYesNoButton({ label = bs.tl("mcm.hitChance.enable"), configKey = "enable" })
+    hitChance:createSlider({ label = bs.tl("mcm.hitChance.updateRate"), min = 0.01, max = 5, configKey = "updateRate", decimalPlaces = 2, step = 0.01, jump = 0.1 })
+    hitChance:createCategory({ label = bs.tl("mcm.hitChance.catPos") })
+    hitChance:createSlider({ label = bs.tl("mcm.hitChance.posX"), configKey = "posX", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
+    hitChance:createSlider({ label = bs.tl("mcm.hitChance.posY"), configKey = "posY", min = 0, max = 1, decimalPlaces = 2, step = 0.01, jump = 0.1 })
 
---- @param e keyDownEventData
-local function keyDownCallback(e)
-    if e.keyCode == tes3.scanCode.v then
-        -- bs.inspect(config)
-        bs.inspect(config.enemyBars)
-    end
+local quickLoot = templates.hud:createPage { label = bs.tl("mcm.quickLoot.name"), config = config.quickLoot, showReset = true, defaultConfig = defaults.quickLoot }
+    quickLoot:createSlider({label = bs.tl("mcm.quickLoot.posX"), configKey = "posX", min = -tes3ui.getViewportSize(), max = tes3ui.getViewportSize(),step = 1, jump = 50})
+    quickLoot:createSlider({label = bs.tl("mcm.quickLoot.showCount"), configKey = "showCount", min = 1, max = 14, step = 1, jump = 1})
+
+-- --- @param e keyDownEventData
+-- local function keyDownCallback(e)
+--     if e.keyCode == tes3.scanCode.v then
+--         -- bs.inspect(config)
+--         bs.inspect(config.enemyBars)
+--     end
+-- end
+-- event.register(tes3.event.keyDown, keyDownCallback)
+
+---@param page mwseMCMExclusionsPage|mwseMCMFilterPage|mwseMCMMouseOverPage|mwseMCMPage|mwseMCMSideBarPage
+---@param tl bs_UITweaks_i18n_Translation
+---@param configKey string
+---@return mwseMCMYesNoButton
+function cfg.YN(page, tl, configKey)
+    return page:createYesNoButton({label = bs.tl(tl), configKey = configKey})
 end
-event.register(tes3.event.keyDown, keyDownCallback)
 
 
 ---==========================================================Misc=============================================================================
 templates.misc = mwse.mcm.createTemplate({ name = configPath .. ": Miscellaneous", defaultConfig = defaults, config = config })
 templates.misc:saveOnClose(configPath, config)
 
-local waitRest = templates.misc:createPage{ label = "Wait/Rest", config = config.wait }
-    waitRest:createYesNoButton({ label = "Enable 24 Hour Wait/Rest", configKey = "fullRest", })
+local waitRest = templates.misc:createPage{ label = bs.tl("mcm.wait.name"), config = config.wait }
+    waitRest:createYesNoButton({ label = bs.tl("mcm.wait.fullRest"), configKey = "fullRest", })
 
-
-local escape = templates.misc:createPage{label = "Quick Escape", config = config.escape}
+local escape = templates.misc:createPage{label = bs.tl("mcm.escape.name"), config = config.escape}
     escape:createDropdown({
-        label = "Escape Keybind",
+        label = bs.tl("mcm.escape.keybind"),
         configKey = "keybind",
         options = {
-            {label = "MenuMode: Right-Click", value = tes3.keybind.menuMode},
-            {label = "Escape: Escape", value = tes3.keybind.escape}
+            {label = bs.tl("mcm.escape.rightClick"), value = tes3.keybind.menuMode},
+            {label = bs.tl("mcm.escape.esc"), value = tes3.keybind.escape}
         }
     })
 
     templates.misc:createExclusionsPage({
-        label = "Quick Escape Blacklist",
-        leftListLabel = "Disabled Menus",
-        rightListLabel = "Enabled Menus",
+        label = bs.tl("mcm.escape.blacklist"),
+        leftListLabel = bs.tl("mcm.escape.disabledMenus"),
+        rightListLabel = bs.tl("mcm.escape.enabledMenus"),
         config = config.escape,
         defaultConfig = defaults.escape,
         showReset = true,
         configKey = "blacklist",
         filters = { {
-            label = "Ingredients",
+            label = bs.tl("mcm.escape.menus"),
             callback = function()
                 local menu = {}
                 for index, value in pairs(bs.menus) do

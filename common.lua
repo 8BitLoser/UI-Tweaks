@@ -1,10 +1,23 @@
 ---@diagnostic disable: duplicate-set-field, duplicate-doc-field
 local id = require("BeefStranger.UI Tweaks.ID")
+local logger = require("logging.logger")
 ---@class bs_UITweaks_Common
 local bs = {
     UpdateBarter = "bsUpdateBarter",
     keyStillDown = "bsKeyStillDown"
 }
+
+---@return mwseLogger
+function bs.log()
+  local log = logger.getLogger("bs_UITweaks_Logger")
+  debug.log(log)
+  if log then
+    return log
+  else
+    return logger.new({ name = "bs_UITweaks_Logger", logLevel = "NONE", logToConsole = true })
+  end
+end
+
 ---@return bsUITweaksPData playerData
 function bs.initData()
     local data = tes3.player.data
@@ -31,6 +44,13 @@ function bs.findText(element, string)
     return nil
 end
 
+bs.i18n = mwse.loadTranslations("BeefStranger.UI Tweaks")
+
+---comment
+---@param string bs_UITweaks_i18n_Translation
+function bs.tl(string)
+  return bs.i18n(string)
+end
 ---===================================
 ---===========tes3uiElement===========
 ---===================================
@@ -553,6 +573,129 @@ function tes3uiElement:bs_findLastChild(id)
   return found
 end
 
+-------------------------
+---createVerticalFillbar
+-------------------------
+
+---@class bs_createVerticalFillbar
+---@field element tes3uiElement?
+---@field rawdata table
+local metatable = {}
+
+---From createCycleButton.lua
+---__index is what is returned when you call something, widget.max returns the value of max
+function metatable:__index(key)
+  -- First look for functions defined on the metatable.
+  local method = metatable[key]
+  if (method) then
+    return method
+  end
+
+  -- Otherwise look for a get function.
+  local getter = metatable["get_" .. key]
+  if (getter) then
+    return getter(self)
+  end
+
+  error(string.format("Invalid access to property '%s'. This property does not exist.", key))
+end
+
+---From createCycleButton.lua
+---__newindex is what happens when you try to set a value, widget.max = 50 , will look for a set_max function, and do whats in it
+function metatable:__newindex(key, value)
+  local setter = metatable["set_" .. key]
+  if (setter) then
+    return setter(self, value)
+  end
+
+  error(string.format("Invalid access to property '%s'. This property is read-only.", key), 2)
+end
+
+function metatable:get_fillColor()
+  return self.rawdata.fillColor
+end
+
+function metatable:set_fillColor(value)
+  self.rawdata.fillColor = value
+  self:updateFill()
+end
+
+function metatable:get_max()
+  return self.rawdata.max
+end
+
+function metatable:set_max(value)
+  self.rawdata.max = value
+  self:updateFill()
+end
+
+function metatable:get_current()
+  return self.rawdata.current
+end
+
+function metatable:set_current(value)
+  self.rawdata.current = value
+  self:updateFill()
+end
+
+function metatable:updateFill()
+  local fillRatio = math.clamp(self.rawdata.current / self.rawdata.max, 0, 1)
+  self.element:findChild("Part_colorbar").heightProportional = fillRatio
+  self.element:findChild("Part_colorbar").color = self.rawdata.fillColor
+  -- self.element:getTopLevelMenu():updateLayout()
+end
+
+---@class bs_tes3ui.verticalFillbar.params
+---@field id string|number?
+---@field current number?
+---@field max number?
+---@field border boolean?
+---@field fillColor number[]?
+
+---@param params bs_tes3ui.verticalFillbar.params
+function tes3uiElement:bs_createVerticalFillbar(params)
+  params = params or {}
+  params.id = params.id or "Vertical_Fillbar"
+  params.current = params.current or 0
+  params.max = params.max or 0
+  params.border = (params.border == nil and true) or params.border
+  params.fillColor = params.fillColor or tes3ui.getPalette(tes3.palette.healthColor)
+
+  local defaultFill = math.clamp(params.current / params.max, 0, params.max)
+
+  local block = self:createNif({ id = params.id, path = "menu_thin_border.NIF" })
+  block.width = 20
+  block.height = 200
+  block.childAlignY = 1
+  local colorbar = block:createRect { id = "Part_colorbar" }
+  colorbar.heightProportional = defaultFill
+  colorbar.widthProportional = 1
+  colorbar.borderAllSides = 2
+  if not params.border then
+    block.contentPath = ""
+  end
+
+  block:makeLuaWidget("bs_VerticalFillbar", {
+    rawdata = {
+      current = params.current,
+      max = params.max,
+      fillColor = params.fillColor or tes3ui.getPalette(tes3.palette.healthColor),
+    }
+  })
+  block.widget.max = params.max
+  block.widget.current = params.current
+  block.widget.fillColor = params.fillColor
+
+  colorbar.color = block.widget.fillColor
+
+  return block
+end
+
+tes3ui.defineLuaWidget({
+	name = "bs_VerticalFillbar",
+	metatable = metatable,
+})
+
 ---===================================
 ---===========tes3uiElement===========
 ---===================================
@@ -635,7 +778,7 @@ function bs.updateList(e)
       local cost = tes3.calculatePrice({ merchant = actor, object = spellObj, itemData = (itemData and itemData) or nil })
       child:setPropertyInt(prop[e.propPrefix.."_cost"], cost)
 
-      child:findChild(id.embed.price).text = cost .. "gp"
+      child:findChild(id.embed.price).text = cost .. bs.tl("CONST.GP")
       local button = child:findChild(id.embed.button)
       if not willTrade or cost > tes3.getPlayerGold() then
           if not willTrade then title.color = bs.rgb.bsNiceRed end
@@ -648,6 +791,8 @@ function bs.updateList(e)
       end
   end
 end
+
+
 
 
 ---@param npc tes3mobileNPC
@@ -726,7 +871,9 @@ function bs.interpolateRGB(color1, color2, factor)
     return { r, g, b }
 end
 
-function bs.keybind(keybind) return tes3.worldController.inputController:isKeyDown(keybind.keyCode) end
+function bs.keyindName(keybind)
+  return tes3.getKeyName(tes3.getInputBinding(keybind).code)
+end
 
 ---@param scanCode tes3.scanCode
 function bs.isKeyDown(scanCode) return tes3.worldController.inputController:isKeyDown(scanCode) end
@@ -1836,5 +1983,20 @@ bs.sound = {
   Wooden_Door_Close_1 = "Wooden Door Close 1",
   Wooden_Door_Open_1 = "Wooden Door Open 1",
 }
+
+---@alias itemTypes
+---|tes3alchemy
+---|tes3apparatus
+---|tes3armor
+---|tes3book
+---|tes3clothing
+---|tes3ingredient
+---|tes3light
+---|tes3lockpick
+---|tes3misc
+---|tes3probe
+---|tes3repairTool
+---|tes3weapon
+---|tes3leveledItem
 
 return bs
